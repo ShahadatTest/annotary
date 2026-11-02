@@ -1,0 +1,40 @@
+spec: S13-06
+
+`export FILE.tar` beside the running harness server: the store goes in as a consistent snapshot
+(the note says so), the result line is `FILE  N blobs  SIZE  schema vK`; an existing file is
+refused without `--force`; the name must end in `.tar`; `--json`.
+
+```console
+$ annotary export backup.tar
+export: server running (pid [..]) — the database goes in as a consistent snapshot (SQLite online backup)
+backup.tar	[..] blobs	[..]	schema v5
+
+$ annotary export backup.tar
+? 5
+error: backup.tar exists — --force overwrites it
+
+$ annotary export backup.tar --force --json
+export: server running (pid [..]) — the database goes in as a consistent snapshot (SQLite online backup)
+{"file":"backup.tar","blobs":[..],"bytes":[..],"schema_version":5}
+
+$ ANNOTARY_TTY=1 annotary export backup.tar --force --json size,live
+export: server running (pid [..]) — the database goes in as a consistent snapshot (SQLite online backup)
+{"size":"[..]","live":true}
+
+$ annotary export -q backup.tar --force
+backup.tar	[..] blobs	[..]	schema v5
+
+$ annotary export backup.tgz
+? 1
+error: backup.tgz does not end in .tar — export writes an uncompressed tar archive — name it FILE.tar
+
+$ annotary export
+? 1
+error: the following required arguments were not provided:
+  <FILE.tar>
+
+Usage: annotary export <FILE.tar>
+
+For more information, try '--help'.
+
+```

@@ -1,0 +1,108 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "3:4-3:13",
+      "exact": "two three"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "3:9-3:18",
+      "exact": "two three"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "3:9-3:18",
+      "exact": "two three"
+    }
+  ],
+  "t2": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "4:5-4:20",
+      "exact": "six seven eight"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "4:5-4:20",
+      "exact": "six SEVEN eight"
+    },
+    {
+      "version": 3,
+      "status": "orphaned"
+    }
+  ],
+  "t3": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:5-5:15",
+      "exact": "ten eleven"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "5:5-5:15",
+      "exact": "ten eleven"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "5:5-5:15",
+      "exact": "ten eleven"
+    }
+  ],
+  "t4": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "7:9-7:25",
+      "exact": "fourteen fifteen"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "7:9-7:25",
+      "exact": "fourteen fifteen"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "7:9-7:25",
+      "exact": "fourteen fifteen"
+    }
+  ],
+  "t5": [
+    {
+      "version": 1,
+      "status": "anchored"
+    },
+    {
+      "version": 2,
+      "status": "anchored"
+    },
+    {
+      "version": 3,
+      "status": "anchored"
+    }
+  ],
+  "t6": [
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "3:0-3:8",
+      "exact": "zero one"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "3:0-3:8",
+      "exact": "zero one"
+    }
+  ]
+}

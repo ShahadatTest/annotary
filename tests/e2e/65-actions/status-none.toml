@@ -1,0 +1,9 @@
+# spec: S05-09
+# A Document with Versions but no Action prints `action:-`.
+bin.name = "annotary"
+args = ["-p", "agent", "status", "act-none"]
+status = "success"
+stdout = """
+act-none	[..]	v1	action:-	open:0	mentions-me:0	seq:[..]
+"""
+stderr = ""

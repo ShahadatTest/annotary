@@ -1,0 +1,8 @@
+# spec: S06-02, S06-06
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "grant", "linter", "nowhere", "read"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Vault nowhere
+"""

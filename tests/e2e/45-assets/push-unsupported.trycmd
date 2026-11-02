@@ -1,0 +1,23 @@
+spec: S03-02, S03-01, S03-15
+
+Unsupported types and absolute / `file://` references warn and are ignored (the push succeeds
+with no manifest entries — so no `assets:` line); URLs, `mailto:` and fragments are silent.
+
+```console
+$ annotary -p rowan push as-unsup.md
+warning: unsupported asset notes.docx (.docx) — not uploaded, link left as written
+warning: absolute path /srv/pics/x.png — ignored (not portable)
+warning: absolute path file:///tmp/x.pdf — ignored (not portable)
+as-unsup	[..]	v1
+
+$ annotary -p rowan push as-unsup.md --json warnings
+warning: unsupported asset notes.docx (.docx) — not uploaded, link left as written
+warning: absolute path /srv/pics/x.png — ignored (not portable)
+warning: absolute path file:///tmp/x.pdf — ignored (not portable)
+{"warnings":["unsupported asset notes.docx (.docx) — not uploaded, link left as written","absolute path /srv/pics/x.png — ignored (not portable)","absolute path file:///tmp/x.pdf — ignored (not portable)"]}
+
+$ annotary -p rowan pull as-unsup --out out --assets
+pull: 0 threads, 0 assets
+as-unsup.md	as-unsup.annotary	v1
+
+```

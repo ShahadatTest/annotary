@@ -1,0 +1,19 @@
+[package]
+name = "annotary-renderer"
+description = "Markdown -> viewer-agnostic HTML (compute at the edge; also builds to wasm32-unknown-unknown). Ticket 09."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[dependencies]
+# Declared directly (not via the workspace table) so the wasm32 build of this crate alone stays
+# small; the same parser + options as the push-time Asset scan (`annotary::assets::scan`).
+pulldown-cmark = { version = "0.13", default-features = false }
+# LaTeX -> MathML, pure Rust, no dependencies, plain MathML (no style attributes).
+latex2mathml = "0.2"
+serde_json = { version = "1", default-features = false, features = ["std"] }
+
+[dev-dependencies]
+insta = { version = "1", features = ["glob"] }

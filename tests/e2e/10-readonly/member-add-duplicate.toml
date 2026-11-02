@@ -1,0 +1,9 @@
+# spec: S01-13, S01-18
+# Handles are unique per Tenant forever: a taken one is a conflict (exit 5).
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "add", "scribe"]
+status.code = 5
+stdout = ""
+stderr = """
+error: handle @scribe is already taken (handles are unique per Tenant forever)
+"""

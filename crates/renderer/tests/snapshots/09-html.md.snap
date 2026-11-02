@@ -1,0 +1,29 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="raw-html">Raw HTML</h1>
+<p data-l="3-6">Inline HTML: <kbd>Ctrl</kbd>+<kbd>C</kbd>, <abbr title="HyperText">HTML</abbr>, a<sup>2</sup>, H<sub>2</sub>O,
+<span>span loses style/class/data-*</span>, <br> break,
+then  and an inline  script, plus
+<a href="https://x.y">handler dropped</a> and <img src="https://x.y/i.png" alt="img">.</p>
+<details>
+<summary>Click to expand</summary>
+<p data-l="11-11">Hidden <strong>Markdown</strong> paragraph inside details.</p>
+</details>
+<div align="center">
+<h2 data-l="17-17" id="centered-heading-markdown-inside-an-unclosed-div">Centered heading (Markdown inside an unclosed div)</h2>
+</div>
+<p align="right">raw paragraph tag</p>
+<img src="/a/0000000000000000000000000000000000000000000000000000000000000a01" alt="local asset in raw HTML" width="640" height="480">
+<span class="asset-missing" data-ref="img/missing.png">missing asset: img/missing.png (missing in raw HTML)</span>
+<video src="/a/0000000000000000000000000000000000000000000000000000000000000a02" controls width="1280" height="720"></video>
+<audio controls><source src="/a/0000000000000000000000000000000000000000000000000000000000000a03" type="audio/mpeg"></audio>
+<a href="/a/0000000000000000000000000000000000000000000000000000000000000a04">raw link to a PDF asset</a> · <a class="asset-missing" data-ref="img/missing.png">raw link to a missing asset</a>
+<table>
+  <tr><th>raw</th><th>table</th></tr>
+  <tr><td>1</td><td>2</td></tr>
+</table>
+submit
+obsolete tags lose their tags, keep their text
+<p data-l="48-48">unknown elements keep their text</p>
+<p data-l="50-50">Text after everything, with a stray &lt; b and a &gt; c and &amp;&amp; here.</p>

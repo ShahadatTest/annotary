@@ -1,0 +1,10 @@
+# spec: S07-12, S07-14
+# As of v3: t3 refined ("five"), t8 exists; t3 is still open there (resolved on v3 later — the
+# resolve event is stamped v3, so `--version 3` shows it resolved: --all).
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "ra-plan", "--version", "3", "--all", "--json", "id,anchor,resolved"]
+status = "success"
+stdout = """
+[{"id":"t1","resolved":{"by":"scribe","at":"[..]","version":1}},{"id":"t4","anchor":{"asset":"img/architecture.png"}},{"id":"t5","anchor":{"version":3,"range":"11:48-11:69","status":"anchored","exact":"testable in isolation"}},{"id":"t2","anchor":{"version":3,"range":"16:0-16:33","status":"anchored","exact":"We ship the CLI before the web UI"}},{"id":"t7","anchor":{"version":3,"range":"20:27-20:57","status":"anchored","exact":"mitigated by the fixture table"}},{"id":"t6","anchor":{"version":3,"range":"21:29-21:79","status":"anchored","exact":"agents should use the CLI, not read the file whole"}},{"id":"t3","anchor":{"version":3,"range":"31:5-31:36","status":"refined","exact":"invite three external developers","now":"invite five external developers"},"resolved":{"by":"rowan","at":"[..]","version":3}},{"id":"t8","anchor":{"version":3,"range":"31:41-31:57","status":"anchored","exact":"collect feedback"}}]
+"""
+stderr = ""

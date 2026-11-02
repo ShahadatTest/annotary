@@ -1,0 +1,26 @@
+spec: S02-04, S02-05, S02-07
+
+Names are the filename stem verbatim — Unicode, spaces, case — and nested paths contribute only
+the stem; a verbatim Name resolves as DOC.
+
+```console
+$ annotary -p rowan push "Übersicht 2026.md"
+Übersicht 2026	[..]	v1
+
+$ annotary -p rowan push docs/nested/plan-nested.md
+plan-nested	[..]	v1
+
+$ annotary -p rowan push "MiXed Case.md"
+MiXed Case	[..]	v1
+
+$ annotary -p rowan show "Übersicht 2026"
+Übersicht 2026	[..]	notes	v1 by @rowan [..]	action:-	open:0	actions:approve,send-back
+
+$ annotary -p rowan status "mixed case"
+? 2
+error: no Document "mixed case" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan status docs/nested/plan-nested.md
+plan-nested	[..]	v1	action:-	open:0	mentions-me:0	seq:[..]
+
+```

@@ -1,0 +1,9 @@
+# spec: S01-17
+# Bare --json = the compact default set (handle name role grants disabled), minified, empty/false omitted.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "list", "--json"]
+status = "success"
+stdout = """
+[{"handle":"rowan","name":"Rowan Vale","role":"owner","grants":[{"vault":"*","rights":["read","comment","action","write"]}]},{"handle":"scribe","name":"Scribe","role":"member","grants":[{"vault":"*","rights":["read","comment","action","write"]}]},{"handle":"linter","name":"linter","role":"member","grants":[{"vault":"*","rights":["read","comment","action","write"]}]},{"handle":"limited","name":"Limited Agent","role":"member","grants":[{"vault":"notes","rights":["read","comment"]}]}]
+"""
+stderr = ""

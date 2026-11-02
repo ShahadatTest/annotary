@@ -1,0 +1,14 @@
+# spec: S01-12
+# TTY (forced with ANNOTARY_TTY=1, colour off): aligned columns + header, same fields, same order.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "list", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+HANDLE    NAME           ROLE    GRANTS
+@rowan    Rowan Vale     owner   *:read,comment,action,write
+@scribe   Scribe         member  *:read,comment,action,write
+@linter   linter         member  *:read,comment,action,write
+@limited  Limited Agent  member  notes:read,comment
+"""
+stderr = ""

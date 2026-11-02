@@ -1,0 +1,16 @@
+# spec: S07-12
+# The read-only time-slice: Threads exactly as they stood on v2 — t3 shifted to line 31 and still
+# anchored, t6/t7 just created (t7's tombstone is not versioned), t8 not yet, t1 resolved (hidden);
+# every line number stamped v2.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "ra-plan", "--version", "2"]
+status = "success"
+stdout = """
+t4	@rowan	asset img/architecture.png	Diagram is out of date — the daemon box is missing.	[..]
+t5	@scribe	v2:11 "testable in isolation"	Should the anchor engine be its own package?	[..]
+t2	@rowan	v2:16 "We ship the CLI before the web UI"	Agreed — but the skill file must land *with* the CLI, not after.	[..]
+t7	@scribe	v2:20 "mitigated by the fixture table"	(deleted)	+1	[..]
+t6	@rowan	v2:21 "agents should use the CLI, not read the file whole"	This is exactly what the sidecar-format ticket has to answer — link it here.	[..]
+t3	@scribe	v2:31 "invite three external developers"	Three feels low for useful signal. Five?	[..]
+"""
+stderr = ""

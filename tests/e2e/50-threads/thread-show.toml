@@ -1,0 +1,12 @@
+# spec: S04-12
+# The full Thread: full range with its Version, frozen quote, created Version, mentions, every reply.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "show", "th-plan", "t2"]
+status = "success"
+stdout = """
+t2	open	@rowan	v1:16:0-16:33 "We ship the CLI before the web UI"	created v1 [..]	mentions @scribe
+  Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.
+t2.1	@scribe	v1 [..]	mentions @rowan
+  Item 3 already lists the skill file with the CLI. @rowan do you want it as its own item?
+"""
+stderr = ""

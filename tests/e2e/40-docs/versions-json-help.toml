@@ -1,0 +1,8 @@
+# spec: S02-19
+bin.name = "annotary"
+args = ["-p", "rowan", "versions", "x", "--json", "?"]
+status = "success"
+stdout = """
+number by at message same_as name hash
+"""
+stderr = ""

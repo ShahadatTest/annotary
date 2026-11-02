@@ -1,0 +1,16 @@
+{
+  "B": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "9:0-10:28",
+      "exact": "Line 9: india delta juliet\nLine 10: juliet kilo uniform"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "9:0-10:28",
+      "exact": "Line 9: india delta juliet\nLine 10: juliet kilo uniform"
+    }
+  ]
+}

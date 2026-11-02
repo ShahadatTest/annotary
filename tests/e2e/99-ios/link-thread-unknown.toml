@@ -1,0 +1,9 @@
+# spec: S18-06
+# A Thread that does not exist: exit 2 with the thread verbs' message.
+bin.name = "annotary"
+args = ["-p", "rowan", "link", "ro-plan", "t99"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Thread t99 in ro-plan ([..])
+"""

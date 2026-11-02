@@ -1,0 +1,8 @@
+# spec: S07-09
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "ra-plan", "--asset", "./img/cli-screenshot.png", "-m", "x"]
+status.code = 5
+stdout = ""
+stderr = """
+error: Asset img/cli-screenshot.png is missing on head v5 (no content to anchor to) — push the Version with the file present, then comment on it
+"""

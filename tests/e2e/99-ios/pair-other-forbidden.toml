@@ -1,0 +1,9 @@
+# spec: S18-09
+# A Member pairs a device for themselves only (another Member = owner-only, exit 4).
+bin.name = "annotary"
+args = ["-p", "agent", "pair", "--member", "rowan"]
+status.code = 4
+stdout = ""
+stderr = """
+error: managing another Member's tokens is owner-only — ask an owner (`annotary member list` shows who)
+"""

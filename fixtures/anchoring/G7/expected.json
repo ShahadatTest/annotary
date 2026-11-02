@@ -1,0 +1,16 @@
+{
+  "G": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "28:0-29:25",
+      "exact": "Line 28: blue quebec india\nLine 29: coral xray tango"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "28:0-29:25",
+      "exact": "Line 28: blue EDITED india\nLine 29: coral xray tango"
+    }
+  ]
+}

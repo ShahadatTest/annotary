@@ -1,0 +1,8 @@
+# spec: S07-13
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "ra-plan", "--status", "moved"]
+status.code = 1
+stdout = ""
+stderr = """
+error: --status "moved": use anchored, refined, orphaned (comma list) — e.g. --status anchored,refined hides orphaned Threads
+"""

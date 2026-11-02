@@ -1,0 +1,9 @@
+# spec: S05-09, S05-11
+# `status DOC`: the last Action on head as `action:ID@vN by @handle`; no orphaned count.
+bin.name = "annotary"
+args = ["-p", "rowan", "status", "act-plan"]
+status = "success"
+stdout = """
+act-plan	[..]	v2	action:approve@v2 by @scribe	open:0	mentions-me:0	seq:[..]
+"""
+stderr = ""

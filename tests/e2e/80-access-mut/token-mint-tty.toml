@@ -1,0 +1,15 @@
+# spec: S06-07
+# TTY: the paste hint, as `member add` prints it (a Member minting their own).
+bin.name = "annotary"
+args = ["-p", "limited", "token", "mint", "--name", "tty"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+
+  ANNOTARY_TOKEN=ant_[..]   # put this in the agent's environment
+
+"""
+stderr = """
+token minted for @limited "tty" (id [..])
+Token (shown once):
+"""

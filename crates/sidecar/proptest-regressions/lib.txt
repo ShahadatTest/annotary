@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 9dd05443beaedd11b1920757897669f6863999ff6f7ff2a408490909181cae14 # shrinks to sc = Sidecar { format: 1, id: "k7q2m9xd", vault: "notes", base_version: 1, members: Members([("ga", MemberEntry { id: "01K2WQ4M8XZ3N6P9RTB0AVYD5E", name: "" }), ("a", MemberEntry { id: "01K2WQ4M8XZ3N6P9RTB0AVYD5E", name: "" })]), versions: [VersionEntry { number: 1, name: "", hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", by: "a", at: "2026-08-01T00:00:00Z", message: None }], assets: [], actions: Actions { available: [], inherited: false, log: [] }, threads: [] }

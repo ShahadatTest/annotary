@@ -1,0 +1,9 @@
+# spec: S18-06
+# A deleted Document has no link (exit 2).
+bin.name = "annotary"
+args = ["-p", "rowan", "link", "ro-del"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Document "ro-del" — [..]
+"""

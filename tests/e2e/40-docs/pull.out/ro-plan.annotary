@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "id": "[..]",
+  "vault": "notes",
+  "base_version": 3,
+  "members": {
+    "rowan": {"id": "[..]", "name": "Rowan Vale"}
+  },
+  "versions": [
+    {"number": 1, "name": "ro-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "first draft"},
+    {"number": 2, "name": "ro-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "add risks"},
+    {"number": 3, "name": "ro-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "back to v1"}
+  ],
+  "actions": {
+    "available": [
+      {"id": "approve", "label": "Approve", "intent": "positive"},
+      {"id": "send-back", "label": "Send back", "intent": "neutral"}
+    ],
+    "inherited": true
+  }
+}

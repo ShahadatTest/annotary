@@ -1,0 +1,34 @@
+spec: S02-16, S02-14, S02-07
+
+pull never clobbers: a `.md` bound to another Document, or one without a Sidecar that differs
+from what would be written, is refused (exit 5) unless `--force`; identical content is fine.
+(The "edited since pull" branch is covered by `crates/annotary/tests/cli_docs.rs`, which can
+edit files between steps.)
+
+```console
+$ annotary -p rowan push pg.md
+pg	[..]	v1
+
+$ annotary -p rowan push other/pg.md
+pg	[..]	v1
+
+$ annotary -p rowan pull pg.md --out other
+? 5
+error: pg.md here is bound to [..] — not [..] — `pull --force` overwrites it, or use --out DIR
+
+$ annotary -p rowan pull pg.md --out other --force
+pull: 0 threads, 0 assets
+pg.md	pg.annotary	v1
+
+$ annotary -p rowan pull pg.md --out loose
+? 5
+error: pg.md exists here without a Sidecar and differs from v1 — `pull --force` overwrites it, or use --out DIR
+
+$ annotary -p rowan pull pg.md --out same
+pull: 0 threads, 0 assets
+pg.md	pg.annotary	v1
+
+$ annotary -p rowan status same/pg.md
+pg	[..]	v1	action:-	open:0	mentions-me:0	seq:[..]
+
+```

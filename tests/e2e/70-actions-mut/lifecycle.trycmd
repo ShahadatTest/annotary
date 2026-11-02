@@ -1,0 +1,98 @@
+spec: S05-02, S05-03, S05-04, S05-05, S05-08, S05-09, S05-10, S05-12, S05-14
+
+Every Action verb on a Document of its own (`act-life`): the `--version` guard, an undeclared
+id, `act` (non-TTY, TTY, JSON), repeated Actions and two Members on one Version (last wins in
+`status`/`list`, all kept in `actions`), a new Version starting clean, the pulled Sidecar pushed
+back unchanged (`inherited` present ⇒ no declaration is sent, `already`), and refusal on a
+deleted Document. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push act-life.md
+act-life	[..]	v1
+
+$ annotary -p rowan act act-life approve --version 2
+? 5
+error: head is v1, not v2 — run `annotary show act-life` and act on v1 once you have read it
+
+$ annotary -p rowan act act-life ship
+? 5
+error: no Action "ship" on act-life ([..]) — available: approve, send-back
+
+$ annotary -p rowan act act-life approve --version 1
+act-life	v1	approve	by @rowan
+
+$ ANNOTARY_TTY=1 annotary -p agent act act-life send-back --no-color
+act-life  v1  send-back  by @scribe
+
+$ annotary -p rowan status act-life
+act-life	[..]	v1	action:send-back@v1 by @scribe	open:0	mentions-me:0	seq:[..]
+
+$ annotary -p rowan act act-life approve --json
+{"name":"act-life","id":"[..]","version":1,"action":"approve","by":"rowan","at":"[..]T[..]Z"}
+
+$ annotary -p agent act act-life approve --json name,version,action,label,intent
+{"name":"act-life","version":1,"action":"approve","label":"Approve","intent":"positive"}
+
+$ annotary -p rowan list act-life --action approve
+[..]	act-life	v1	approve	0	[..]
+
+$ annotary -p rowan actions act-life
+approve	@scribe	[..]	v1	Approve
+approve	@rowan	[..]	v1	Approve
+send-back	@scribe	[..]	v1	Send back
+approve	@rowan	[..]	v1	Approve
+
+$ annotary -p rowan push v2/act-life.md --doc act-life
+act-life	[..]	v2
+
+$ annotary -p rowan status act-life
+act-life	[..]	v2	action:-	open:0	mentions-me:0	seq:[..]
+
+$ annotary -p rowan list act-life --action none
+[..]	act-life	v2	-	0	[..]
+
+$ annotary -p rowan show act-life
+act-life	[..]	notes	v2 by @rowan [..]	action:-	open:0	actions:approve,send-back
+
+$ annotary -p agent act act-life send-back
+act-life	v2	send-back	by @scribe
+
+$ annotary -p rowan show act-life
+act-life	[..]	notes	v2 by @rowan [..]	action:send-back@v2 by @scribe	open:0	actions:approve,send-back
+
+$ annotary -p rowan actions act-life --json id,version
+[{"id":"send-back","version":2},{"id":"approve","version":1},{"id":"approve","version":1},{"id":"send-back","version":1},{"id":"approve","version":1}]
+
+$ annotary -p agent pull act-life --out pulled
+pull: 0 threads, 0 assets
+act-life.md	act-life.annotary	v2
+
+$ annotary -p agent push pulled/act-life.md
+act-life	[..]	already v2
+
+$ annotary -p rowan show act-life
+act-life	[..]	notes	v2 by @rowan [..]	action:send-back@v2 by @scribe	open:0	actions:approve,send-back
+
+$ annotary -p rowan delete act-life
+act-life	[..]	deleted
+
+$ annotary -p rowan act act-life approve
+? 2
+error: no Document "act-life" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan act pulled/act-life.md approve
+? 2
+error: Document act-life ([..]) is deleted — `annotary restore DOC` brings it back
+
+$ annotary -p rowan actions act-life
+? 2
+error: no Document "act-life" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan actions pulled/act-life.md --deleted
+send-back	@scribe	[..]	v2	Send back
+approve	@scribe	[..]	v1	Approve
+approve	@rowan	[..]	v1	Approve
+send-back	@scribe	[..]	v1	Send back
+approve	@rowan	[..]	v1	Approve
+
+```

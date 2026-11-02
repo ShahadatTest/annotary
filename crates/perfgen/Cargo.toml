@@ -1,0 +1,25 @@
+[package]
+name = "annotary-perfgen"
+description = "annotary perf suite (ticket 15): the deterministic large-Document generator and the seeder that drives it through the real push / API path. Test infrastructure — not part of the product binary."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[lib]
+name = "annotary_perfgen"
+path = "src/lib.rs"
+
+[[bin]]
+name = "perfgen"
+path = "src/main.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+clap = { version = "4", features = ["derive", "env"] }
+ureq = { version = "3", default-features = false, features = ["json"] }
+# The generated images (real PNGs with dimensions, so the viewer reserves their boxes).
+image = { version = "0.25", default-features = false, features = ["png"] }

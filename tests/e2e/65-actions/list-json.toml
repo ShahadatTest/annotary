@@ -1,0 +1,8 @@
+# spec: S05-10
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "act-plan", "--json", "name,version,action"]
+status = "success"
+stdout = """
+[{"name":"act-plan","version":2,"action":"approve"}]
+"""
+stderr = ""

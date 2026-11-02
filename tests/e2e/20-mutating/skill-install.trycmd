@@ -1,0 +1,40 @@
+spec: S14-02
+
+`skill install` in a sandbox: the default location `./.agents/skills/annotary/SKILL.md` (dirs
+created, the path printed, a note about `--dir`), a second run is `unchanged`, a differing file
+is refused without `--force` (exit 5) and overwritten with it, `--dir DIR` lands in
+`DIR/annotary/SKILL.md`, `--json` bare / `?`. Needs no server or credential. (Byte equality
+with the embedded skill and `metadata.version` == `--version` are asserted by
+`crates/annotary/tests/cli_skill.rs`.) Merged stdout+stderr.
+
+```console
+$ annotary skill install
+wrote ./.agents/skills/annotary/SKILL.md (v0.0.0)
+also: --dir ~/.claude/skills (any skills dir — the file lands in DIR/annotary/SKILL.md)
+
+$ annotary skill install
+unchanged ./.agents/skills/annotary/SKILL.md (v0.0.0)
+also: --dir ~/.claude/skills (any skills dir — the file lands in DIR/annotary/SKILL.md)
+
+$ annotary skill install -q
+unchanged ./.agents/skills/annotary/SKILL.md (v0.0.0)
+
+$ sh edit.sh
+
+$ annotary skill install
+? 5
+error: ./.agents/skills/annotary/SKILL.md exists and differs from the embedded v0.0.0 (edited?) — `--force` overwrites it
+
+$ annotary skill install --force --json
+{"path":"./.agents/skills/annotary/SKILL.md","version":"0.0.0","written":true}
+
+$ annotary skill install --dir skills --json
+{"path":"skills/annotary/SKILL.md","version":"0.0.0","written":true}
+
+$ annotary skill install --dir skills
+unchanged skills/annotary/SKILL.md (v0.0.0)
+
+$ annotary skill install --json ?
+path version written dir previous
+
+```

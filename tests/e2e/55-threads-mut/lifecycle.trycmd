@@ -1,0 +1,141 @@
+spec: S04-02, S04-03, S04-04, S04-07, S04-08, S04-11, S04-13, S04-15, S04-16, S04-17, S04-18
+
+Every Thread verb on a Document of its own (`life-a`): new (document / span, TTY parity, JSON),
+reply (stdin), `reply --resolve`, resolve/reopen (idempotent, with a note), edit (author or
+owner: an agent editing the owner's Comment is exit 4), delete = tombstone (Thread and ids stay;
+a fully-tombstoned Thread leaves the lists), `show`/`status` counts, mutations refused on a
+deleted Document, and the `--version` guard once the head moved. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push life-a.md
+life-a	[..]	v1
+
+$ annotary -p rowan thread new life-a --document -m "First impressions: fine. @scribe"
+t1	document
+
+$ annotary -p agent thread new life-a "3:6-3:10" -m "beta?"
+t2	v1:3:6-3:10 "beta"
+
+$ annotary -p agent thread new life-a "3:6-3:10" -m "beta?" --json
+{"id":"t3","subject":"span","anchor":{"version":1,"range":"3:6-3:10","status":"anchored","exact":"beta"},"version":1}
+
+$ annotary -p agent thread new life-a "5:2-6:5" -m "two lines" --json id,anchor,version
+{"id":"t4","anchor":{"version":1,"range":"5:2-6:5","status":"anchored","exact":"one[..]- two"},"version":1}
+
+$ annotary -p agent thread reply life-a t1 -m "Looks good to me too. @rowan"
+t1.1
+
+$ annotary -p agent thread reply life-a t1 -m "one more" --json
+{"id":"t1.2","thread":"t1","version":1}
+
+$ annotary -p rowan thread reply life-a t2 --resolve -m "Yes, beta."
+t2.1	resolved
+
+$ annotary -p rowan thread reply life-a t2 --resolve -m "again" --json
+{"id":"t2.2","thread":"t2","state":"resolved","version":1}
+
+$ annotary -p agent thread resolve life-a t2
+t2 was already resolved
+t2	resolved
+
+$ annotary -p agent thread reopen life-a t2
+t2	reopened
+
+$ annotary -p agent thread reopen life-a t2 --json
+t2 was already open
+{"id":"t2","thread":"t2","state":"reopened","version":1}
+
+$ annotary -p agent thread resolve life-a t3 --json
+{"id":"t3","thread":"t3","state":"resolved","version":1}
+
+$ annotary -p agent thread edit life-a t1 -m "hijack"
+? 4
+error: only the author (@rowan) or an owner may edit t1
+
+$ annotary -p agent thread edit life-a t1.1 -m "Looks good to me too — ship it. @rowan"
+t1.1	edited
+
+$ annotary -p rowan thread edit life-a t1.1 -m "(owner edit)" --json
+{"id":"t1.1","thread":"t1","state":"edited","version":1}
+
+$ annotary -p agent thread delete life-a t1
+? 4
+error: only the author (@rowan) or an owner may delete t1
+
+$ annotary -p agent thread edit life-a t1.9 -m "x"
+? 2
+error: no Comment t1.9 in life-a ([..]) — Comment ids are t7 (root) or t7.1 (reply)
+
+$ annotary -p rowan thread delete life-a t1.1
+t1.1	deleted
+
+$ annotary -p rowan thread delete life-a t1.1 --json
+t1.1 was already deleted
+{"id":"t1.1","thread":"t1","state":"deleted","version":1}
+
+$ annotary -p rowan thread edit life-a t1.1 -m "too late"
+? 5
+error: Comment t1.1 is deleted — a tombstoned Comment cannot be edited; reply instead
+
+$ annotary -p agent thread show life-a t1
+t1	open	@rowan	document	created v1 [..]	mentions @scribe
+  First impressions: fine. @scribe
+t1.1	@scribe	v1 [..]	deleted by @rowan [..]
+  (deleted)
+t1.2	@scribe	v1 [..]
+  one more
+
+$ annotary -p agent status life-a
+life-a	[..]	v1	action:-	open:3	mentions-me:1	seq:[..]
+
+$ annotary -p rowan thread delete life-a t1
+t1	deleted
+
+$ annotary -p rowan thread delete life-a t1.2
+t1.2	deleted
+
+$ annotary -p rowan thread list life-a
+t2	@scribe	v1:3 "beta"	beta?	+2	[..]
+t4	@scribe	v1:5 "one - two"	two lines	[..]
+
+$ annotary -p rowan show life-a
+life-a	[..]	notes	v1 by @rowan [..]	action:-	open:2	actions:approve,send-back
+t2	@scribe	v1:3 "beta"	beta?	+2	[..]
+t4	@scribe	v1:5 "one - two"	two lines	[..]
+
+$ annotary -p rowan thread show life-a t1
+t1	open	@rowan	document	created v1 [..]	deleted by @rowan [..]
+  (deleted)
+t1.1	@scribe	v1 [..]	deleted by @rowan [..]
+  (deleted)
+t1.2	@scribe	v1 [..]	deleted by @rowan [..]
+  (deleted)
+
+$ annotary -p agent thread reply life-a t1 -m "still here"
+t1.3
+
+$ annotary -p agent thread list life-a --all --json id,replies,resolved,deleted
+[{"id":"t1","replies":3,"deleted":true},{"id":"t2","replies":2},{"id":"t3","replies":0,"resolved":{"by":"scribe","at":"[..]T[..]Z","version":1}},{"id":"t4","replies":0}]
+
+$ annotary -p rowan delete life-a
+life-a	[..]	deleted
+
+$ annotary -p rowan thread reply life-a t2 -m "x"
+? 2
+error: no Document "life-a" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan restore life-a
+life-a	[..]	restored
+
+$ annotary -p rowan push v2/life-a.md -m "v2" --doc life-a
+threads: 4 re-anchored — 4 anchored, 0 refined, 0 orphaned (unchanged)
+life-a	[..]	v2
+
+$ annotary -p agent thread new life-a "3:6-3:10" --version 1 -m "stale"
+? 5
+error: head is v2, not v1 — run `annotary pull life-a` and re-read before commenting
+
+$ annotary -p agent thread reply life-a t2 -m "on v2" --json
+{"id":"t2.3","thread":"t2","version":2}
+
+```

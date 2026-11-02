@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "[..]",
+  "vault": "notes",
+  "base_version": 2,
+  "members": {
+    "rowan": {"id": "[..]", "name": "Rowan Vale"},
+    "scribe": {"id": "[..]", "name": "Scribe"}
+  },
+  "versions": [
+    {"number": 1, "name": "act-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "first draft"},
+    {"number": 2, "name": "act-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "skill file with the CLI"}
+  ],
+  "actions": {
+    "available": [
+      {"id": "approve", "label": "Approve", "intent": "positive"},
+      {"id": "send-back", "label": "Send back", "intent": "neutral"}
+    ],
+    "inherited": true,
+    "log": [
+      {"id": "approve", "by": "rowan", "at": "[..]T[..]Z", "version": 1, "label": "Approve", "intent": "positive"},
+      {"id": "send-back", "by": "scribe", "at": "[..]T[..]Z", "version": 1, "label": "Send back", "intent": "neutral"},
+      {"id": "approve", "by": "scribe", "at": "[..]T[..]Z", "version": 2, "label": "Approve", "intent": "positive"}
+    ]
+  }
+}

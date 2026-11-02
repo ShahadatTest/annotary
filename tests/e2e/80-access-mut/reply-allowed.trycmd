@@ -1,0 +1,37 @@
+spec: S06-01, S06-14
+
+The ticket's scenario end to end: `limited` holds `read,comment` on `notes` only. Its reply on
+a Thread succeeds, its `act` on the same Document fails with exit 4 naming `action`, and once an
+owner grants `action` the same call succeeds. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push acc-plan.md
+acc-plan	[..]	v1
+
+$ annotary -p rowan thread new acc-plan --document -m "Thoughts? @limited"
+t1	document
+
+$ annotary -p limited thread reply acc-plan t1 -m "Looks good."
+t1.1
+
+$ annotary -p limited act acc-plan approve
+? 4
+error: missing right `action` on Vault notes (you are @limited) — ask an owner: annotary member grant limited notes action
+
+$ annotary -p limited status acc-plan
+acc-plan	[..]	v1	action:-	open:1	mentions-me:1	seq:[..]
+
+$ annotary -p rowan member grant limited notes read,comment,action
+@limited	Limited Agent	member	notes:read,comment,action
+
+$ annotary -p limited act acc-plan approve
+acc-plan	v1	approve	by @limited
+
+$ annotary -p rowan member grant limited notes read,comment
+@limited	Limited Agent	member	notes:read,comment
+
+$ annotary -p limited push acc-plan.md --doc acc-plan
+? 4
+error: blob upload needs the `write` right on a Vault (you are @limited) — ask an owner: annotary member grant limited VAULT write
+
+```

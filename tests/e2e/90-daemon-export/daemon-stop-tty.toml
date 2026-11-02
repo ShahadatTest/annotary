@@ -1,0 +1,13 @@
+# spec: S13-04, S16-04
+# TTY parity for `daemon stop`: the same status line, two spaces apart.
+bin.name = "annotary"
+args = ["daemon", "stop"]
+env.add = { ANNOTARY_DAEMON_OS = "macos", ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+running  pid [..]  since [..]  [URL]  store ~/.annotary/store  log ~/.annotary/logs/server.log  (v0.0.0)
+"""
+stderr = """
+LaunchAgent com.annotary.e2e is not loaded — nothing to stop
+no LaunchAgent installed — `annotary daemon install` keeps the server up after login
+"""

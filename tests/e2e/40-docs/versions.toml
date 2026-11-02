@@ -1,0 +1,11 @@
+# spec: S02-19, S02-10
+# `versions DOC`: number by at message same_as, oldest first; v3 is the same content as v1.
+bin.name = "annotary"
+args = ["-p", "agent", "versions", "ro-plan"]
+status = "success"
+stdout = """
+v1	@rowan	[..]	first draft	-
+v2	@rowan	[..]	add risks	-
+v3	@rowan	[..]	back to v1	v1
+"""
+stderr = ""

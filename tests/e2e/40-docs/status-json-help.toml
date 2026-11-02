@@ -1,0 +1,8 @@
+# spec: S02-28
+bin.name = "annotary"
+args = ["-p", "agent", "status", "x", "--json", "?"]
+status = "success"
+stdout = """
+name id version action open_threads mentions_me seq vault deleted
+"""
+stderr = ""

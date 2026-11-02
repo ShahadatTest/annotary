@@ -1,0 +1,13 @@
+# spec: S09-11
+# TTY: the same fields as the non-TTY row, aligned under a header (`ro-plan` from the docs seed).
+bin.name = "annotary"
+args = ["-p", "rowan", "rerender", "ro-plan", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+NAME     ID        VERSIONS  CHANGED
+ro-plan  [..]         3        0
+"""
+stderr = """
+rerender: 3 Versions, 0 changed (renderer [..])
+"""

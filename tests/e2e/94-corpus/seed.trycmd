@@ -1,0 +1,130 @@
+spec: S32-03
+
+The made-up corpus (`fixtures/corpus/`, copied in by `copy.sh`) through the real CLI: each
+Document pushed with its Assets, `field-notes` warning about the one picture it does not have,
+Threads on realistic text in three scripts, the RFC's Version history replayed as `hist-rfc` with
+its re-anchoring summaries, and a pull that pushes back as `already`. No @mentions (the `mentions`
+goldens are cross-Document). Merged stdout+stderr; ids are random. The `...` lines are the HEIC and
+AVIF "no web derivative" warnings of a machine with no converter (S03-17); macOS prints none.
+
+```console
+$ sh copy.sh
+
+$ annotary -p rowan push corpus/api-reference.md
+api-reference	[..]	v1
+
+$ annotary -p rowan push corpus/edge-cases.md
+edge-cases	[..]	v1
+
+$ annotary -p rowan push corpus/field-notes.md
+...
+warning: missing asset ../assets/water-tap.jpg (not found) — pushed with missing:true
+assets: 24 referenced, [..], 1 missing (../assets/water-tap.jpg)
+field-notes	[..]	v1
+
+$ annotary -p rowan push corpus/glossary-multilingual.md
+glossary-multilingual	[..]	v1
+
+$ annotary -p rowan push corpus/math-and-diagrams.md
+warning: unsupported asset x (no extension) — not uploaded, link left as written
+assets: 3 referenced, [..]
+math-and-diagrams	[..]	v1
+
+$ annotary -p rowan push corpus/meeting-notes-2026-03-02.md
+...
+warning: missing asset ../assets/water-tap.jpg (not found, via field-notes.md) — pushed with missing:true
+assets: 25 referenced, [..], 1 missing (../assets/water-tap.jpg)
+meeting-notes-2026-03-02	[..]	v1
+
+$ annotary -p rowan push corpus/meeting-notes-2026-03-09.md
+assets: 3 referenced, [..]
+meeting-notes-2026-03-09	[..]	v1
+
+$ annotary -p rowan push corpus/meeting-notes-2026-03-16.md
+...
+warning: missing asset ../assets/water-tap.jpg (not found, via field-notes.md) — pushed with missing:true
+assets: 24 referenced, [..], 1 missing (../assets/water-tap.jpg)
+meeting-notes-2026-03-16	[..]	v1
+
+$ annotary -p rowan push corpus/onboarding.md
+...
+warning: missing asset ../assets/water-tap.jpg (not found, via field-notes.md) — pushed with missing:true
+assets: 24 referenced, [..], 1 missing (../assets/water-tap.jpg)
+onboarding	[..]	v1
+
+$ annotary -p rowan push corpus/release-checklist.md
+assets: 3 referenced, [..]
+release-checklist	[..]	v1
+
+$ annotary -p rowan push corpus/rfc-tile-cache.md
+assets: 2 referenced, [..]
+rfc-tile-cache	[..]	v1
+
+$ annotary -p rowan list meeting-notes
+[..]	meeting-notes-2026-03-16	v1	-	0	[..]
+[..]	meeting-notes-2026-03-09	v1	-	0	[..]
+[..]	meeting-notes-2026-03-02	v1	-	0	[..]
+
+$ annotary -p rowan thread new glossary-multilingual --document -m "Have a native reader check every line."
+t1	document
+
+$ annotary -p rowan thread new field-notes --asset ../assets/a.png -m "Which handheld took this?"
+t1	asset ../assets/a.png
+
+$ annotary -p rowan push hist/1/hist-rfc.md
+warning: missing asset api-reference.md (not found) — pushed with missing:true
+warning: missing asset glossary-multilingual.md (not found) — pushed with missing:true
+assets: 2 referenced, [..], 2 missing (api-reference.md, glossary-multilingual.md)
+hist-rfc	[..]	v1
+
+$ annotary -p rowan thread new hist-rfc --document -m "The cost table needs a source."
+t1	document
+
+$ annotary -p agent thread new hist-rfc "44:27-44:68" -m "Is that still true after the upgrade?"
+t2	v1:44:27-44:68 "memory is the most expensive thing we buy"
+
+$ annotary -p rowan thread new hist-rfc "33:64-33:91" -m "Typo."
+t3	v1:33:64-33:91 "clients recieve stale tiles"
+
+$ annotary -p rowan thread new hist-rfc "185:54-185:83" -m "Good."
+t4	v1:185:54-185:83 "it refuses to run without one"
+
+$ annotary -p agent thread new hist-rfc "313:6-313:49" -m "On which fleet?"
+t5	v1:313:6-313:49 "takes around nine days on the current fleet"
+
+$ annotary -p rowan push hist/2/hist-rfc.md --doc hist-rfc -m "v2"
+warning: missing asset api-reference.md (not found) — pushed with missing:true
+warning: missing asset glossary-multilingual.md (not found) — pushed with missing:true
+assets: 2 referenced, [..], 2 missing (api-reference.md, glossary-multilingual.md)
+threads: 5 re-anchored — 3 anchored, 1 refined, 1 orphaned (+1 refined: t3; +1 orphaned: t2)
+hist-rfc	[..]	v2
+
+$ annotary -p rowan push hist/3/hist-rfc.md --doc hist-rfc -m "v3"
+warning: missing asset api-reference.md (not found) — pushed with missing:true
+warning: missing asset glossary-multilingual.md (not found) — pushed with missing:true
+assets: 2 referenced, [..], 2 missing (api-reference.md, glossary-multilingual.md)
+threads: 5 re-anchored — 2 anchored, 1 refined, 2 orphaned (+1 orphaned: t4)
+hist-rfc	[..]	v3
+
+$ annotary -p rowan push hist/4/hist-rfc.md --doc hist-rfc -m "v4"
+warning: missing asset api-reference.md (not found) — pushed with missing:true
+warning: missing asset glossary-multilingual.md (not found) — pushed with missing:true
+assets: 2 referenced, [..], 2 missing (api-reference.md, glossary-multilingual.md)
+threads: 5 re-anchored — 1 anchored, 1 refined, 3 orphaned (+1 orphaned: t5)
+hist-rfc	[..]	v4
+
+$ annotary -p rowan thread list hist-rfc
+t1	@rowan	document	The cost table needs a source.	[..]
+t3	@rowan	v4:35 refined "clients recieve stale tiles"	Typo.	[..]
+t2	@scribe	v1:44 orphaned "memory is the most expensive thing we buy"	Is that still true after the upgrade?	[..]
+t4	@rowan	v2:186 orphaned "it refuses to run without one"	Good.	[..]
+t5	@scribe	v3:314 orphaned "takes around nine days on the current fleet"	On which fleet?	[..]
+
+$ annotary -p rowan pull edge-cases --out pulled
+pull: 0 threads, 0 assets
+edge-cases.md	edge-cases.annotary	v1
+
+$ annotary -p rowan push pulled/edge-cases.md
+edge-cases	[..]	already v1
+
+```

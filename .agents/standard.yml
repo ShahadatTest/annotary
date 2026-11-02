@@ -1,0 +1,19 @@
+# Recorded by Copier from the repo-standard template: version (_commit), owner, tier. Read by
+# tools, not agents. Never edit by hand; `copier update` rewrites it. removed_starter_files lists
+# the starter files the repo deleted on purpose; set it with `copier update -d` (copier.yml).
+_commit: v0.13.1
+_src_path: gh:josh-andrews-dev/repo-standard
+conduct_email: joshwandrews@gmail.com
+description: A service for sharing Markdown documents between humans and agents and
+    commenting on them, with the same standing for both
+has_ui: false
+kinds:
+- server
+owner: Personal
+project_name: annotary
+removed_starter_files:
+- deploy/install.sh
+server_host: generic
+tier: full
+tracker: github
+visibility: public

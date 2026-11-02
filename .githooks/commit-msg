@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Refuses a commit whose subject is not in Conventional Commits form (`type(scope)!: summary`).
+# CI runs this same script with --title on the pull request title, because the title becomes the
+# squash-merge subject on main. Usage: commit-msg [--title] <file holding the message>.
+set -euo pipefail
+
+title=no
+if [ $# -ge 2 ] && [ "$1" = --title ]; then
+  title=yes
+  shift
+fi
+subject=$(grep -v '^#' -- "$1" | sed '/^[[:space:]]*$/d' | head -n 1 || true)
+types='feat|fix|docs|chore|refactor|test|build|ci|perf|style|revert'
+
+if [[ "$subject" =~ ^($types)(\([^\)]+\))?\!?:\ [^[:space:]] ]]; then
+  exit 0
+fi
+# Merge commits, fixup/squash commits and git revert's default subject never reach main: the pull
+# request is squash-merged under its title, which gets no such pass.
+if [ "$title" = no ] && [[ "$subject" =~ ^(Merge\ |fixup!\ |squash!\ |amend!\ |Revert\ \") ]]; then
+  exit 0
+fi
+echo "commit-msg: Refused: \"$subject\" is not a Conventional Commits subject." >&2
+if [[ "$subject" =~ ^Revert\ \"(.*)\"$ ]]; then
+  echo "  For a revert, use: revert: ${BASH_REMATCH[1]}" >&2
+else
+  echo "  Use <type>(<optional scope>): <summary>, with type one of ${types//|/, }." >&2
+  echo "  Example: docs: add the contact line" >&2
+fi
+exit 1

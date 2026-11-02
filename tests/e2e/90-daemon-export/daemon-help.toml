@@ -1,0 +1,25 @@
+# spec: S13-01, S13-04, S18-03
+# The verb's help (ticket 14: the CLI prototype's text): the six subcommands and where the plist / server.json live.
+bin.name = "annotary"
+args = ["daemon", "--help"]
+status = "success"
+stdout = """
+Usage: annotary daemon install | uninstall | status | start | stop | restart
+
+  install [--port N]       Write the LaunchAgent (RunAtLoad, KeepAlive, log → logs/server.log) and start it;
+                           first-run setup if the store is empty
+      [--bind ADDR --allow-remote] [--url URL] [--link-base URL]
+                           Passed to `serve` in the plist: reachable from your phone (Tailscale / LAN
+                           address), the public URL and the link relay — see `serve --help`
+  uninstall                Stop it and remove the plist (the data dir stays)
+  status                   running / pid / since / URL / store / log — from server.json (a stale pid
+                           reads as not running)
+  start | stop             Load / unload the LaunchAgent (stop keeps it installed; start or the next login
+                           brings it back)
+  restart                  Restart the running server (upgrade = replace the binary, then `daemon restart`)
+
+macOS: writes ~/Library/LaunchAgents/com.annotary.server.plist running `annotary serve`
+with the current data dir; `status` reads ~/.annotary/server.json. Other platforms: exit 1 with
+"unsupported — run `annotary serve` under your service manager".
+"""
+stderr = ""

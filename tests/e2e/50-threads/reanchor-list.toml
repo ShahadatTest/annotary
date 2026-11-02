@@ -1,0 +1,17 @@
+# spec: S07-13, S07-09, S07-10
+# Open Threads on head (v5) after five pushes: document order by current position (the asset on
+# line 3 first, then t2 refined on line 16), orphaned Threads last (by original position) with
+# `orphaned` in the anchor column and their last valid placement `vN:L`; the tombstoned t7 is
+# still listed (its reply lives).
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "ra-plan"]
+status = "success"
+stdout = """
+t4	@rowan	asset img/architecture.png	Diagram is out of date — the daemon box is missing.	[..]
+t5	@scribe	v5:11 "testable in isolation"	Should the anchor engine be its own package?	[..]
+t2	@rowan	v5:16 refined "We ship the CLI before the web UI"	Agreed — but the skill file must land *with* the CLI, not after.	[..]
+t7	@scribe	v3:20 orphaned "mitigated by the fixture table"	(deleted)	+1	[..]
+t6	@rowan	v3:21 orphaned "agents should use the CLI, not read the file whole"	This is exactly what the sidecar-format ticket has to answer — link it here.	[..]
+t8	@scribe	v3:31 orphaned "collect feedback"	How — survey or interviews? Worth deciding before the invites go out.	[..]
+"""
+stderr = ""

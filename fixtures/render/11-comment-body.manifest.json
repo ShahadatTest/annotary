@@ -1,0 +1,4 @@
+[
+  {"ref": "img/a.png", "hash": "0000000000000000000000000000000000000000000000000000000000000b01", "size": 10, "type": "image/png", "width": 640, "height": 480},
+  {"ref": "img/gone.png", "type": "image/png", "missing": true}
+]

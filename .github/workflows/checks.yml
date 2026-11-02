@@ -1,0 +1,77 @@
+# annotary's own checks, beside the template's ci.yml (job `ci`: PR title, gitleaks, `make ci`). All on
+# GitHub-hosted runners: this repo is public, and a self-hosted runner registered to it would run a
+# fork's pull request code on someone's machine. Two jobs, per docs/PHASE1-DONE.md:
+#   test — `cargo test` (crate unit tests + in-process integration tests, the spec-id checker included)
+#          plus fmt / clippy / wasm-check, on Linux and on macOS;
+#   e2e  — `make e2e` (trycmd goldens against a real spawned `serve` + the Playwright suite) on Linux.
+# `make perf` is not here: its budgets are absolute and a shared runner's numbers mean nothing
+# (perf/README.md has where it runs). `make check` (= check-ci + perf) stays the definition of done on
+# a developer's machine.
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  # file:line in panics, without filling the runner's disk with full debuginfo.
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+
+jobs:
+  test:
+    name: cargo test (${{ matrix.os }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: Linux
+            runner: ubuntu-latest
+          - os: macOS
+            runner: macos-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable, 2026-10-16
+        with:
+          components: clippy, rustfmt
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - run: make fmt-check
+      - run: make clippy
+      # Crate unit tests + in-process server integration tests, spec-id checker included.
+      - run: make test
+      - run: make wasm-check
+
+  e2e:
+    name: make e2e (trycmd + Playwright, Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable, 2026-10-16
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      # The pinned @playwright/test, its Chromium and the system libraries Chromium needs.
+      - run: npm ci --no-fund --no-audit && touch node_modules/.stamp
+      - run: npx playwright install --with-deps chromium
+      - run: make e2e
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: failure()
+        with:
+          name: playwright-traces
+          path: target/playwright/
+          if-no-files-found: ignore

@@ -1,0 +1,352 @@
+/* annotary web UI (ticket 10) — every selector is namespaced `cd-` (the rendered Document
+   HTML owns the bare element names and the few classes the renderer contract allows). Layout A
+   (margin cards) from an 850px-wide container, layout C (inline in the flow) below; the same
+   Thread element is a card in A and a row in C. Inlined into every page: no CSS swap, no FOUC. */
+/* ---------- tokens (CMD-23): light on :root (the pre-CMD-23 look, unchanged); dark on
+   `.cd-app.cd-theme-dark` and, for `.cd-app.cd-theme-system`, the same block under
+   `prefers-color-scheme: dark` (the two dark blocks are identical: `ui.rs` tests it). The server
+   puts the theme class and the highlight / text-size variables on `.cd-app` (`prefs.rs`), so the
+   first paint is final. DESIGN.md lists every token. ---------- */
+:root{color-scheme:light;
+  --cd-bg:#fff;--cd-fg:#1c1c1e;--cd-muted:#6b6f76;--cd-line:#e5e7eb;--cd-soft:#f6f7f9;--cd-card:#fff;--cd-field:#fff;--cd-dim:#fafafa;--cd-faint:#c9cbd3;
+  --cd-accent:#2563eb;--cd-accent-ink:#fff;--cd-sel-bg:#eef2ff;--cd-sel-ink:#1e40af;
+  --cd-amber:#b45309;--cd-amber-bg:#fef3c7;--cd-err:#9f1239;--cd-err-bg:#fff1f2;--cd-err-line:#fecdd3;--cd-err-strong:#b00020;
+  --cd-hdr-bg:rgba(255,255,255,.96);
+  --cd-warn:#c2410c;--cd-warn-bg:#fff7ed;--cd-warn-line:#fed7aa;
+  --cd-note-bg:#fffbeb;--cd-note-line:#fde68a;--cd-note-ink:#78350f;
+  --cd-info-bg:#eff6ff;--cd-info-line:#bfdbfe;--cd-info-ink:#1e3a8a;
+  --cd-owner-bg:#eef2ff;--cd-owner-ink:#3730a3;
+  --cd-primary:#1c1c1e;--cd-primary-ink:#fff;--cd-primary-hover:#000;--cd-kbd-line:#666;--cd-kbd-ink:#ddd;
+  --cd-stripe-a:#fafafa;--cd-stripe-b:#f3f4f6;--cd-dash:#d1d5db;
+  --cd-hl:#fff1a8;--cd-hl-sel:#ffd54a;--cd-hl-ink:currentColor;--cd-hl-link:#2563eb;--cd-hl-code-bg:#f6f7f9;
+  --cd-refined:#c7d2fe;--cd-refined-sel:#a5b4fc;--cd-refined-line:#6366f1;--cd-refined-ink:#4338ca;
+  --cd-pos:#15803d;--cd-pos-bg:#dcfce7;--cd-neu:#374151;--cd-neu-bg:#e5e7eb;--cd-neg:#b91c1c;--cd-neg-bg:#fee2e2;
+  --cd-open:#f59e0b;--cd-res:#22c55e;--cd-out:#9ca3af;--cd-mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+/* the Member's highlight pair for light pages (inline on .cd-app; the fallbacks are Yellow) */
+.cd-app{--cd-hl:var(--cd-hl-light,#fff1a8);--cd-hl-sel:var(--cd-hl-light-sel,#ffd54a)}
+/* DARK (keep the two blocks identical) */
+.cd-app.cd-theme-dark{color-scheme:dark;
+  --cd-bg:#000;--cd-fg:#f2f2f7;--cd-muted:#98989f;--cd-line:#38383a;--cd-soft:#1c1c1e;--cd-card:#1c1c1e;--cd-field:#2c2c2e;--cd-dim:#141416;--cd-faint:#48484a;
+  --cd-accent:#60a5fa;--cd-accent-ink:#000;--cd-sel-bg:#1e293b;--cd-sel-ink:#bfdbfe;
+  --cd-amber:#fbbf24;--cd-amber-bg:#3a2a0a;--cd-err:#fca5a5;--cd-err-bg:#2a1215;--cd-err-line:#7f1d1d;--cd-err-strong:#fca5a5;
+  --cd-hdr-bg:rgba(0,0,0,.92);
+  --cd-warn:#fdba74;--cd-warn-bg:#331a08;--cd-warn-line:#7c2d12;
+  --cd-note-bg:#3a2a0a;--cd-note-line:#78350f;--cd-note-ink:#fde68a;
+  --cd-info-bg:#0f1b2e;--cd-info-line:#1e3a8a;--cd-info-ink:#bfdbfe;
+  --cd-owner-bg:#1e1b4b;--cd-owner-ink:#c7d2fe;
+  --cd-primary:#f2f2f7;--cd-primary-ink:#000;--cd-primary-hover:#fff;--cd-kbd-line:#8e8e93;--cd-kbd-ink:#3a3a3c;
+  --cd-stripe-a:#111113;--cd-stripe-b:#1c1c1e;--cd-dash:#48484a;
+  --cd-hl:var(--cd-hl-dark,#facc15);--cd-hl-sel:var(--cd-hl-dark-sel,#fde047);--cd-hl-ink:#000;--cd-hl-link:#000;--cd-hl-code-bg:rgba(0,0,0,.12);
+  --cd-refined:#818cf8;--cd-refined-sel:#a5b4fc;--cd-refined-line:#1e1b4b;--cd-refined-ink:#a5b4fc;
+  --cd-pos:#4ade80;--cd-pos-bg:#0f2e1a;--cd-neu:#d1d5db;--cd-neu-bg:#2c2c2e;--cd-neg:#fca5a5;--cd-neg-bg:#2a1215;
+  --cd-open:#fbbf24;--cd-res:#4ade80;--cd-out:#8e8e93}
+@media (prefers-color-scheme: dark){
+.cd-app.cd-theme-system{color-scheme:dark;
+  --cd-bg:#000;--cd-fg:#f2f2f7;--cd-muted:#98989f;--cd-line:#38383a;--cd-soft:#1c1c1e;--cd-card:#1c1c1e;--cd-field:#2c2c2e;--cd-dim:#141416;--cd-faint:#48484a;
+  --cd-accent:#60a5fa;--cd-accent-ink:#000;--cd-sel-bg:#1e293b;--cd-sel-ink:#bfdbfe;
+  --cd-amber:#fbbf24;--cd-amber-bg:#3a2a0a;--cd-err:#fca5a5;--cd-err-bg:#2a1215;--cd-err-line:#7f1d1d;--cd-err-strong:#fca5a5;
+  --cd-hdr-bg:rgba(0,0,0,.92);
+  --cd-warn:#fdba74;--cd-warn-bg:#331a08;--cd-warn-line:#7c2d12;
+  --cd-note-bg:#3a2a0a;--cd-note-line:#78350f;--cd-note-ink:#fde68a;
+  --cd-info-bg:#0f1b2e;--cd-info-line:#1e3a8a;--cd-info-ink:#bfdbfe;
+  --cd-owner-bg:#1e1b4b;--cd-owner-ink:#c7d2fe;
+  --cd-primary:#f2f2f7;--cd-primary-ink:#000;--cd-primary-hover:#fff;--cd-kbd-line:#8e8e93;--cd-kbd-ink:#3a3a3c;
+  --cd-stripe-a:#111113;--cd-stripe-b:#1c1c1e;--cd-dash:#48484a;
+  --cd-hl:var(--cd-hl-dark,#facc15);--cd-hl-sel:var(--cd-hl-dark-sel,#fde047);--cd-hl-ink:#000;--cd-hl-link:#000;--cd-hl-code-bg:rgba(0,0,0,.12);
+  --cd-refined:#818cf8;--cd-refined-sel:#a5b4fc;--cd-refined-line:#1e1b4b;--cd-refined-ink:#a5b4fc;
+  --cd-pos:#4ade80;--cd-pos-bg:#0f2e1a;--cd-neu:#d1d5db;--cd-neu-bg:#2c2c2e;--cd-neg:#fca5a5;--cd-neg-bg:#2a1215;
+  --cd-open:#fbbf24;--cd-res:#4ade80;--cd-out:#8e8e93}
+/* the canvas outside .cd-app (overscroll, a short page) follows too */
+html:has(>body>.cd-app.cd-theme-system),html:has(>body>.cd-app.cd-theme-system)>body{background:#000;color-scheme:dark}
+}
+/* END DARK */
+html:has(>body>.cd-app.cd-theme-dark),html:has(>body>.cd-app.cd-theme-dark)>body{background:#000;color-scheme:dark}
+html:has(>body>.cd-app.cd-theme-system){color-scheme:light dark}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;background:var(--cd-bg);color:var(--cd-fg);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+a{color:var(--cd-accent);text-decoration:none}
+button{font:inherit;cursor:pointer}
+.cd-app{container-type:inline-size;container-name:cd;min-height:100vh;position:relative;background:var(--cd-bg);color:var(--cd-fg)}
+.cd-muted{color:var(--cd-muted)}.cd-small{font-size:12px}.cd-mono{font-family:var(--cd-mono)}
+.cd-mention{color:var(--cd-accent);font-weight:500}
+.cd-auth{font-size:11px;color:var(--cd-muted);margin-left:3px;cursor:default}
+
+/* ---------- header ---------- */
+.cd-hdr{position:sticky;top:0;z-index:5;background:var(--cd-hdr-bg);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--cd-line);display:flex;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;min-height:48px}
+.cd-line{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+.cd-brand{display:inline-flex;flex:none}
+.cd-icon{display:block}
+.cd-name{font-weight:600;white-space:nowrap}
+.cd-crumb{color:var(--cd-muted);white-space:nowrap}
+.cd-docid{font-family:var(--cd-mono);font-size:12px;color:var(--cd-muted)}
+.cd-rest{display:contents}
+.cd-grow{flex:1}
+.cd-nline,.cd-arrows{display:none}
+/* ticket 18 (X5): "Open in Annotary" — rendered hidden, shown by the script on iPhone / iPad only */
+.cd-openapp{color:var(--cd-accent);border-color:var(--cd-accent);font-weight:500}
+.cd-openapp[hidden]{display:none}
+.cd-status{display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:var(--cd-muted);font-size:13px;white-space:nowrap}
+.cd-status b{color:var(--cd-fg);font-weight:600}
+.cd-chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--cd-line);border-radius:999px;padding:1px 8px;font-size:12px;background:var(--cd-card);color:var(--cd-fg);white-space:nowrap}
+.cd-chip.cd-pos{background:var(--cd-pos-bg);color:var(--cd-pos);border-color:transparent}
+.cd-chip.cd-neu{background:var(--cd-neu-bg);color:var(--cd-neu);border-color:transparent}
+.cd-chip.cd-neg{background:var(--cd-neg-bg);color:var(--cd-neg);border-color:transparent}
+.cd-chip.cd-warn{background:var(--cd-warn-bg);color:var(--cd-warn);border-color:transparent}
+.cd-chip.cd-none{color:var(--cd-muted)}
+.cd-chip input{margin:0 2px 0 0}
+.cd-btn{border:1px solid var(--cd-line);background:var(--cd-card);border-radius:6px;padding:4px 10px;font-size:13px;white-space:nowrap;color:var(--cd-fg)}
+.cd-btn:hover{background:var(--cd-soft)}
+.cd-btn .cd-badge{display:inline-block;min-width:16px;padding:0 4px;border-radius:999px;background:var(--cd-accent);color:var(--cd-accent-ink);font-size:10px;font-weight:600;line-height:16px;text-align:center;margin-left:4px}
+.cd-btn .cd-badge:empty{display:none}
+.cd-vsw{display:inline-flex;align-items:center;border:1px solid var(--cd-line);border-radius:6px;overflow:hidden}
+.cd-vsw .cd-arrow{display:inline-block;padding:3px 8px;font-size:13px;color:var(--cd-fg);line-height:1.4}
+.cd-vsw .cd-arrow.cd-off{color:var(--cd-faint);pointer-events:none}
+.cd-vsw select{border:0;border-left:1px solid var(--cd-line);border-right:1px solid var(--cd-line);font:inherit;font-size:13px;padding:3px 6px;background:var(--cd-card);color:var(--cd-fg);max-width:220px}
+.cd-banner{background:var(--cd-note-bg);border-bottom:1px solid var(--cd-note-line);color:var(--cd-note-ink);padding:6px 16px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cd-banner .cd-btn{background:var(--cd-card)}
+.cd-panel{position:absolute;right:16px;top:52px;z-index:6;width:min(440px,calc(100% - 32px));background:var(--cd-card);border:1px solid var(--cd-line);border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);padding:10px 14px;font-size:13px;max-height:60vh;overflow:auto}
+.cd-panel[hidden]{display:none}
+.cd-panel h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted)}
+.cd-panel ul{list-style:none;margin:0;padding:0}
+.cd-panel li{margin:3px 0;color:var(--cd-muted)}
+.cd-panel li b{color:var(--cd-fg);font-weight:500}
+.cd-panel li[data-t]{cursor:pointer}
+.cd-panel li[data-t]:hover{color:var(--cd-fg)}
+
+/* ---------- the Document (layout C by default: one column) ---------- */
+.cd-layout{padding:0 16px}
+/* CMD-23: Document text scales with the Member's Text size (`--cd-text-scale` on .cd-app, 1 = 15px); the
+   reading width is in `ch`, so it scales with it. Cards (`.cd-strip`, 13px) and the header do not. */
+.cd-doc{position:relative;max-width:72ch;margin:0 auto;padding:24px 0 120px;line-height:1.65;overflow-wrap:break-word;font-size:calc(15px * var(--cd-text-scale,1))}
+.cd-doc h1{font-size:1.9em;line-height:1.2;margin:.2em 0 .6em}
+.cd-doc h2{font-size:1.35em;margin:1.4em 0 .4em}
+.cd-doc h3{font-size:1.1em;margin:1.2em 0 .3em}
+.cd-doc p{margin:.5em 0}
+.cd-doc ul,.cd-doc ol{padding-left:1.4em;margin:.5em 0}
+.cd-doc li{margin:.15em 0}
+.cd-doc [data-l]{scroll-margin-top:96px}
+.cd-doc code{font-family:var(--cd-mono);font-size:.9em;background:var(--cd-soft);padding:0 4px;border-radius:4px}
+.cd-doc pre{background:var(--cd-soft);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:.9em;line-height:1.45}
+.cd-doc pre code{background:transparent;padding:0;font-size:inherit}
+.cd-doc blockquote{margin:.6em 0;padding:0 0 0 12px;border-left:3px solid var(--cd-line);color:var(--cd-muted)}
+.cd-doc table{border-collapse:collapse;margin:.6em 0;display:block;overflow-x:auto;max-width:100%}
+.cd-doc th,.cd-doc td{border:1px solid var(--cd-line);padding:4px 8px;vertical-align:top}
+.cd-doc th{background:var(--cd-soft)}
+.cd-doc hr{border:0;border-top:1px solid var(--cd-line);margin:1.2em 0}
+.cd-doc img,.cd-doc video{max-width:100%;height:auto;border-radius:6px}
+.cd-doc object[type="application/pdf"]{width:100%;height:70vh;border:1px solid var(--cd-line);border-radius:6px}
+.cd-doc .asset-missing{display:inline-block;border:1px dashed var(--cd-dash);border-radius:6px;padding:6px 10px;color:var(--cd-muted);font-size:13px;
+  background:repeating-linear-gradient(45deg,var(--cd-stripe-a),var(--cd-stripe-a) 8px,var(--cd-stripe-b) 8px,var(--cd-stripe-b) 16px)}
+.cd-doc .footnotes{font-size:.9em;color:var(--cd-muted);border-top:1px solid var(--cd-line);margin-top:2em}
+mark.cd-hl{background:var(--cd-hl);color:var(--cd-hl-ink);border-radius:2px;padding:0;cursor:pointer;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+mark.cd-hl.cd-st-refined{background:var(--cd-refined);text-decoration:underline dotted var(--cd-refined-line);text-decoration-thickness:2px;text-underline-offset:2px}
+mark.cd-hl.cd-selected{background:var(--cd-hl-sel)}
+mark.cd-hl.cd-st-refined.cd-selected{background:var(--cd-refined-sel)}
+mark.cd-hl a{color:var(--cd-hl-link)}
+mark.cd-hl code{background:var(--cd-hl-code-bg)}
+.cd-asset-hl{outline:3px solid var(--cd-hl);outline-offset:2px;cursor:pointer}
+.cd-asset-hl.cd-selected{outline-color:var(--cd-hl-sel)}
+.cd-hl-block{box-shadow:-3px 0 0 var(--cd-hl)}
+/* resolved Threads (and their highlights) stay behind the toggle */
+.cd-app:not(.cd-show-resolved) mark.cd-hl.cd-res{background:transparent;color:inherit;text-decoration:none;cursor:inherit}
+.cd-app:not(.cd-show-resolved) .cd-asset-hl.cd-res{outline:none;cursor:inherit}
+.cd-app:not(.cd-show-resolved) .cd-hl-block.cd-res{box-shadow:none}
+
+/* ---------- Thread strips + the Thread element (row in C, card in A) ---------- */
+.cd-strip{margin:6px 0 10px;border-left:3px solid var(--cd-hl);padding-left:8px;font-size:13px;line-height:1.5}
+.cd-strip.cd-strip-doc{border-left-color:var(--cd-faint)}
+.cd-strip.cd-strip-orphaned{border-left-color:var(--cd-out)}
+.cd-strip-h{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted);font-weight:600;margin:4px 0 6px}
+.cd-thread{background:var(--cd-card);border-radius:6px}
+.cd-thread+.cd-thread{margin-top:4px}
+.cd-row{display:flex;gap:8px;align-items:flex-start;padding:4px 6px;cursor:pointer;border-radius:6px}
+.cd-row:hover{background:var(--cd-soft)}
+.cd-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--cd-open);flex:none;margin-top:6px}
+.cd-resolved>.cd-row .cd-dot{background:var(--cd-res)}
+.cd-st-orphaned>.cd-row .cd-dot{background:var(--cd-out)}
+.cd-main{flex:1;min-width:0}
+.cd-quote{color:var(--cd-muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd-quote q{quotes:"\201C" "\201D";color:var(--cd-fg)}
+.cd-quote .cd-now{display:block;color:var(--cd-refined-ink)}
+.cd-quote .cd-out{color:var(--cd-warn);font-weight:500}
+.cd-quote .cd-kind{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted);margin-right:4px}
+.cd-snip{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd-snip b{font-weight:600}
+.cd-meta{font-size:11px;color:var(--cd-muted);white-space:nowrap}
+.cd-tid{font-family:var(--cd-mono);font-size:11px;color:var(--cd-muted);flex:none}
+.cd-body{display:none}
+.cd-thread.cd-open .cd-body{display:block}
+.cd-thread.cd-open .cd-quote{white-space:normal}
+.cd-thread.cd-open .cd-snip{display:none}
+.cd-c{padding:6px 8px;border-top:1px solid var(--cd-soft)}
+.cd-who{display:flex;gap:6px;align-items:baseline;font-size:12px;color:var(--cd-muted);flex-wrap:wrap}
+.cd-who b{color:var(--cd-fg);font-weight:600}
+.cd-who b .cd-sec{font-weight:400;color:var(--cd-muted)}
+.cd-cbody{margin-top:2px;overflow-wrap:anywhere}
+.cd-cbody>:first-child{margin-top:0}.cd-cbody>:last-child{margin-bottom:0}
+.cd-cbody p{margin:.25em 0}
+.cd-cbody pre{background:var(--cd-soft);border-radius:6px;padding:6px 8px;overflow-x:auto;font-size:.92em}
+.cd-cbody code{font-family:var(--cd-mono);font-size:.9em;background:var(--cd-soft);padding:0 3px;border-radius:3px}
+.cd-cbody ul,.cd-cbody ol{padding-left:1.3em;margin:.25em 0}
+.cd-tomb{color:var(--cd-muted);font-style:italic}
+.cd-resline{padding:4px 8px;font-size:12px;color:var(--cd-muted);border-top:1px solid var(--cd-soft)}
+.cd-thread.cd-resolved{display:none}
+.cd-show-resolved .cd-thread.cd-resolved{display:block}
+.cd-strip.cd-all-resolved{display:none}
+.cd-show-resolved .cd-strip.cd-all-resolved{display:block}
+details.cd-orphaned summary{cursor:pointer;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted);font-weight:600;list-style:none;padding:2px 0}
+details.cd-orphaned summary::-webkit-details-marker{display:none}
+details.cd-orphaned summary::before{content:"\25B8  "}
+details.cd-orphaned[open] summary::before{content:"\25BE  "}
+details.cd-orphaned summary .cd-muted{font-weight:400;text-transform:none;letter-spacing:0}
+details.cd-orphaned .cd-thread{background:var(--cd-dim)}
+
+/* ---------- layout A: the margin (container ≥ 850px) ---------- */
+@container cd (min-width: 850px){
+  .cd-layout{display:grid;grid-template-columns:minmax(0,calc(72ch * var(--cd-text-scale,1))) 320px;justify-content:center;column-gap:28px;padding:0 24px}
+  .cd-doc{max-width:none;margin:0;grid-column:1}
+  .cd-strip{position:absolute;left:calc(100% + 28px);width:320px;margin:0;border-left:0;padding-left:0}
+  .cd-strip-doc{top:24px}
+  .cd-strip.cd-strip-orphaned{margin:0}
+  .cd-strip-h{margin:0 0 6px}
+  .cd-thread{border:1px solid var(--cd-line);border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .cd-thread+.cd-thread{margin-top:8px}
+  .cd-thread.cd-selected{border-color:var(--cd-fg);box-shadow:0 2px 10px rgba(0,0,0,.10);transform:translateX(-14px)}
+  .cd-row{padding:8px 10px 0;cursor:default}
+  .cd-row:hover{background:transparent}
+  .cd-dot{margin-top:4px}
+  .cd-quote{white-space:normal}
+  .cd-snip,.cd-meta{display:none}
+  .cd-body{display:block}
+  .cd-c{padding:6px 10px}
+  .cd-app:not(.cd-ready) .cd-strip{visibility:hidden}
+}
+@container cd (max-width: 1099.98px){
+  .cd-docid{display:none}
+  .cd-vsw select{max-width:170px}
+}
+/* ---------- the narrow header: one line + tap-to-open overlay (container < 850px) ---------- */
+@container cd (max-width: 849.98px){
+  .cd-hdr{flex-wrap:nowrap}
+  .cd-line{flex:1;flex-wrap:nowrap;cursor:pointer;overflow:hidden}
+  .cd-name{overflow:hidden;text-overflow:ellipsis}
+  .cd-nline{display:inline;color:var(--cd-muted);font-size:13px;white-space:nowrap}
+  .cd-nline b{color:var(--cd-fg);font-weight:600}
+  .cd-arrows{display:inline-flex;gap:2px;flex:none}
+  .cd-arrows .cd-arrow{display:inline-block;padding:2px 8px;border:1px solid var(--cd-line);border-radius:6px;color:var(--cd-fg);font-size:14px;line-height:1.3}
+  .cd-arrows .cd-arrow.cd-off{color:var(--cd-faint);pointer-events:none}
+  .cd-docid,.cd-crumb{display:none}
+  .cd-rest{display:none;position:absolute;left:0;right:0;top:100%;background:var(--cd-card);border-bottom:1px solid var(--cd-line);box-shadow:0 8px 24px rgba(0,0,0,.12);
+    padding:10px 16px;flex-direction:column;align-items:flex-start;gap:10px;z-index:6}
+  .cd-overlay-open .cd-rest{display:flex}
+  .cd-rest .cd-grow{display:none}
+  .cd-panel{top:48px;right:8px}
+}
+
+/* ---------- ticket 11: commenting, Actions, keyboard, live ---------- */
+.cd-pill[hidden],.cd-toast[hidden],.cd-err[hidden],.cd-actbtns[hidden],.cd-cbody[hidden],.cd-help[hidden]{display:none}
+.cd-pill{position:absolute;z-index:20;display:inline-flex;align-items:center;gap:6px;background:var(--cd-primary);color:var(--cd-primary-ink);border:0;border-radius:999px;
+  padding:5px 12px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap}
+.cd-pill kbd,.cd-help kbd{display:inline-block;min-width:16px;padding:0 5px;border:1px solid var(--cd-kbd-line);border-radius:4px;font:11px/1.6 var(--cd-mono);color:var(--cd-kbd-ink);text-align:center}
+.cd-help kbd{border-color:var(--cd-line);color:var(--cd-fg);background:var(--cd-soft)}
+/* CMD-23: Keyboard shortcuts Off hides the single-key rows of the help and the pill's `c` */
+.cd-app[data-cd-keys=off] .cd-help .cd-k1,.cd-app[data-cd-keys=off] .cd-pill kbd{display:none}
+.cd-help table{border-collapse:collapse;font-size:13px}
+.cd-help td{padding:3px 10px 3px 0;vertical-align:top;color:var(--cd-fg)}
+.cd-help td:first-child{white-space:nowrap;color:var(--cd-muted)}
+.cd-toast{position:absolute;right:16px;top:56px;z-index:7;max-width:min(440px,calc(100% - 32px));background:var(--cd-err-bg);color:var(--cd-err);border:1px solid var(--cd-err-line);border-radius:8px;
+  padding:8px 12px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.12);cursor:pointer}
+.cd-btn.cd-sm{padding:2px 8px;font-size:12px}
+.cd-btn.cd-primary{background:var(--cd-primary);color:var(--cd-primary-ink);border-color:var(--cd-primary)}
+.cd-btn.cd-primary:hover{background:var(--cd-primary-hover)}
+.cd-helpbtn{min-width:28px;padding:4px 8px;font-family:var(--cd-mono)}
+.cd-tools{display:inline-flex;gap:6px;align-items:center}
+.cd-actbtns{display:inline-flex;gap:6px;margin-left:4px}
+.cd-actbtn.cd-pos{background:var(--cd-pos-bg);color:var(--cd-pos);border-color:transparent}
+.cd-actbtn.cd-neu{background:var(--cd-neu-bg);color:var(--cd-neu);border-color:transparent}
+.cd-actbtn.cd-neg{background:var(--cd-neg-bg);color:var(--cd-neg);border-color:transparent}
+.cd-actbtn:hover{filter:brightness(.95)}
+.cd-acts{display:flex;gap:6px;align-items:center;padding:6px 8px;border-top:1px solid var(--cd-soft);flex-wrap:wrap}
+.cd-chk{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--cd-muted)}
+.cd-chk input{margin:0}
+.cd-link{border:0;background:transparent;padding:0 2px;font-size:11px;color:var(--cd-muted);text-decoration:underline dotted;cursor:pointer}
+.cd-link:hover{color:var(--cd-fg)}
+.cd-ctools{margin-left:auto;display:inline-flex;gap:4px}
+.cd-confirm{font-size:11px;color:var(--cd-warn)}
+.cd-discard{margin:4px 0 0;font-size:12px;color:var(--cd-warn)}
+.cd-discard .cd-link{font-size:12px}
+.cd-editor{padding:6px 8px;border-top:1px solid var(--cd-soft)}
+.cd-editor textarea{width:100%;border:1px solid var(--cd-line);border-radius:6px;padding:6px 8px;font:inherit;font-size:13px;min-height:60px;resize:vertical;background:var(--cd-field);color:var(--cd-fg)}
+.cd-editor textarea:focus{outline:2px solid var(--cd-accent);outline-offset:-1px}
+.cd-editor .cd-acts{padding:6px 0 0;border-top:0}
+.cd-err{margin:4px 8px 6px;padding:4px 8px;font-size:12px;color:var(--cd-err);background:var(--cd-err-bg);border:1px solid var(--cd-err-line);border-radius:6px}
+.cd-editor .cd-err{margin:4px 0}
+.cd-thread.cd-composer{border-color:var(--cd-fg)}
+.cd-thread.cd-composer .cd-row{cursor:default}
+.cd-thread.cd-composer .cd-dot{background:var(--cd-accent)}
+.cd-pending{opacity:.72}
+.cd-c.cd-pending .cd-cbody::after{content:" …";color:var(--cd-muted)}
+mark.cd-hl.cd-pending-hl,.cd-asset-hl.cd-pending-hl{background:var(--cd-hl-sel);outline-color:var(--cd-hl-sel)}
+.cd-banner.cd-newver{background:var(--cd-info-bg);border-bottom-color:var(--cd-info-line);color:var(--cd-info-ink)}
+.cd-thread.cd-composer .cd-body{display:block}
+.cd-thread.cd-composer .cd-snip,.cd-thread.cd-composer .cd-meta{display:none}
+.cd-edited{color:var(--cd-muted)}
+@container cd (max-width: 849.98px){
+  .cd-toast{top:48px;right:8px}
+  .cd-actbtns{margin-left:0}
+}
+
+/* ---------- ticket 12: the shared top bar's nav (list page + owner screens; admin.css has the rest) ---------- */
+.cd-nav{display:inline-flex;gap:2px;margin-left:10px}
+.cd-navlink{color:var(--cd-muted);padding:3px 8px;border-radius:6px;font-size:13px;white-space:nowrap}
+.cd-navlink:hover{background:var(--cd-soft);color:var(--cd-fg)}
+.cd-navlink.cd-current{color:var(--cd-fg);font-weight:600;background:var(--cd-soft)}
+@container cd (max-width: 849.98px){
+  /* the top bar is not the Document header: it wraps instead of collapsing to one line */
+  .cd-hdr-nav{flex-wrap:wrap}
+  .cd-hdr-nav .cd-line{flex:1 1 auto;cursor:default;overflow:visible;flex-wrap:wrap}
+  .cd-hdr-nav .cd-name{overflow:visible}
+  .cd-hdr-nav .cd-status .cd-muted{display:none}
+}
+
+/* ---------- the Document list ---------- */
+.cd-listmain{max-width:1100px;margin:0 auto;padding:16px}
+.cd-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px;font-size:13px}
+.cd-filters input[type=search],.cd-filters input[type=text],.cd-filters select{font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--cd-line);border-radius:6px;background:var(--cd-field);color:var(--cd-fg)}
+.cd-filters label{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+table.cd-list{width:100%;border-collapse:collapse;font-size:14px}
+table.cd-list th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--cd-line)}
+table.cd-list td{padding:8px;border-bottom:1px solid var(--cd-soft);vertical-align:top}
+table.cd-list th.cd-num,table.cd-list td.cd-num{text-align:right}
+table.cd-list tr:hover td{background:var(--cd-soft)}
+.cd-docname{font-weight:600;color:var(--cd-fg)}
+.cd-title{font-size:12px;color:var(--cd-muted);margin-top:1px}
+.cd-deleted{display:inline-block;margin-left:6px;font-size:11px;color:var(--cd-warn);border:1px solid var(--cd-warn-line);border-radius:999px;padding:0 6px}
+.cd-listfoot{font-size:13px;color:var(--cd-muted);margin:12px 0}
+.cd-empty{color:var(--cd-muted);font-size:14px;padding:24px 8px;text-align:center}
+@container cd (max-width: 640px){
+  table.cd-list .cd-col-id,table.cd-list .cd-col-updated{display:none}
+}
+
+/* ---------- ticket 15: viewport-first rendering ---------- */
+/* Off-screen content is neither laid out nor painted until it nears the viewport
+   (content-visibility: auto; the HTML still carries everything — spec 128): the Document's
+   top-level blocks and the Thread cards from the 61st child of the Document on (the first 60
+   children — more than a tall viewport — render in the first frame, so nothing in view is a
+   placeholder that grows later: CLS 0), except a block that holds a strip or precedes one (its
+   highlight is what the margin card aligns with, so it stays rendered — no forced layout).
+   `contain-intrinsic-size: auto` remembers a rendered size; the script re-aligns the margin when
+   a card or block takes its real size (contentvisibilityautostatechange). */
+.cd-doc>:nth-child(n+61):not(.cd-strip):not(:has(.cd-strip)):not(:has(+ .cd-strip)){content-visibility:auto;contain-intrinsic-size:auto 4em}
+.cd-doc>:nth-child(n+61) .cd-thread{content-visibility:auto;contain-intrinsic-size:auto 140px}
+@container cd (max-width: 849.98px){
+  /* layout C: a collapsed row, not a card — the placeholder is its height */
+  .cd-doc>:nth-child(n+61) .cd-thread{contain-intrinsic-size:auto 64px}
+}
+
+/* ---------- simple pages (errors, login) ---------- */
+.cd-simple{max-width:36rem;margin:4rem auto;padding:0 1rem}
+.cd-simple h1{font-size:1.4em}
+.cd-simple .cd-err{color:var(--cd-err-strong)}

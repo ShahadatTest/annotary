@@ -1,0 +1,38 @@
+spec: S06-13
+
+`profile add | remove` on config.toml (a group of its own: it adds profiles while it runs and
+removes them again). There is no default profile: a call without -p is exit 3, naming the
+profiles. Tokens are never printed. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan profile add tmp --server http://127.0.0.1:1 --token ant_notreal
+profile "tmp" saved → [..]/config.toml
+
+$ annotary -p rowan profile add tmp --server http://127.0.0.1:1
+? 5
+error: profile 'tmp' already exists in [..]/config.toml — `annotary profile remove NAME` first, or `annotary login -p NAME` to replace its token
+
+$ annotary -p rowan profile add tmp2 --vault notes
+profile "tmp2" has no token yet — `annotary login -p tmp2` fills it
+profile "tmp2" saved → [..]/config.toml
+
+$ annotary -p rowan profile add tmp3 --server ftp://nope
+? 1
+error: --server "ftp://nope" must be an http(s) URL
+
+$ annotary member list
+? 3
+error: no credential — say who you are: pass -p NAME (`annotary profile list` shows whose each one is), or set ANNOTARY_TOKEN
+profiles in ~/.annotary/config.toml: agent, down, limited, pw, rowan, tmp, tmp2
+
+$ annotary -p rowan profile remove tmp
+profile "tmp" removed → [..]/config.toml
+
+$ annotary -p rowan profile remove tmp2 --json
+{"name":"tmp2","server":"http://127.0.0.1:7377","vault":"notes"}
+
+$ annotary -p rowan profile remove tmp
+? 2
+error: profile 'tmp' not found in ~/.annotary/config.toml — profiles: agent, down, limited, pw, rowan
+
+```

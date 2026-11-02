@@ -1,0 +1,39 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="tables">Tables</h1>
+<table data-l="3-7">
+<thead data-l="3-3">
+<tr data-l="3-3"><th data-l="3-3" align="left">Left</th><th data-l="3-3" align="center">Center</th><th data-l="3-3" align="right">Right</th><th data-l="3-3">Default</th></tr>
+</thead>
+<tbody data-l="5-7">
+<tr data-l="5-5"><td data-l="5-5" align="left">a</td><td data-l="5-5" align="center">b</td><td data-l="5-5" align="right">c</td><td data-l="5-5">d</td></tr>
+<tr data-l="6-6"><td data-l="6-6" align="left"><em>em</em></td><td data-l="6-6" align="center"><code>code</code></td><td data-l="6-6" align="right"><a href="https://x.y">l</a></td><td data-l="6-6"><del>s</del></td></tr>
+<tr data-l="7-7"><td data-l="7-7" align="left">esc | pipe</td><td data-l="7-7" align="center">x</td><td data-l="7-7" align="right">y</td><td data-l="7-7">z</td></tr>
+</tbody>
+</table>
+<p data-l="9-9">Header only:</p>
+<table data-l="11-12">
+<thead data-l="11-11">
+<tr data-l="11-11"><th data-l="11-11">h1</th><th data-l="11-11">h2</th></tr>
+</thead>
+</table>
+<p data-l="14-14">Compact:</p>
+<table data-l="16-18">
+<thead data-l="16-16">
+<tr data-l="16-16"><th data-l="16-16">a</th><th data-l="16-16">b</th></tr>
+</thead>
+<tbody data-l="18-18">
+<tr data-l="18-18"><td data-l="18-18">1</td><td data-l="18-18">2</td></tr>
+</tbody>
+</table>
+<p data-l="20-20">Wide cell content and missing cells:</p>
+<table data-l="22-25">
+<thead data-l="22-22">
+<tr data-l="22-22"><th data-l="22-22">A</th><th data-l="22-22">B</th><th data-l="22-22">C</th></tr>
+</thead>
+<tbody data-l="24-25">
+<tr data-l="24-24"><td data-l="24-24">only one</td><td data-l="24-24"></td><td data-l="24-24"></td></tr>
+<tr data-l="25-25"><td data-l="25-25">one</td><td data-l="25-25">two</td><td data-l="25-25">three</td></tr>
+</tbody>
+</table>

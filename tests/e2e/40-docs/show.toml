@@ -1,0 +1,9 @@
+# spec: S02-28
+# `show DOC` header (non-TTY): name id vault "vN by @h AGE "message"" action open actions — tab-separated.
+bin.name = "annotary"
+args = ["-p", "agent", "show", "ro-plan"]
+status = "success"
+stdout = """
+ro-plan	[..]	notes	v3 by @rowan [..] "back to v1"	action:-	open:0	actions:approve,send-back
+"""
+stderr = ""

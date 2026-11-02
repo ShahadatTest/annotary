@@ -1,0 +1,9 @@
+# spec: S02-19
+# `--json a,b` narrows; same_as omitted when null.
+bin.name = "annotary"
+args = ["-p", "rowan", "versions", "ro-plan", "--json", "number,message,same_as"]
+status = "success"
+stdout = """
+[{"number":1,"message":"first draft"},{"number":2,"message":"add risks"},{"number":3,"message":"back to v1","same_as":1}]
+"""
+stderr = ""

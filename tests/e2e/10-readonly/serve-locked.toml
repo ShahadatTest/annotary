@@ -1,0 +1,9 @@
+# spec: S01-02
+# A second `serve` on the store the running server holds is refused (exit 5) with the holder's pid.
+bin.name = "annotary"
+args = ["serve", "--port", "0"]
+status.code = 5
+stdout = ""
+stderr = """
+error: store ~/.annotary/store is locked by another annotary serve (pid [..]) — stop it first, or use --data-dir / ANNOTARY_HOME for a separate store
+"""

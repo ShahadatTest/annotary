@@ -1,0 +1,8 @@
+# spec: S01-18
+bin.name = "annotary"
+args = ["-V"]
+status = "success"
+stdout = """
+annotary 0.0.0
+"""
+stderr = ""

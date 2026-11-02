@@ -1,0 +1,12 @@
+# spec: S06-04, S06-06
+# `role` takes owner|member — anything else is a usage error (exit 1).
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "role", "linter", "admin"]
+status.code = 1
+stdout = ""
+stderr = """
+error: invalid value 'admin' for '<ROLE>'
+  [possible values: owner, member]
+
+For more information, try '--help'.
+"""

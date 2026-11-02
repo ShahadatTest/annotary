@@ -1,0 +1,1304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>annotary — an interactive guide</title>
+<style>
+:root{
+  --bg:#fff; --fg:#1c1c1e; --muted:#6b6f76; --line:#e5e7eb; --soft:#f6f7f9;
+  --accent:#2563eb; --accent-soft:#eff4ff;
+  --hl:#fff1a8; --hl-sel:#ffd54a; --refined:#c7d2fe; --refined-line:#6366f1;
+  --pos:#15803d; --pos-bg:#dcfce7; --neu:#374151; --neu-bg:#e5e7eb; --neg:#b91c1c; --neg-bg:#fee2e2;
+  --open:#f59e0b; --res:#22c55e; --out:#9ca3af;
+  --ink:#0f172a; --term:#0b1020; --term-fg:#d6deeb; --term-dim:#7f8ea3; --term-ok:#7fdb8a; --term-err:#ff8a8a; --term-cmd:#9ccfff;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--soft);color:var(--fg);font:16px/1.5 var(--sans)}
+button{font:inherit;cursor:pointer}
+code,kbd,.mono{font-family:var(--mono);font-size:.9em}
+code{background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:#fff;font-size:.8em}
+a{color:var(--accent)}
+
+/* ---------- deck chrome ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);transition:width .3s;z-index:20}
+#deck{position:relative;height:100%;overflow:hidden}
+.slide{position:absolute;inset:0;overflow-y:auto;padding:56px 64px 96px;opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .35s,transform .35s,visibility .35s}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide.before{transform:translateX(-24px)}
+.inner{max-width:1180px;margin:0 auto}
+#bar{position:fixed;left:0;right:0;bottom:0;height:56px;display:flex;align-items:center;gap:12px;padding:0 20px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-top:1px solid var(--line);z-index:20}
+#bar .title{flex:1;color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bar button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px}
+#bar button:hover{border-color:var(--accent);color:var(--accent)}
+#count{font:13px var(--mono);color:var(--muted);min-width:64px;text-align:center}
+#menu{position:fixed;left:20px;bottom:64px;width:340px;max-height:70vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 40px rgba(15,23,42,.15);padding:8px;display:none;z-index:30}
+#menu.open{display:block}
+#menu .sec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 10px 4px}
+#menu button{display:flex;gap:10px;width:100%;text-align:left;border:0;background:none;padding:6px 10px;border-radius:7px}
+#menu button:hover,#menu button.cur{background:var(--accent-soft);color:var(--accent)}
+#menu button span{font:12px var(--mono);color:var(--muted);min-width:20px}
+
+/* ---------- type ---------- */
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+h1{font-size:44px;line-height:1.1;margin:0 0 16px;letter-spacing:-.02em}
+h2{font-size:34px;line-height:1.15;margin:0 0 12px;letter-spacing:-.015em}
+h3{font-size:18px;margin:0 0 6px}
+.lede{font-size:19px;color:#3b3f46;max-width:820px;margin:0 0 28px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card p{margin:6px 0 0}
+.card ul{margin:8px 0 0;padding-left:18px}
+.card li{margin:3px 0}
+.pill{display:inline-block;font-size:12px;border-radius:999px;padding:1px 9px;font-weight:600}
+.p-pos{background:var(--pos-bg);color:var(--pos)}.p-neu{background:var(--neu-bg);color:var(--neu)}.p-neg{background:var(--neg-bg);color:var(--neg)}
+.p-anch{background:#fef3c7;color:#92400e}.p-ref{background:#e0e7ff;color:#3730a3}.p-orph{background:#f3f4f6;color:#6b7280}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 14px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#1d4ed8;color:#fff}
+.btn[disabled]{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 10px 10px 0;font-size:14px}
+.warn{border-left-color:var(--open);background:#fffbeb}
+
+/* ---------- title slide ---------- */
+.dark{background:radial-gradient(1200px 600px at 80% -10%,#1e3a8a 0,transparent 60%),var(--ink);color:#e2e8f0}
+.dark h1{font-size:72px;color:#fff}
+.dark .lede{color:#cbd5e1;font-size:22px}
+.wordmark{font-family:var(--mono);letter-spacing:-.03em}
+.wordmark b{color:#93c5fd;font-weight:700}
+.stats{display:flex;gap:36px;flex-wrap:wrap;margin-top:40px}
+.stat .n{font-size:30px;font-weight:700;color:#fff}
+.stat .l{font-size:13px;color:#94a3b8}
+.hero-doc{margin-top:44px;background:#fff;color:var(--fg);border-radius:14px;padding:22px 26px;max-width:760px;box-shadow:0 30px 80px rgba(0,0,0,.35);position:relative}
+.hero-doc mark{background:var(--hl);border-radius:3px;padding:0 1px}
+.hero-cards{position:absolute;right:-250px;top:22px;width:230px;display:flex;flex-direction:column;gap:10px}
+.hero-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+@media (max-width:1250px){.hero-cards{display:none}}
+
+/* ---------- vocabulary ---------- */
+.terms{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.terms button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px}
+.terms button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.termbox{min-height:150px}
+.termbox .avoid{margin-top:10px;font-size:13px;color:var(--muted)}
+
+/* ---------- loop ---------- */
+.loop{display:grid;grid-template-columns:260px 1fr;gap:24px}
+.steps button{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:1px solid transparent;background:none;border-radius:10px;padding:9px 12px;margin-bottom:4px}
+.steps button .num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--line);font-size:13px;font-weight:700;flex:none}
+.steps button.on{background:#fff;border-color:var(--line)}
+.steps button.on .num{background:var(--accent);color:#fff}
+.who{font-size:12px;color:var(--muted)}
+
+/* ---------- terminal ---------- */
+.term{background:var(--term);color:var(--term-fg);border-radius:12px;font:13px/1.55 var(--mono);padding:14px 16px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.term .cmd{color:var(--term-cmd)}
+.term .cmd::before{content:"$ ";color:var(--term-dim)}
+.term .err{color:var(--term-err)}
+.term .ok{color:var(--term-ok)}
+.term .dim{color:var(--term-dim)}
+.term .cursor{display:inline-block;width:8px;height:15px;background:var(--term-fg);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.termhead{display:flex;gap:6px;margin-bottom:10px}
+.termhead i{width:11px;height:11px;border-radius:50%;background:#334155;display:block}
+.termhead span{margin-left:8px;color:var(--term-dim);font-size:12px}
+
+/* ---------- re-anchoring demo ---------- */
+.ra{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px}
+.vtabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.vtabs button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;font:13px var(--mono)}
+.vtabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.src{background:#fff;border:1px solid var(--line);border-radius:12px;font:13.5px/1.9 var(--mono);padding:10px 0;overflow:auto}
+.src .ln{display:flex}
+.src .ln .no{width:40px;text-align:right;padding-right:12px;color:#b0b5bd;user-select:none;flex:none}
+.src .ln .tx{white-space:pre;padding-right:14px}
+.src .ln.chg{background:#f0fdf4}
+.src .ln.del{background:#fef2f2;text-decoration:line-through;color:#b91c1c}
+.src mark{border-radius:3px;padding:1px 0}
+.src mark.st-anchored{background:var(--hl)}
+.src mark.st-refined{background:var(--refined);box-shadow:inset 0 -2px 0 var(--refined-line)}
+.tl{display:flex;flex-direction:column;gap:10px}
+.tcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
+.tcard .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tcard .q{font-family:var(--mono);font-size:12.5px;color:#374151;margin-top:6px}
+.tcard .hist{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.tcard .hist span{font:11px var(--mono);border-radius:5px;padding:1px 6px}
+.ra-explain{margin-top:14px;min-height:72px}
+
+/* ---------- web UI mock ---------- */
+.mock{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(15,23,42,.08)}
+.mock-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 16px;border-bottom:1px solid var(--line);font-size:14px}
+.mock-top .name{font-weight:700}
+.mock-top .grow{flex:1}
+.chip{font-size:12px;border-radius:999px;padding:2px 10px;border:1px solid var(--line)}
+.actbtn{font-size:13px;border-radius:8px;padding:4px 10px;border:1px solid var(--line);background:#fff}
+.actbtn.pos{color:var(--pos);border-color:#bbf7d0}.actbtn.neu{color:var(--neu)}
+.mock-body{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;padding:22px 24px;min-height:430px}
+.mdoc h3{font-size:22px;margin:0 0 10px}
+.mdoc h4{margin:16px 0 6px}
+.mdoc p,.mdoc li{font-size:15px}
+.mdoc mark{background:var(--hl);border-radius:3px;cursor:pointer}
+.mdoc mark.res{background:transparent}
+.mdoc mark.pending{background:var(--hl-sel)}
+.mdoc mark.focus{outline:2px solid var(--open)}
+.margin{position:relative}
+.mcard{position:absolute;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;transition:top .25s,box-shadow .2s}
+.mcard.focus{box-shadow:0 0 0 2px var(--open)}
+.mcard.pending{opacity:.6}
+.mcard.res{opacity:.55}
+.mcard .who{display:flex;justify-content:space-between}
+.mcard .c{margin-top:6px;padding-top:6px;border-top:1px solid var(--soft)}
+.mcard .c:first-of-type{border-top:0;padding-top:0}
+.mcard .acts{display:flex;gap:10px;margin-top:8px}
+.mcard .acts button{border:0;background:none;color:var(--accent);padding:0;font-size:12px}
+.mcard textarea{width:100%;font:13px var(--sans);border:1px solid var(--line);border-radius:7px;padding:6px;margin-top:6px;resize:vertical;min-height:52px}
+.selpill{position:absolute;display:none;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:4px 12px;font-size:12px;z-index:5}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--open)}
+.dot.r{background:var(--res)}
+
+/* ---------- actions demo ---------- */
+.vline{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin:14px 0}
+.vbox{width:132px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px}
+.vbox.head{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.vbox .v{font:600 15px var(--mono)}
+.vbox .acts{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+
+/* ---------- wait demo ---------- */
+.waitgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px}
+.evlog{font:12px/1.7 var(--mono);background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;height:150px;overflow:auto}
+.evlog .m{color:var(--pos);font-weight:600}
+.evlog .s{color:var(--muted)}
+
+/* ---------- files ---------- */
+.tree{font:14px/1.9 var(--mono);background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.tree button{border:0;background:none;padding:0 6px;border-radius:5px;font:inherit;color:var(--fg)}
+.tree button:hover,.tree button.on{background:var(--accent-soft);color:var(--accent)}
+.tree .ind1{padding-left:22px}.tree .ind2{padding-left:44px}.tree .ind3{padding-left:66px}.tree .ind4{padding-left:88px}
+.json{font:12px/1.55 var(--mono);white-space:pre;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow:auto;max-height:360px}
+.json .k{color:#7c3aed}.json .s{color:#0f766e}.json .n{color:#b45309}
+
+/* ---------- edge diagram ---------- */
+.edge{display:grid;grid-template-columns:1fr 70px 1fr;gap:0;align-items:stretch}
+.edge .arrow{display:grid;place-items:center;color:var(--muted);font-size:26px}
+.edge ol{margin:8px 0 0;padding-left:20px}
+.edge li{margin:4px 0}
+
+/* ---------- access ---------- */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.seg button{border:0;background:none;padding:7px 14px;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:#fff}
+table.matrix{border-collapse:collapse;width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+table.matrix th,table.matrix td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.matrix th{background:var(--soft);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+table.matrix td.c{text-align:center}
+table.matrix tr:last-child td{border-bottom:0}
+table.matrix .me{background:var(--accent-soft)}
+.y{color:var(--pos);font-weight:700}.p{color:#b45309;font-weight:700}.n{color:#b91c1c;font-weight:700}.q{color:var(--muted);font-weight:700}
+
+/* ---------- perf ---------- */
+.bars{display:flex;flex-direction:column;gap:14px}
+.bar{display:grid;grid-template-columns:220px 1fr 120px;gap:14px;align-items:center;font-size:14px}
+.track{position:relative;height:22px;background:var(--soft);border:1px solid var(--line);border-radius:6px}
+.fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#60a5fa,var(--accent));border-radius:5px;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.budget{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);right:0}
+.budget::after{content:"budget";position:absolute;top:-16px;right:-18px;font-size:10px;color:var(--muted)}
+
+/* ---------- misc ---------- */
+.big{font-size:40px;font-weight:800;letter-spacing:-.02em}
+.exitcodes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.exitcodes div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px}
+.exitcodes b{font:700 20px var(--mono);display:block}
+.road{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.road .card h3 .pill{margin-left:6px;vertical-align:2px}
+@media (max-width:900px){
+  .slide{padding:36px 22px 90px}
+  .g2,.g3,.g4,.ra,.waitgrid,.loop,.road,.exitcodes{grid-template-columns:1fr}
+  .mock-body{grid-template-columns:1fr}
+  .edge{grid-template-columns:1fr}.edge .arrow{transform:rotate(90deg)}
+  h1{font-size:34px}.dark h1{font-size:48px}h2{font-size:28px}
+  .bar{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="deck">
+
+<!-- ======================================================= 1 TITLE -->
+<section class="slide dark" data-title="annotary" data-sec="Introduction">
+<div class="inner">
+  <div class="kicker" style="color:#93c5fd">An interactive guide · use ← → or the buttons below</div>
+  <h1 class="wordmark">anno<b>tary</b></h1>
+  <p class="lede">Review threads for Markdown, shared by people and AI agents on equal terms. Comment on any
+  span, reply, resolve, approve, push a new version, and every comment follows the text it was about.</p>
+  <div class="row">
+    <button class="btn primary" data-go="next">Start the tour →</button>
+    <button class="btn" style="background:transparent;color:#e2e8f0;border-color:#334155" data-go="menu">Jump to a section</button>
+  </div>
+  <div class="hero-doc">
+    <div class="small muted mono" style="margin-bottom:6px">plan · v5 · 4 open · action: approve by @rowan</div>
+    <h3 style="margin:0 0 8px">Launch plan</h3>
+    <p style="margin:0 0 8px"><mark>We ship the CLI well before the web UI.</mark> The skill file lands with it.</p>
+    <p style="margin:0">Invite five <mark>external developers</mark> to try it in week two.</p>
+    <div class="hero-cards"><div class="hero-card"><b>@rowan</b> <span class="pill p-ref">refined</span><div style="margin-top:4px">The skill file must land <i>with</i> the CLI, not after.</div><div class="muted small" style="margin-top:6px">↳ @claude-code: Done in v5 ✓</div></div>
+    <div class="hero-card"><b>@codex</b> <span class="pill p-ref">refined</span><div style="margin-top:4px">Do we have five lined up? @rowan</div></div></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">1</div><div class="l">Rust binary: CLI + server + web UI</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">cloud services needed</div></div>
+    <div class="stat"><div class="n">25</div><div class="l">tokens for an agent's status check</div></div>
+    <div class="stat"><div class="n">80 ms</div><div class="l">first paint, 5,000-line document</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 2 PROBLEM -->
+<section class="slide" data-title="The problem" data-sec="Introduction">
+<div class="inner">
+  <div class="kicker">The problem</div>
+  <h2>Feedback on documents gets lost between agents</h2>
+  <p class="lede">You write plans, specs and notes in Markdown with several coding agents and move the work between them.
+  The feedback on those documents has nowhere durable to live.</p>
+  <div class="grid g3">
+    <div class="card"><h3>Comments inside agent tools</h3><p class="muted">Antigravity artifacts, plan-mode comments, desktop review panes.</p>
+      <ul><li>One-shot: no replies, no resolution</li><li>Gone after the next edit</li><li>The next session, or another vendor's agent, can't see them</li></ul></div>
+    <div class="card"><h3>Google Docs</h3><p class="muted">Gets comments-under-edits right, for people.</p>
+      <ul><li>Agents can't read it in a few dozen tokens</li><li>Not your Markdown files</li><li>Hosted; no Version an approval can be tied to</li></ul></div>
+    <div class="card"><h3>GitHub pull requests</h3><p class="muted">Great for code review.</p>
+      <ul><li>Comments attach to lines, not phrases</li><li>A changed line makes its comment "outdated"</li><li>No cheap way for an agent to wait for you</li></ul></div>
+  </div>
+  <h3 style="margin-top:30px">What annotary is built to do</h3>
+  <div class="grid g4 small" style="margin-top:10px">
+    <div class="card">✓ Comment on a <b>span</b>, the whole Document, or an image</div>
+    <div class="card">✓ <b>Threads</b> with replies, resolve and reopen</div>
+    <div class="card">✓ Comments <b>follow the text</b> across Versions, or say honestly that they lost it</div>
+    <div class="card">✓ <b>Approve / Send back</b>, recorded on a specific Version</div>
+    <div class="card">✓ People and agents are <b>Members</b> with equal standing</div>
+    <div class="card">✓ Agents read it through a <b>CLI</b> in a few dozen tokens</div>
+    <div class="card">✓ Agents <b>block</b> until something needs them, without polling</div>
+    <div class="card">✓ Runs <b>on your machine</b>; the data is plain files</div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 3 WHAT IT IS -->
+<section class="slide" data-title="What it is" data-sec="Introduction">
+<div class="inner">
+  <div class="kicker">What it is</div>
+  <h2>One binary, three faces</h2>
+  <p class="lede"><code>annotary</code> is a single Rust binary. It is the CLI that people and agents type, the local server
+  that holds the truth, and the web page you read and comment in.</p>
+  <div class="grid g3">
+    <div class="card"><div class="big">⌨︎</div><h3>CLI</h3><p>Push and pull Documents, list and reply to Threads, take Actions, <code>wait</code> for events. Plain tab-separated output, <code>--json</code> when a program parses it, typed exit codes.</p><p class="muted small">Used by you and by every agent, through the same commands.</p></div>
+    <div class="card"><div class="big">▣</div><h3>Local server</h3><p><code>annotary serve</code>, or a macOS LaunchAgent via <code>daemon install</code>. Listens on <code>127.0.0.1:7377</code> only. SQLite + content-addressed files under <code>~/.annotary/</code>.</p><p class="muted small">Stores, authorises and serves. Does no heavy work.</p></div>
+    <div class="card"><div class="big">◧</div><h3>Web viewer</h3><p>Open <code>http://127.0.0.1:7377</code>. Rendered Markdown with Thread cards in the margin, select-to-comment, keyboard shortcuts, live updates, older Versions as they were.</p><p class="muted small">On your own machine you are signed in automatically.</p></div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <svg viewBox="0 0 1080 200" width="100%" role="img" aria-label="Architecture diagram">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#94a3b8"/></marker></defs>
+      <g font-family="-apple-system,system-ui,sans-serif" font-size="14">
+        <rect x="10" y="20" width="230" height="70" rx="12" fill="#eff4ff" stroke="#bfdbfe"/><text x="125" y="50" text-anchor="middle" font-weight="700">You, in a browser</text><text x="125" y="72" text-anchor="middle" fill="#6b6f76" font-size="12">read · select · comment · approve</text>
+        <rect x="10" y="115" width="230" height="70" rx="12" fill="#f6f7f9" stroke="#e5e7eb"/><text x="125" y="145" text-anchor="middle" font-weight="700">You, in a terminal</text><text x="125" y="167" text-anchor="middle" fill="#6b6f76" font-size="12">push · pull · show · act</text>
+        <rect x="420" y="40" width="250" height="125" rx="14" fill="#0f172a"/><text x="545" y="78" text-anchor="middle" fill="#fff" font-weight="700">annotary serve</text><text x="545" y="100" text-anchor="middle" fill="#93c5fd" font-size="12" font-family="ui-monospace,Menlo,monospace">127.0.0.1:7377</text><text x="545" y="125" text-anchor="middle" fill="#cbd5e1" font-size="12">HTTP API · web pages · events</text><text x="545" y="145" text-anchor="middle" fill="#cbd5e1" font-size="12">~/.annotary/store</text>
+        <rect x="840" y="10" width="230" height="52" rx="12" fill="#fff" stroke="#e5e7eb"/><text x="955" y="41" text-anchor="middle" font-weight="700">Claude Code</text>
+        <rect x="840" y="74" width="230" height="52" rx="12" fill="#fff" stroke="#e5e7eb"/><text x="955" y="105" text-anchor="middle" font-weight="700">Codex</text>
+        <rect x="840" y="138" width="230" height="52" rx="12" fill="#fff" stroke="#e5e7eb"/><text x="955" y="169" text-anchor="middle" font-weight="700">Any agent with a shell</text>
+        <path d="M240,55 L418,85" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <path d="M240,150 L418,125" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <path d="M838,36 L672,85" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <path d="M838,100 L672,102" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <path d="M838,164 L672,122" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <text x="755" y="24" text-anchor="middle" fill="#6b6f76" font-size="12">annotary CLI</text>
+        <text x="755" y="196" text-anchor="middle" fill="#6b6f76" font-size="12">+ a 59-line skill file</text>
+      </g>
+    </svg>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 4 VOCAB -->
+<section class="slide" data-title="The vocabulary" data-sec="Concepts">
+<div class="inner">
+  <div class="kicker">Concepts</div>
+  <h2>Ten words explain the whole model</h2>
+  <p class="lede">annotary uses these words consistently in the CLI, the web UI and the code. Click one.</p>
+  <div class="terms" id="terms"></div>
+  <div class="card termbox" id="termbox"></div>
+</div>
+</section>
+
+<!-- ======================================================= 5 LOOP -->
+<section class="slide" data-title="The review loop" data-sec="Concepts">
+<div class="inner">
+  <div class="kicker">How a review goes</div>
+  <h2>The review loop</h2>
+  <p class="lede">Editing always happens outside annotary, in your editor or the agent's own tools. annotary holds
+  the Versions and the conversation about them.</p>
+  <div class="loop">
+    <div class="steps" id="loopsteps"></div>
+    <div>
+      <div class="term" id="loopterm" style="min-height:220px"></div>
+      <p id="loopnote" class="note" style="margin-top:14px"></p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 6 RE-ANCHOR DEMO -->
+<section class="slide" data-title="Comments follow the text" data-sec="Core features">
+<div class="inner">
+  <div class="kicker">Try it · re-anchoring</div>
+  <h2>Comments follow the text across Versions</h2>
+  <p class="lede">Every push maps each Thread from the previous Version to the new one. Step through five Versions
+  of a plan and watch the three placement states.</p>
+  <div class="vtabs" id="vtabs"></div>
+  <div class="ra">
+    <div>
+      <div class="src" id="rasrc"></div>
+      <div class="note ra-explain" id="raexplain"></div>
+    </div>
+    <div class="tl" id="racards"></div>
+  </div>
+  <div class="row small muted" style="margin-top:14px">
+    <span><span class="pill p-anch">anchored</span> text unchanged (it may have moved)</span>
+    <span><span class="pill p-ref">refined</span> text changed under the comment</span>
+    <span><span class="pill p-orph">orphaned</span> the text is gone; the last placement is kept</span>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 7 RE-ANCHOR TECH -->
+<section class="slide" data-title="How re-anchoring works" data-sec="Core features">
+<div class="inner">
+  <div class="kicker">Under the hood</div>
+  <h2>How re-anchoring works</h2>
+  <p class="lede">It is a pure function of two texts, with no fuzzy matching, randomness or time limits. The same push
+  always gives the same placements.</p>
+  <div class="grid g4">
+    <div class="card"><div class="kicker">1 · lines</div><h3>Histogram line diff</h3><p class="small">Find which lines are equal and which hunks changed (the <code>imara-diff</code> crate).</p></div>
+    <div class="card"><div class="kicker">2 · words</div><h3>Word diff inside each hunk</h3><p class="small">Inside a changed hunk, diff <b>Unicode word tokens</b> (UAX #29), not characters, so a rewritten sentence doesn't "survive" by sharing stray letters.</p></div>
+    <div class="card"><div class="kicker">3 · survivors</div><h3>Keep what survived</h3><p class="small">The new span runs from the first to the last surviving character of the old one. Insertions inside are covered; additions at the edges are not.</p></div>
+    <div class="card"><div class="kicker">4 · verdict</div><h3>Anchored, refined or orphaned</h3><p class="small">Same text ⇒ anchored. Some words survive ⇒ refined, with the current text. No word survives ⇒ orphaned, permanently.</p></div>
+  </div>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3>Computed where you push</h3><p class="small">The CLI does the mapping when you push and sends the placements with the commit. The server recomputes and refuses any that don't match, because a wrong placement would corrupt that Anchor for good.</p></div>
+    <div class="card"><h3>History stays small</h3><p class="small">Each Anchor keeps its original placement (frozen as the Thread's label), its current one, and a history entry only when something changed. That is enough to show any Thread "as it was" on any Version.</p></div>
+    <div class="card"><h3>Checked against real cases</h3><p class="small">A table of fixtures drawn from Google Docs and GitHub behaviour (D1–D12, G0–G14). Every row is a test, and the algorithm only changes when that table changes with it.</p></div>
+  </div>
+  <div class="note warn" style="margin-top:18px">Orphaned is <b>sticky</b> and honest. If deleted text comes back in a later Version, the Thread
+  stays orphaned rather than guessing that it is the same text. Orphaned Threads stay open, replyable and resolvable.</div>
+</div>
+</section>
+
+<!-- ======================================================= 8 WEB UI DEMO -->
+<section class="slide" data-title="The web viewer" data-sec="Core features">
+<div class="inner">
+  <div class="kicker">Try it · the web viewer</div>
+  <h2>Read, select, comment</h2>
+  <p class="lede"><b>Select any words in the document below</b> and click <i>Comment</i>. Reply to a card, resolve it, or take an
+  Action. This mock-up behaves like the real page.</p>
+  <div class="mock" id="mock">
+    <div class="mock-top">
+      <span class="name">plan</span><span class="mono small muted">k7q2m9xd</span>
+      <span class="chip mono">v5 (head)</span>
+      <span class="small muted" id="mockcount"></span>
+      <span class="grow"></span>
+      <span class="chip" id="mockchip">no action on v5</span>
+      <button class="actbtn pos" data-act="approve">Approve</button>
+      <button class="actbtn neu" data-act="send-back">Send back</button>
+    </div>
+    <div class="mock-body" id="mockbody">
+      <div class="mdoc" id="mdoc">
+        <h3>Launch plan</h3>
+        <p>We ship the CLI well before the web UI. The skill file lands with the CLI, so agents learn the commands on day one.</p>
+        <h4>Order of work</h4>
+        <ol>
+          <li>Local server and the CLI, with its skill file</li>
+          <li>Re-anchoring, tested against the fixture table</li>
+          <li>The web viewer with margin comments</li>
+        </ol>
+        <p>Invite five external developers to try it in week two, then collect feedback in short interviews.</p>
+      </div>
+      <div class="margin" id="margin"></div>
+      <button class="selpill" id="selpill">💬 Comment</button>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:10px">The real page also has: <kbd>j</kbd>/<kbd>k</kbd> to move between Threads, <kbd>r</kbd> reply, <kbd>e</kbd> resolve, <kbd>c</kbd> comment on the selection,
+  a narrow layout for phones, a Version picker that shows Threads as they were, and live updates when someone else posts.</p>
+</div>
+</section>
+
+<!-- ======================================================= 9 ACTIONS -->
+<section class="slide" data-title="Actions on Versions" data-sec="Core features">
+<div class="inner">
+  <div class="kicker">Try it · Actions</div>
+  <h2>Decisions belong to a Version</h2>
+  <p class="lede">An Action such as <b>Approve</b> or <b>Send back</b> is recorded on the head Version. A new Version starts with no Action,
+  so an approval never quietly carries over to text nobody approved.</p>
+  <div class="row">
+    <button class="btn" data-a="approve">Approve head</button>
+    <button class="btn" data-a="send-back">Send back head</button>
+    <button class="btn primary" data-a="push">Push a new Version</button>
+    <span class="small muted" style="margin-left:8px">Guarded command:</span>
+    <code>act plan approve --version</code>
+    <select id="guardv" class="btn" style="padding:5px 8px"></select>
+    <button class="btn" data-a="guard">Run</button>
+  </div>
+  <div class="vline" id="vline"></div>
+  <div class="term" id="actterm" style="min-height:90px"></div>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3>Declared, not hard-coded</h3><p class="small">Each Vault has default Actions (<code>approve</code>, <code>send-back</code>), and a Document can declare its own set. Each has a label and an intent: positive, neutral or negative.</p></div>
+    <div class="card"><h3>Guarded by Version</h3><p class="small"><code>--version N</code> makes <code>act</code> and <code>thread new</code> refuse with exit 5 if someone pushed since you read. You never approve text you haven't seen.</p></div>
+    <div class="card"><h3>A full log</h3><p class="small"><code>actions plan</code> lists every Action ever taken, with who, when and on which Version. <code>list --action none</code> finds what still needs a decision.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 10 AGENTS -->
+<section class="slide" data-title="How agents use it" data-sec="Agents">
+<div class="inner">
+  <div class="kicker">Try it · an agent's session</div>
+  <h2>Agents work through the CLI, in very few tokens</h2>
+  <p class="lede">This is the real session from the project's acceptance test: <code>@claude-code</code> picks up a review,
+  edits, pushes and replies. Step through it.</p>
+  <div class="grid" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)">
+    <div>
+      <div class="term" id="agterm" style="height:390px"><div class="termhead"><i></i><i></i><i></i><span>claude-code · ANNOTARY_TOKEN set</span></div><div id="agout"></div></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="agnext">Next command ▸</button>
+        <button class="btn" id="agall">Run all</button>
+        <button class="btn" id="agreset">Reset</button>
+        <span class="small muted" id="agstep"></span>
+      </div>
+    </div>
+    <div>
+      <div class="card"><h3>What the agent just did</h3><p id="agnote" class="small">Press <b>Next command</b>.</p></div>
+      <div class="card" style="margin-top:14px"><h3>Tokens read so far</h3>
+        <div class="big" id="agtok">0</div>
+        <p class="small muted">Measured with the o200k tokenizer on the real output (<code>tests/token-report.md</code>, asserted in CI within ±20% of the design prototype).
+        Reading the raw Sidecar file instead would cost about 20 times as much, which is why the skill file tells agents never to open it.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 11 WAIT -->
+<section class="slide" data-title="wait: no polling" data-sec="Agents">
+<div class="inner">
+  <div class="kicker">Try it · wait</div>
+  <h2>Agents block until something needs them</h2>
+  <p class="lede"><code>annotary wait</code> parks on the server and returns when a matching event lands. By default that means a new
+  Version, an Action, or an <b>@mention of this agent</b>. Act as the human on the right and see which events wake it.</p>
+  <div class="waitgrid">
+    <div>
+      <div class="term" id="waitterm" style="height:250px"></div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="rearm" disabled>Wait again from the cursor</button><span class="small muted">The cursor (<code>seq</code>) survives server restarts, so no event is missed or seen twice.</span></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>You, in the browser</h3>
+        <div class="grid" style="gap:8px;margin-top:10px">
+          <button class="btn" data-w="reply">Reply on t2 (no mention)</button>
+          <button class="btn" data-w="resolve">Resolve t5</button>
+          <button class="btn" data-w="mention">Reply on t2: “@claude-code can you tighten item 3?”</button>
+          <button class="btn" data-w="approve">Approve v5</button>
+          <button class="btn" data-w="push">Push v6</button>
+        </div>
+      </div>
+      <h3 style="margin:16px 0 6px">Events log on the server</h3>
+      <div class="evlog" id="evlog"></div>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:12px">Wider filters are available with <code>--on thread,reply,resolve,reopen</code> or <code>--action approve</code>. Timeouts default to 30 minutes (exit 7).
+  The same event stream drives the web page's live updates over Server-Sent Events.</p>
+</div>
+</section>
+
+<!-- ======================================================= 12 SKILL -->
+<section class="slide" data-title="The skill file" data-sec="Agents">
+<div class="inner">
+  <div class="kicker">Teaching the agent</div>
+  <h2>A 59-line skill file is the whole manual</h2>
+  <p class="lede">The binary carries an Agent Skills file. <code>annotary skill install</code> writes it where Claude Code, Codex and other
+  tools look for skills. It costs about 940 tokens to load.</p>
+  <div class="grid g2">
+    <div class="term" style="max-height:440px"><span class="dim">---
+name: annotary
+description: Read, reply to and resolve review Threads on
+  Markdown Documents shared via annotary; push new
+  Versions; take Actions (approve, send back); wait for
+  @mentions. …
+metadata:
+  version: 0.1.0
+---</span>
+<b>## Do this</b>
+- Read through the CLI, never the file.
+  <span class="ok">annotary show DOC</span> (~200 tokens) is the read path.
+- Cite Threads by id + quoted text
+  (t7 "testable in isolation"), never by line number.
+- Pull before you edit, push when done.
+- Reply on the Thread, then resolve.
+- Guard with <span class="ok">--version N</span> on act and thread new.
+- Wait, don't poll.
+- <span class="ok">--json</span> when you will parse.
+
+<b>## Exit codes</b>
+0 ok · 1 usage · 2 not found · 3 no credential ·
+4 missing right · 5 conflict · 6 unreachable · 7 timeout</div>
+    <div>
+      <div class="card"><h3>Rules that keep agents cheap and correct</h3>
+        <ul class="small">
+          <li><b>Quote, don't cite line numbers.</b> Line numbers belong to one Version; <code>t7 "quoted text"</code> stays meaningful.</li>
+          <li><b>Say what changed and where.</b> “Done in v5: item 3 now reads …”, then <code>--resolve</code>.</li>
+          <li><b>Use <code>@handle</code></b> when a person needs to look; it wakes their <code>wait</code>.</li>
+        </ul></div>
+      <div class="card" style="margin-top:14px"><h3>Kept current by version</h3>
+        <p class="small">The skill records the binary version it shipped with. If <code>annotary --version</code> differs, the agent runs
+        <code>skill install</code> again. It never overwrites a file you edited unless you pass <code>--force</code>.</p></div>
+      <div class="card" style="margin-top:14px"><h3>Works with any agent tool</h3>
+        <p class="small">There is no plug-in and no MCP server to configure: anything that can run a shell command and read its output can be a Member.
+        Each agent gets its own Token through <code>ANNOTARY_TOKEN</code>.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 13 FILES -->
+<section class="slide" data-title="Files on disk" data-sec="Technical">
+<div class="inner">
+  <div class="kicker">Technical · data</div>
+  <h2>Where everything lives</h2>
+  <p class="lede">Two places: the server's data directory, and your working folder, where <code>pull</code> writes the Markdown and its
+  Sidecar. Click any file.</p>
+  <div class="grid g2">
+    <div>
+      <div class="tree" id="tree"></div>
+      <div class="card" id="treeinfo" style="margin-top:14px;min-height:120px"></div>
+    </div>
+    <div>
+      <h3>A Sidecar, abridged <span class="small muted">(plan.annotary)</span></h3>
+      <div class="json" id="sidecar"></div>
+      <p class="small muted">The Sidecar is a deterministic, stable JSON projection of everything the server knows about the Document. On push the
+      CLI reads only three things from it: the Document id, the base Version, and any Action declaration.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 14 WHERE IT RUNS -->
+<section class="slide" data-title="Where it runs" data-sec="Technical">
+<div class="inner">
+  <div class="kicker">Technical · runtime</div>
+  <h2>Heavy work happens where you push</h2>
+  <p class="lede">The project's first design decision (ADR 0001): every per-Version computation runs in the CLI that pushes. The
+  server only stores, authorises and serves, so viewing a Document is a SQLite read plus static files.</p>
+  <div class="edge">
+    <div class="card"><h3>The pushing CLI computes</h3>
+      <ol class="small">
+        <li>SHA-256 of the Markdown and every Asset</li>
+        <li>The Asset scan: follows links, finds what's missing</li>
+        <li>Image dimensions; PNG/JPEG copies of HEIC, AVIF, TIFF</li>
+        <li>The diff and every Thread's new placement</li>
+        <li>Markdown → HTML: GFM, tables, footnotes, math as MathML</li>
+        <li>Uploads only the blobs the server lacks</li>
+      </ol></div>
+    <div class="arrow">→</div>
+    <div class="card"><h3>The server stores and serves</h3>
+      <ol class="small">
+        <li>Checks rights, size limits and the manifest</li>
+        <li>Verifies the submitted placements</li>
+        <li>Commits Version, Threads and events in one transaction</li>
+        <li>Serves pages with the Threads already in the HTML</li>
+        <li>Streams events to <code>wait</code> and open pages</li>
+        <li>Hourly housekeeping: auto-purge, blob cleanup</li>
+      </ol></div>
+  </div>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3>Local only, on purpose</h3><p class="small">It binds to <code>127.0.0.1</code> and refuses any other address, so nothing on your network can reach it. In a browser on the same machine you're the owner automatically, unless you set a local password.</p></div>
+    <div class="card"><h3>Always on</h3><p class="small"><code>daemon install</code> writes a macOS LaunchAgent that starts at login and restarts if it stops. <code>status</code>, <code>start</code>, <code>stop</code>, <code>restart</code> and <code>uninstall</code> manage it. On Linux, run <code>serve</code> under your own service manager.</p></div>
+    <div class="card"><h3>Why the split matters later</h3><p class="small">When a hosted version exists, the expensive work still runs on your machine, so a cloud server stays cheap. The same split lets a browser push through WebAssembly; the renderer and diff crates already compile for it.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 15 ACCESS -->
+<section class="slide" data-title="Members and rights" data-sec="Technical">
+<div class="inner">
+  <div class="kicker">Try it · access</div>
+  <h2>People and agents are both Members</h2>
+  <p class="lede">Nothing in the model distinguishes a person from an agent. The only difference is how they sign in: a local
+  password, or a Token. Rights are granted per Vault. Pick a Member to see what they can do.</p>
+  <div class="seg" id="memseg"></div>
+  <table class="matrix" style="margin-top:14px" id="acctable"></table>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3>One command per agent</h3><p class="small"><code>member add codex</code> creates the Member with full rights and prints <code>ANNOTARY_TOKEN=…</code> once. Paste it into the agent's environment and you're done. The web UI has an equivalent "Add agent" button.</p></div>
+    <div class="card"><h3>Tokens you can audit</h3><p class="small"><code>token list</code> shows when each Token was last used. Tokens can carry an expiry and are revoked with one command. They are stored hashed.</p></div>
+    <div class="card"><h3>History is never lost</h3><p class="small">Members are disabled, never deleted, and a handle is never reused. Every mutation writes an event in the same transaction, so who did what is always on record.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 16 ASSETS -->
+<section class="slide" data-title="Images and other Assets" data-sec="Technical">
+<div class="inner">
+  <div class="kicker">Technical · Assets</div>
+  <h2>Images, video and PDFs travel with the Document</h2>
+  <p class="lede">Any local file your Markdown links to becomes an Asset of that Version, stored once by its content hash
+  however many Versions use it.</p>
+  <div class="grid g3">
+    <div class="card"><h3>What counts</h3><p class="small mono">png jpg gif webp svg heic heif avif tiff bmp · mp4 mov m4v webm · mp3 m4a aac wav ogg flac · pdf · md markdown txt</p>
+      <p class="small">Linked Markdown files are followed up to five levels deep. Code blocks are never mistaken for links.</p></div>
+    <div class="card"><h3>Missing is shown, not fatal</h3><p class="small">A file that isn't there still lets the push go through. You get a warning, the page shows a placeholder, and <code>--strict</code> turns warnings into a refusal.</p></div>
+    <div class="card"><h3>Comment on an image</h3><p class="small"><code>thread new plan --asset img/architecture.png</code>. Asset Threads follow the file's content: if the image is replaced or removed, the Thread is orphaned.</p></div>
+    <div class="card"><h3>Ready for the browser</h3><p class="small">Width and height are recorded at push, so pages never jump while images load. HEIC and AVIF photos get a JPEG copy, and TIFF/BMP a PNG.</p></div>
+    <div class="card"><h3>Uploads only what's new</h3><p class="small">The CLI asks the server which hashes it lacks and sends only those. Re-pushing a Document with 40 images uploads none of them.</p></div>
+    <div class="card"><h3>Size limits</h3><p class="small">2 MB of Markdown, 100 MB per Asset, 500 MB per Version. The CLI checks them before uploading and the server enforces them again.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 17 SPEED -->
+<section class="slide" data-title="Speed" data-sec="Quality">
+<div class="inner">
+  <div class="kicker">Quality · speed</div>
+  <h2>Fast on a 5,000-line Document with 500 Threads</h2>
+  <p class="lede">The performance budgets were set before any code was written, and a release build is measured against them on a generated
+  fixture: median of five cold runs in Chromium. No budget has ever been raised.</p>
+  <div class="bars" id="bars"></div>
+  <p class="small muted" style="margin-top:18px">Measured 2026-08-19 on the development Mac (<code>make perf</code>). Layout shift after first paint: <b>0</b> (budget 0).
+  The page arrives with every Thread already placed, so nothing jumps when the script runs.</p>
+</div>
+</section>
+
+<!-- ======================================================= 18 TRUST -->
+<section class="slide" data-title="Built to be relied on" data-sec="Quality">
+<div class="inner">
+  <div class="kicker">Quality · tests</div>
+  <h2>Every promise has a test</h2>
+  <p class="lede">The spec has 154 user stories. Each one maps to test ids, and a checker fails the build if any story or id is left
+  uncovered. <code>make check</code> runs everything and is the definition of done.</p>
+  <div class="grid g4">
+    <div class="card"><div class="big">266</div><p class="small">Rust unit and integration tests, against an in-process server</p></div>
+    <div class="card"><div class="big">767</div><p class="small">CLI golden steps, run against a real server</p></div>
+    <div class="card"><div class="big">26</div><p class="small">Playwright browser tests of the web UI</p></div>
+    <div class="card"><div class="big">2 min</div><p class="small">for the full suite without perf (<code>make check-ci</code>, verified 2026-10-07)</p></div>
+  </div>
+  <h3 style="margin:26px 0 10px">Exit codes an agent can branch on</h3>
+  <div class="exitcodes">
+    <div><b>0</b>ok</div><div><b>1</b>usage or other</div><div><b>2</b>not found or ambiguous (candidates listed)</div><div><b>3</b>no credential</div>
+    <div><b>4</b>missing right (named)</div><div><b>5</b>conflict: head moved, refused, cap hit</div><div><b>6</b>server not reachable</div><div><b>7</b>wait timed out</div>
+  </div>
+  <p class="small muted" style="margin-top:14px">Errors are one line on stderr with a hint: <span class="mono">error: head is v5, not v4 — run `annotary pull plan` and re-read before commenting</span>.</p>
+</div>
+</section>
+
+<!-- ======================================================= 19 LANDSCAPE -->
+<section class="slide" data-title="How it compares" data-sec="Context">
+<div class="inner">
+  <div class="kicker">Context · the landscape</div>
+  <h2>How it compares</h2>
+  <p class="lede">Other tools cover parts of this. As of October 2026, none combines them all.</p>
+  <table class="matrix" id="landscape"></table>
+  <p class="small muted" style="margin-top:10px"><span class="y">●</span> yes · <span class="p">◐</span> partly · <span class="n">○</span> no · <span class="q">?</span> not documented.
+  Checked 2026-10-07 from each project's own docs and releases.</p>
+</div>
+</section>
+
+<!-- ======================================================= 20 ROADMAP -->
+<section class="slide" data-title="Status and roadmap" data-sec="Context">
+<div class="inner">
+  <div class="kicker">Context · status</div>
+  <h2>Where it stands, and what's next</h2>
+  <div class="road">
+    <div class="card"><h3>Phase 1 · local <span class="pill p-pos">built</span></h3>
+      <ul class="small"><li>All 16 build tickets done</li><li>CLI, server, web viewer and commenting, daemon, export</li><li>Re-anchoring, Actions, <code>wait</code>, skill file</li><li>All perf budgets met</li></ul>
+      <p class="small muted">Known gaps: login has no rate limit; Vault management is web-only; Mermaid blocks show as source.</p></div>
+    <div class="card"><h3>Phase 2 · hosted <span class="pill p-neu">planned</span></h3>
+      <ul class="small"><li>Multi-tenant hosting, with sync from the local server</li><li>Sign-in with Google or a passkey; device login for the CLI</li><li>Plug-ins for Claude Code and Codex</li><li>An iOS app with mention notifications</li><li>Pushing from the browser (WebAssembly)</li></ul></div>
+    <div class="card"><h3>Phase 3 · suggestions <span class="pill p-neu">planned</span></h3>
+      <ul class="small"><li>An agent proposes a replacement for a span</li><li>You accept or reject it in the margin</li><li>Accepting creates the next Version</li></ul>
+      <p class="small muted">Backlog includes full-text search, a user-facing diff, MCP, and Linux/Windows service install.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================================================= 21 START -->
+<section class="slide dark" data-title="Get started" data-sec="Context">
+<div class="inner">
+  <div class="kicker" style="color:#93c5fd">Get started</div>
+  <h1 style="font-size:48px">Five minutes to your first review</h1>
+  <div class="grid g2" style="margin-top:24px">
+    <div class="term"><span class="dim"># 1. start the server (first run asks for your handle)</span>
+<span class="cmd">annotary daemon install</span>
+<span class="dim"># 2. give an agent its own identity</span>
+<span class="cmd">annotary member add claude-code</span>
+<span class="ok">ANNOTARY_TOKEN=ant_…</span>   <span class="dim">← paste into the agent's env</span>
+<span class="dim"># 3. teach it the commands</span>
+<span class="cmd">annotary skill install</span>
+<span class="dim"># 4. share a document</span>
+<span class="cmd">annotary push plan.md -m "first draft"</span>
+<span class="dim"># 5. open it and start commenting</span>
+<span class="cmd">open http://127.0.0.1:7377</span></div>
+    <div>
+      <p class="lede" style="font-size:19px">Then ask your agent to <i>“address the review comments on plan”</i>. It will <code>show</code>, <code>pull</code>, edit,
+      <code>push</code>, reply on each Thread and resolve it. It can <code>wait</code> for your approval without using any tokens while it waits.</p>
+      <div class="row"><button class="btn" style="background:transparent;color:#e2e8f0;border-color:#334155" data-go="first">↺ Back to the start</button>
+      <button class="btn" style="background:transparent;color:#e2e8f0;border-color:#334155" data-go="menu">Sections</button></div>
+    </div>
+  </div>
+</div>
+</section>
+
+</div>
+
+<div id="menu"></div>
+<div id="bar">
+  <button id="menubtn" title="Sections (M)">☰ Sections</button>
+  <span class="title" id="bartitle"></span>
+  <button id="prev" title="Previous (←)">←</button>
+  <span id="count"></span>
+  <button id="next" title="Next (→)">→</button>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ================= deck navigation ================= */
+const slides = $$('.slide');
+let cur = 0;
+const enterHooks = {};
+function show(i){
+  i = Math.max(0, Math.min(slides.length-1, i));
+  slides.forEach((s,k)=>{ s.classList.toggle('active', k===i); s.classList.toggle('before', k<i); });
+  cur = i;
+  $('#progress').style.width = ((i+1)/slides.length*100)+'%';
+  $('#count').textContent = (i+1)+' / '+slides.length;
+  $('#bartitle').textContent = slides[i].dataset.sec + ' · ' + slides[i].dataset.title;
+  if (location.hash !== '#'+(i+1)) history.replaceState(null,'','#'+(i+1));
+  $$('#menu button').forEach((b,k)=>b.classList.toggle('cur', k===i));
+  slides[i].scrollTop = 0;
+  const h = enterHooks[slides[i].dataset.title]; if (h) h();
+}
+function buildMenu(){
+  const m = $('#menu'); let sec = '';
+  slides.forEach((s,i)=>{
+    if (s.dataset.sec !== sec){ sec = s.dataset.sec; const d=document.createElement('div'); d.className='sec'; d.textContent=sec; m.appendChild(d); }
+    const b=document.createElement('button'); b.innerHTML='<span>'+(i+1)+'</span>'+esc(s.dataset.title);
+    b.onclick=()=>{ show(i); m.classList.remove('open'); }; m.appendChild(b);
+  });
+}
+buildMenu();
+$('#prev').onclick=()=>show(cur-1);
+$('#next').onclick=()=>show(cur+1);
+$('#menubtn').onclick=e=>{ e.stopPropagation(); $('#menu').classList.toggle('open'); };
+document.addEventListener('click', e=>{ if (!e.target.closest('#menu')) $('#menu').classList.remove('open'); });
+$$('[data-go]').forEach(b=>b.addEventListener('click', e=>{
+  e.stopPropagation();
+  const g=b.dataset.go; if (g==='next') show(cur+1); else if (g==='first') show(0); else $('#menu').classList.toggle('open');
+}));
+document.addEventListener('keydown', e=>{
+  if (e.target.closest('textarea,input,select')) return;
+  if (e.metaKey||e.ctrlKey||e.altKey) return;
+  if (['ArrowRight','PageDown'].includes(e.key) || (e.key===' ' && !e.shiftKey)){ e.preventDefault(); show(cur+1); }
+  else if (['ArrowLeft','PageUp'].includes(e.key) || (e.key===' ' && e.shiftKey)){ e.preventDefault(); show(cur-1); }
+  else if (e.key==='Home') show(0);
+  else if (e.key==='End') show(slides.length-1);
+  else if (e.key==='m' || e.key==='M') $('#menu').classList.toggle('open');
+  else if (e.key==='Escape') $('#menu').classList.remove('open');
+});
+let tx=null;
+document.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e=>{
+  if (tx===null || window.getSelection().toString()) return;
+  const dx=e.changedTouches[0].clientX-tx; tx=null;
+  if (Math.abs(dx)>70) show(cur+(dx<0?1:-1));
+}, {passive:true});
+
+/* ================= vocabulary ================= */
+const TERMS = [
+  ['Document','One Markdown file plus its linked Assets and its annotary metadata, treated as one unit with a stable identity across Versions. Known by a short id like k7q2m9xd and shown by its Name (the filename it was uploaded as).','artifact, page, file'],
+  ['Version','One immutable snapshot of a Document, produced each time content is pushed. Numbered v1, v2, …; pushing content identical to the head produces nothing. Versions are never deleted, and Threads and Actions are tied to the Version they were made on.','revision, commit, save'],
+  ['Thread','A root Comment about a Subject (a span of text, the whole Document, or an Asset) plus its Replies. Open or resolved, and independent of whether its Anchor still finds the text. Ids look like t7; replies like t7.2.','comment (for the whole thread), discussion'],
+  ['Anchor','Where a Thread points. Its original placement (Version, span, quoted text) is frozen forever and used as the Thread\'s label; the current placement is updated on every push, with a sparse history in between.','position, location'],
+  ['Anchored · Refined · Orphaned','The three placement states. Anchored: the text is unchanged (it may have moved). Refined: the span survives but its text changed. Orphaned: nothing survives, and the last valid placement is kept. Orphaned is sticky.','outdated, stale, detached'],
+  ['Action','A named decision taken on the head Version, such as Approve or Send back, with an intent (positive, neutral or negative). A new Version starts with no Action, so nothing goes stale.','status, approval state'],
+  ['Member','A person or an agent: the one who comments, takes Actions, is @mentioned and holds credentials. Nothing distinguishes people from agents except how they authenticate.','user, bot, account'],
+  ['Vault','The container Documents live in and on which rights are granted. You start with one called notes and can create more.','workspace, folder, repo'],
+  ['Asset','A local file the Markdown links to (image, video, audio, PDF, or another Markdown file) that travels with the Document and is identified by its content hash.','attachment, upload'],
+  ['Sidecar','The <name>.annotary file pull writes next to <name>.md: the server\'s full projection of the Document as plain JSON. It exists so your data is portable; people and agents use the CLI instead of reading it.','metadata file, index'],
+];
+(function(){
+  const t=$('#terms'), box=$('#termbox');
+  function pick(i){
+    $$('button',t).forEach((b,k)=>b.classList.toggle('on',k===i));
+    const [n,d,a]=TERMS[i];
+    box.innerHTML='<h3 style="font-size:24px">'+esc(n)+'</h3><p style="font-size:17px;max-width:900px">'+esc(d)+'</p><div class="avoid">Never called: '+esc(a)+'</div>';
+  }
+  TERMS.forEach((x,i)=>{ const b=document.createElement('button'); b.textContent=x[0]; b.onclick=()=>pick(i); t.appendChild(b); });
+  pick(0);
+})();
+
+/* ================= review loop ================= */
+const LOOP = [
+  ['Push','you',['cmd:annotary push plan.md -m "first draft"','dim:assets: 2 referenced, 2 new (1.4 MB)','plan\tk7q2m9xd\tv1'],'The Markdown and every image it links to are hashed, scanned, rendered to HTML and uploaded. A Document is created with Version 1, and a <code>plan.annotary</code> Sidecar is written next to the file.'],
+  ['Comment','you · browser',['dim:# in the browser: select “We ship the CLI before the web UI” → Comment','cmd:annotary thread list plan','t1\t@rowan\tv1:16 "We ship the CLI before the web UI"\tThe skill file must land *with* the CLI. @claude-code\t1m'],'Select text in the web page and comment. The span and its exact quote are frozen as the Thread\'s label. Mentioning <code>@claude-code</code> puts the Thread in that agent\'s mentions and wakes its <code>wait</code>.'],
+  ['Read','agent',['cmd:annotary show plan','plan\tk7q2m9xd\tnotes\tv1 by @rowan 2m "first draft"\taction:-\topen:1\tactions:approve,send-back','t1\t@rowan\tv1:16 "We ship the CLI before the web UI"\tThe skill file must land *with* the CLI. @claude-code\t2m'],'The agent reads the Document\'s state in one call of about 250 tokens: header, Action, and every open Thread with its quote.'],
+  ['Edit','agent',['cmd:annotary pull plan','dim:pull: 1 threads, 2 assets','plan.md\tplan.annotary\tv1','dim:# the agent edits plan.md with its normal file tools'],'Editing happens outside annotary. <code>pull</code> refuses to overwrite local edits, so nothing is lost.'],
+  ['Push v2','agent',['cmd:annotary push plan.md -m "skill file ships with the CLI"','dim:assets: 2 referenced, 0 new','dim:threads: 1 re-anchored — 0 anchored, 1 refined, 0 orphaned (+1 refined: t1)','plan\tk7q2m9xd\tv2'],'The CLI maps every Thread onto the new text before uploading. The summary line says what moved.'],
+  ['Reply & resolve','agent',['cmd:annotary thread reply plan t1 --resolve -m "Done in v2 — item 3 now names the skill file. @rowan"','t1.1\tresolved'],'The agent answers on the Thread, says which Version has the change, resolves it, and mentions you so you get notified.'],
+  ['Decide','you',['cmd:annotary act plan approve --version 2','plan\tv2\tapprove\tby @rowan','dim:# meanwhile the agent was blocked in: annotary wait plan','ok:17\taction\tplan\tapprove v2 by @rowan'],'You approve Version 2, either in the browser or from the CLI. The agent\'s <code>wait</code> returns at once and it carries on.'],
+];
+(function(){
+  const s=$('#loopsteps'), term=$('#loopterm'), note=$('#loopnote');
+  function pick(i){
+    $$('button',s).forEach((b,k)=>b.classList.toggle('on',k===i));
+    term.innerHTML=LOOP[i][2].map(line=>{
+      const m=line.match(/^(cmd|dim|ok|err):(.*)$/);
+      if (!m) return '<div>'+esc(line).replace(/\t/g,'  ')+'</div>';
+      return '<div class="'+m[1]+'">'+esc(m[2]).replace(/\t/g,'  ')+'</div>';
+    }).join('');
+    note.innerHTML=LOOP[i][3];
+  }
+  LOOP.forEach((x,i)=>{ const b=document.createElement('button'); b.innerHTML='<span class="num">'+(i+1)+'</span><span><b>'+esc(x[0])+'</b><br><span class="who">'+esc(x[1])+'</span></span>'; b.onclick=()=>pick(i); s.appendChild(b); });
+  pick(0);
+})();
+
+/* ================= re-anchoring demo ================= */
+const RA = {
+  versions: [
+    { n:1, msg:'first draft by @rowan',
+      lines:['# Launch plan','','We ship the CLI before the web UI.','Invite three external developers to try it.','Agents should use the CLI, not read the file whole.','Collect feedback after two weeks.'],
+      explain:'Version 1. Three span Threads and one Document-level Thread are created. Each freezes its quote and placement.' },
+    { n:2, msg:'add a Goals section',
+      lines:['# Launch plan','','## Goals','Ship something people use daily.','','We ship the CLI before the web UI.','Invite three external developers to try it.','Agents should use the CLI, not read the file whole.','Collect feedback after two weeks.'],
+      changed:[2,3,4],
+      explain:'Three lines are inserted above. Every span moved down by three lines but its text is identical, so all stay <b>anchored</b>. Each history gets an entry because the range moved; the status is still anchored.' },
+    { n:3, msg:'tighten the order',
+      lines:['# Launch plan','','## Goals','Ship something people use daily.','','We ship the CLI well before the web UI.','Invite three external developers to try it.','Agents should use the CLI, not read the file whole.','Collect feedback after two weeks.'],
+      changed:[5],
+      explain:'A word is inserted <i>inside</i> t1\'s span. Insertions between surviving words are covered, so t1 is <b>refined</b>: the card now shows the current text next to the frozen quote.' },
+    { n:4, msg:'drop the agents line',
+      lines:['# Launch plan','','## Goals','Ship something people use daily.','','We ship the CLI well before the web UI.','Invite three external developers to try it.','Collect feedback after two weeks.'],
+      removed:'Agents should use the CLI, not read the file whole.',
+      explain:'t3\'s whole line is deleted and none of its words survive, so t3 is <b>orphaned</b>. It keeps its last valid placement (v3, line 8), stays open, and can still be replied to.' },
+    { n:5, msg:'five testers; restore the agents line',
+      lines:['# Launch plan','','## Goals','Ship something people use daily.','','We ship the CLI well before the web UI.','Invite five external developers to try it.','Agents should use the CLI, not read the file whole.','Collect feedback after two weeks.'],
+      changed:[6,7],
+      explain:'"three" is replaced at the <i>edge</i> of t2\'s span. Edge replacements fall outside, so t2 is refined to "external developers". The agents line came back word for word, but t3 stays <b>orphaned</b>: annotary never guesses that restored text is the same text.' },
+  ],
+  threads: [
+    { id:'t1', by:'@rowan', body:'The skill file must land with the CLI, not after.', quote:'We ship the CLI before the web UI',
+      at:[ {s:'anchored',l:3,x:'We ship the CLI before the web UI'}, {s:'anchored',l:6,x:'We ship the CLI before the web UI'}, {s:'refined',l:6,x:'We ship the CLI well before the web UI'}, {s:'refined',l:6,x:'We ship the CLI well before the web UI'}, {s:'refined',l:6,x:'We ship the CLI well before the web UI'} ] },
+    { id:'t2', by:'@codex', body:'Do we have three lined up?', quote:'three external developers',
+      at:[ {s:'anchored',l:4,x:'three external developers'}, {s:'anchored',l:7,x:'three external developers'}, {s:'anchored',l:7,x:'three external developers'}, {s:'anchored',l:7,x:'three external developers'}, {s:'refined',l:7,x:'external developers'} ] },
+    { id:'t3', by:'@rowan', body:'Link the sidecar-format ticket here.', quote:'agents should use the CLI, not read the file whole',
+      at:[ {s:'anchored',l:5,x:'Agents should use the CLI, not read the file whole'}, {s:'anchored',l:8,x:'Agents should use the CLI, not read the file whole'}, {s:'anchored',l:8,x:'Agents should use the CLI, not read the file whole'}, {s:'orphaned',l:8,v:3,x:'Agents should use the CLI, not read the file whole'}, {s:'orphaned',l:8,v:3,x:'Agents should use the CLI, not read the file whole'} ] },
+    { id:'t4', by:'@rowan', body:'Needs a Risks section before I can approve.', doc:true },
+  ]
+};
+(function(){
+  const tabs=$('#vtabs'), src=$('#rasrc'), cards=$('#racards'), ex=$('#raexplain');
+  function pill(s){ return '<span class="pill '+({anchored:'p-anch',refined:'p-ref',orphaned:'p-orph'}[s])+'">'+s+'</span>'; }
+  function pick(vi){
+    $$('button',tabs).forEach((b,k)=>b.classList.toggle('on',k===vi));
+    const V=RA.versions[vi];
+    let html='';
+    V.lines.forEach((line,li)=>{
+      const no=li+1; let tx=esc(line);
+      RA.threads.forEach(t=>{
+        if (t.doc) return; const p=t.at[vi];
+        if (p.s==='orphaned' || p.l!==no) return;
+        const k=line.indexOf(p.x); if (k<0) return;
+        tx=esc(line.slice(0,k))+'<mark class="st-'+p.s+'" title="'+t.id+'">'+esc(p.x)+'</mark>'+esc(line.slice(k+p.x.length));
+      });
+      const chg=(V.changed||[]).includes(li)?' chg':'';
+      html+='<div class="ln'+chg+'"><span class="no">'+no+'</span><span class="tx">'+(tx||' ')+'</span></div>';
+    });
+    if (V.removed) html+='<div class="ln del"><span class="no">−</span><span class="tx">'+esc(V.removed)+'</span></div>';
+    src.innerHTML=html;
+    ex.innerHTML='<b>v'+V.n+'</b> · '+esc(V.msg)+'<br>'+V.explain;
+    cards.innerHTML=RA.threads.map(t=>{
+      if (t.doc) return '<div class="tcard"><div class="top"><b>'+t.id+' · '+t.by+'</b><span class="pill p-neu">whole Document</span></div><div style="margin-top:6px">'+esc(t.body)+'</div><div class="small muted" style="margin-top:6px">Document-level Threads have no Anchor and are never orphaned.</div></div>';
+      const p=t.at[vi]; const v=p.v||V.n;
+      let hist=''; let last='';
+      for (let k=0;k<=vi;k++){ const q=t.at[k]; const key=q.s+q.l+q.x; if (key!==last){ hist+='<span class="'+({anchored:'p-anch',refined:'p-ref',orphaned:'p-orph'}[q.s])+'">v'+(k+1)+' '+q.s+(q.s!=='orphaned'?' L'+q.l:'')+'</span>'; last=key; } }
+      return '<div class="tcard"><div class="top"><b>'+t.id+' · '+t.by+'</b>'+pill(p.s)+'</div>'+
+        '<div class="q">v'+v+':'+p.l+' '+(p.s!=='anchored'?p.s+' ':'')+'"'+esc(t.quote)+'"</div>'+
+        (p.s==='refined'?'<div class="q" style="color:#3730a3">now: "'+esc(p.x)+'"</div>':'')+
+        '<div style="margin-top:6px">'+esc(t.body)+'</div>'+
+        '<div class="hist">'+hist+'</div></div>';
+    }).join('');
+  }
+  RA.versions.forEach((V,i)=>{ const b=document.createElement('button'); b.textContent='v'+V.n; b.onclick=()=>pick(i); tabs.appendChild(b); });
+  const nb=document.createElement('button'); nb.textContent='next Version ▸'; nb.style.marginLeft='8px';
+  nb.onclick=()=>{ const i=$$('button',tabs).findIndex(b=>b.classList.contains('on')); pick((i+1)%RA.versions.length); };
+  tabs.appendChild(nb);
+  pick(0);
+})();
+
+/* ================= web UI mock ================= */
+(function(){
+  const doc=$('#mdoc'), margin=$('#margin'), pillBtn=$('#selpill'), body=$('#mockbody');
+  let n=2, pendingRange=null;
+  const threads=[];
+  function wrapText(text, id){
+    const walker=document.createTreeWalker(doc, NodeFilter.SHOW_TEXT);
+    let node; while((node=walker.nextNode())){
+      const k=node.data.indexOf(text); if (k<0) continue;
+      const r=document.createRange(); r.setStart(node,k); r.setEnd(node,k+text.length);
+      const m=document.createElement('mark'); m.dataset.t=id; r.surroundContents(m); return m;
+    }
+  }
+  function cardHTML(t){
+    const cs=t.comments.map(c=>'<div class="c"><div class="who"><b>'+esc(c.by)+'</b><span class="muted">'+esc(c.when)+'</span></div><div>'+esc(c.body)+'</div></div>').join('');
+    return '<div class="who" style="margin-bottom:4px"><span><span class="dot'+(t.resolved?' r':'')+'"></span><b>'+t.id+'</b></span><span class="muted mono" style="font-size:11px">v5 anchored</span></div>'+
+      '<div class="mono muted" style="font-size:11px;margin-bottom:6px">“'+esc(t.quote)+'”</div>'+cs+
+      '<div class="slot"></div><div class="acts">'+(t.pending?'<span class="muted">posting…</span>':'<button data-x="reply">Reply</button><button data-x="res">'+(t.resolved?'Reopen':'Resolve')+'</button>')+'</div>';
+  }
+  function add(t){
+    t.mark = t.mark || wrapText(t.quote, t.id);
+    const el=document.createElement('div'); el.className='mcard'; el.dataset.t=t.id; t.el=el;
+    margin.appendChild(el); threads.push(t); draw(t);
+    el.addEventListener('click', e=>{
+      const x=e.target.dataset.x;
+      if (x==='res'){ t.resolved=!t.resolved; draw(t); }
+      else if (x==='reply'){ openReply(t); }
+      else if (x==='post'){ const v=el.querySelector('textarea').value.trim(); if (!v) return; t.comments.push({by:'@rowan',when:'now',body:v}); draw(t); }
+      else if (x==='cancel'){ draw(t); }
+      focus(t);
+    });
+    if (t.mark) t.mark.addEventListener('click', ()=>focus(t));
+  }
+  function openReply(t){
+    t.el.querySelector('.slot').innerHTML='<textarea placeholder="Reply… (try @claude-code)"></textarea><div class="acts"><button data-x="post">Post</button><button data-x="cancel">Cancel</button></div>';
+    t.el.querySelector('textarea').focus();
+    layout();
+  }
+  function draw(t){
+    t.el.innerHTML=cardHTML(t);
+    t.el.classList.toggle('res',!!t.resolved); t.el.classList.toggle('pending',!!t.pending);
+    if (t.mark){ t.mark.classList.toggle('res',!!t.resolved); t.mark.classList.toggle('pending',!!t.pending); }
+    count(); layout();
+  }
+  function focus(t){
+    threads.forEach(o=>{ o.el.classList.toggle('focus',o===t); if (o.mark) o.mark.classList.toggle('focus',o===t); });
+  }
+  function count(){ const open=threads.filter(t=>!t.resolved).length; $('#mockcount').textContent=open+' open'; }
+  function layout(){
+    let bottom=0;
+    const base=margin.getBoundingClientRect().top;
+    threads.slice().sort((a,b)=>top(a)-top(b)).forEach(t=>{
+      const want=top(t)-base; const y=Math.max(want,bottom); t.el.style.top=y+'px'; bottom=y+t.el.offsetHeight+10;
+    });
+    margin.style.minHeight=bottom+'px';
+  }
+  function top(t){ return t.mark ? t.mark.getBoundingClientRect().top : margin.getBoundingClientRect().top; }
+  window.addEventListener('resize', layout);
+  enterHooks['The web viewer']=()=>requestAnimationFrame(layout);
+
+  add({id:'t1', quote:'We ship the CLI well before the web UI', comments:[{by:'@rowan',when:'4d',body:'The skill file must land with the CLI, not after. @claude-code'},{by:'@claude-code',when:'3d',body:'Done in v5: item 1 now names the skill file. @rowan'}]});
+  add({id:'t2', quote:'five external developers', comments:[{by:'@codex',when:'1d',body:'Do we have five lined up? @rowan'}]});
+
+  doc.addEventListener('mouseup', ()=>setTimeout(()=>{
+    const sel=window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed){ pillBtn.style.display='none'; return; }
+    const r=sel.getRangeAt(0);
+    if (!doc.contains(r.commonAncestorContainer) || r.startContainer!==r.endContainer || r.startContainer.nodeType!==3){
+      pillBtn.textContent='Select within one sentence'; pendingRange=null;
+    } else { pillBtn.textContent='💬 Comment'; pendingRange=r.cloneRange(); }
+    const rb=r.getBoundingClientRect(), bb=body.getBoundingClientRect();
+    pillBtn.style.left=(rb.left-bb.left+rb.width/2-50)+'px'; pillBtn.style.top=(rb.bottom-bb.top+6)+'px'; pillBtn.style.display='block';
+  },0));
+  pillBtn.addEventListener('mousedown', e=>e.preventDefault());
+  pillBtn.addEventListener('click', ()=>{
+    pillBtn.style.display='none';
+    if (!pendingRange) return;
+    const quote=pendingRange.toString().trim(); if (!quote) return;
+    const id='t'+(++n);
+    const m=document.createElement('mark'); m.dataset.t=id; pendingRange.surroundContents(m);
+    window.getSelection().removeAllRanges();
+    const t={id, quote, mark:m, comments:[], pending:false};
+    add(t);
+    t.el.querySelector('.acts').innerHTML='';
+    t.el.querySelector('.slot').innerHTML='<textarea placeholder="Comment on this span…"></textarea><div class="acts"><button data-y="post">Post</button><button data-y="cancel">Cancel</button></div>';
+    m.classList.add('pending'); t.el.querySelector('textarea').focus(); layout(); focus(t);
+    t.el.addEventListener('click', e=>{
+      const y=e.target.dataset.y; if (!y) return; e.stopPropagation();
+      if (y==='cancel'){ const p=m.parentNode; while(m.firstChild) p.insertBefore(m.firstChild,m); m.remove(); t.el.remove(); threads.splice(threads.indexOf(t),1); count(); layout(); return; }
+      const v=t.el.querySelector('textarea').value.trim(); if (!v) return;
+      t.comments.push({by:'@rowan',when:'now',body:v}); t.pending=true; draw(t);
+      setTimeout(()=>{ t.pending=false; draw(t); }, 600);
+    }, true);
+  });
+  $$('#mock .actbtn').forEach(b=>b.addEventListener('click', ()=>{
+    const a=b.dataset.act; const chip=$('#mockchip');
+    chip.textContent=(a==='approve'?'approve':'send-back')+' · v5 · by @rowan · now';
+    chip.style.background=a==='approve'?'var(--pos-bg)':'var(--neu-bg)';
+    chip.style.color=a==='approve'?'var(--pos)':'var(--neu)';
+  }));
+})();
+
+/* ================= actions demo ================= */
+(function(){
+  let head=5; const acts={1:[['send-back','@rowan']],3:[['approve','@codex']],4:[['send-back','@rowan']]};
+  const vline=$('#vline'), term=$('#actterm'), sel=$('#guardv');
+  function chip(a){ return '<span class="pill '+(a[0]==='approve'?'p-pos':'p-neu')+'">'+a[0]+'</span> <span class="small muted">'+a[1]+'</span>'; }
+  function draw(){
+    let h='';
+    for (let v=1; v<=head; v++){
+      const list=acts[v]||[];
+      h+='<div class="vbox'+(v===head?' head':'')+'"><div class="v">v'+v+(v===head?' <span class="small" style="color:var(--accent)">head</span>':'')+'</div><div class="acts">'+(list.length?list.map(chip).join(''):'<span class="small muted">no Action</span>')+'</div></div>';
+    }
+    vline.innerHTML=h;
+    sel.innerHTML=''; for (let v=Math.max(1,head-2); v<=head; v++){ const o=document.createElement('option'); o.value=v; o.textContent=v; if (v===head-1) o.selected=true; sel.appendChild(o); }
+  }
+  function status(){ const l=(acts[head]||[]).slice(-1)[0]; return 'plan  k7q2m9xd  v'+head+'  action:'+(l?l[0]+'@v'+head+' by '+l[1]:'-')+'  open:4  mentions-me:0'; }
+  function out(lines){ term.innerHTML=lines.map(([c,t])=>'<div class="'+c+'">'+esc(t)+'</div>').join(''); }
+  $$('[data-a]').forEach(b=>b.addEventListener('click', ()=>{
+    const a=b.dataset.a;
+    if (a==='push'){ head++; draw(); out([['cmd','annotary push plan.md -m "address review"'],['dim','threads: 6 re-anchored — 4 anchored, 1 refined, 1 orphaned'],['','plan  k7q2m9xd  v'+head],['cmd','annotary status plan'],['',status()],['dim','# the new head starts with no Action — the approval on v'+(head-1)+' stays on v'+(head-1)]]); return; }
+    if (a==='guard'){
+      const v=+sel.value;
+      if (v!==head){ out([['cmd','annotary act plan approve --version '+v],['err','error: head is v'+head+', not v'+v+' — run `annotary show plan` and act on v'+head+' once you have read it'],['dim','(exit 5)']]); return; }
+      (acts[head]=acts[head]||[]).push(['approve','@rowan']); draw();
+      out([['cmd','annotary act plan approve --version '+v],['','plan  v'+head+'  approve  by @rowan']]); return;
+    }
+    (acts[head]=acts[head]||[]).push([a,'@rowan']); draw();
+    out([['cmd','annotary act plan '+a],['','plan  v'+head+'  '+a+'  by @rowan'],['cmd','annotary status plan'],['',status()]]);
+  }));
+  draw(); out([['dim','# Approve or send back the head, then push a new Version and look at the chips.']]);
+})();
+
+/* ================= agent session ================= */
+const AG = [
+  {c:'annotary mentions', o:['plan\tt2\t@rowan\tv4:16 "We ship the CLI before the web UI"\tAgreed — but the skill file must land *with* the CLI, not after. @claude-code make sure the order list says so.\t+1\t4d'], t:59,
+   n:'Asks what needs it across every Document: one open Thread mentions it.'},
+  {c:'annotary show plan', o:['plan\tk7q2m9xd\tnotes\tv4 by @rowan 2d "back to the first-draft wording for comparison"\taction:-\topen:5\tactions:approve,send-back','t2\t@rowan\tv4:16 "We ship the CLI before the web UI"\tAgreed — but the skill file must land *with* the CLI, not after. …\t+1\t4d','t6\t@rowan\tasset img/architecture.png\tDiagram is out of date — the daemon box is missing.\t+1\t4d','t4\t@rowan\tv3:21 orphaned "agents should use the CLI, not read the file whole"\tThis is exactly what the sidecar-format ticket has to answer — link it here.\t2d','t5\t@codex\tv3:31 orphaned "collect feedback"\tHow — survey or interviews? …\t1d'], t:246,
+   n:'One call gives the whole review: head Version, Action, available Actions, and every open Thread with its quote and placement state, including an image Thread and two orphaned ones.'},
+  {c:'annotary thread show plan t2', o:['t2\topen\t@rowan\tv4:16:0-16:33 "We ship the CLI before the web UI"\tcreated v1 4d\tmentions @claude-code','  Agreed — but the skill file must land *with* the CLI, not after. @claude-code make sure the order list says so.','t2.1\t@claude-code\tv2 3d\tmentions @rowan','  Item 3 already lists the skill file with the CLI. @rowan do you want it as its own item?'], t:117,
+   n:'Reads the full conversation on the Thread it was mentioned in.'},
+  {c:'annotary pull plan', o:['dim:pull: 8 threads, 4 assets (1 missing: img/cli-screenshot.png); assets not written (--assets)','plan.md\tplan.annotary\tv4','dim:# …the agent edits plan.md with its normal file tools…'], t:0,
+   n:'Writes the Markdown to disk and edits it with its own tools. annotary never edits text.'},
+  {c:'annotary push plan.md -m "make the skill file explicit in the order of work"', o:['dim:assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)','dim:threads: 8 re-anchored — 5 anchored, 0 refined, 3 orphaned (unchanged)','plan\tk7q2m9xd\tv5'], t:0,
+   n:'Version 5 is created. Every Thread was re-anchored on the agent\'s machine, and the server verified the result. No image was re-uploaded.'},
+  {c:'annotary thread reply plan t2 --resolve -m "Done in v5 — item 3 now reads \'CLI … and the skill file\'. @rowan"', o:['t2.2\tresolved'], t:0,
+   n:'Replies with what changed and where, resolves the Thread, and mentions the human.'},
+  {c:'annotary status plan', o:['plan\tk7q2m9xd\tv5\taction:-\topen:4\tmentions-me:0\tseq:812'], t:25,
+   n:'A 25-token check. seq is the event cursor that wait resumes from.'},
+  {c:'annotary wait plan --on action,mention --timeout 30m', o:['dim:(blocked: no tokens spent while it waits)','ok:814\taction\tplan\tapprove v5 by @rowan'], t:13,
+   n:'Blocks until the human acts. @rowan approved v5, so the agent can move on.'},
+  {c:'annotary act plan approve', o:['err:error: missing right `action` on Vault notes (you are @claude-code) — ask an owner: annotary member grant claude-code notes action','dim:(exit 4)'], t:0,
+   n:'An example failure: this agent was only granted read and comment. The error names the missing right and the command that would grant it, and exit 4 tells the agent exactly what happened.'},
+];
+(function(){
+  const out=$('#agout'), note=$('#agnote'), tok=$('#agtok'), step=$('#agstep'), term=$('#agterm');
+  let i=0, total=0, busy=false;
+  function line(cls, text){ const d=document.createElement('div'); if (cls) d.className=cls; d.textContent=text.replace(/\t/g,'   '); out.appendChild(d); term.scrollTop=term.scrollHeight; return d; }
+  function render(){ step.textContent=i+' / '+AG.length; $('#agnext').disabled=i>=AG.length; }
+  function run(k, fast){
+    return new Promise(res=>{
+      const s=AG[k]; const d=line('cmd',''); let j=0;
+      const typeIt=()=>{
+        if (fast){ d.textContent=s.c; finish(); return; }
+        d.textContent=s.c.slice(0,++j); term.scrollTop=term.scrollHeight;
+        if (j<s.c.length) setTimeout(typeIt, 12); else setTimeout(finish, 200);
+      };
+      const finish=()=>{
+        s.o.forEach(o=>{ const m=o.match(/^(dim|ok|err):(.*)$/s); m?line(m[1],m[2]):line('',o); });
+        total+=s.t; tok.textContent=total; note.textContent=s.n; res();
+      };
+      typeIt();
+    });
+  }
+  $('#agnext').onclick=async()=>{ if (busy||i>=AG.length) return; busy=true; await run(i++); render(); busy=false; };
+  $('#agall').onclick=async()=>{ if (busy) return; busy=true; while(i<AG.length){ await run(i++, true); } render(); busy=false; };
+  $('#agreset').onclick=()=>{ if (busy) return; out.innerHTML=''; i=0; total=0; tok.textContent='0'; note.innerHTML='Press <b>Next command</b>.'; render(); };
+  render();
+})();
+
+/* ================= wait demo ================= */
+(function(){
+  const term=$('#waitterm'), log=$('#evlog'), rearm=$('#rearm');
+  let seq=812, cursor=812, parked=false, head=5;
+  function arm(){
+    parked=true; rearm.disabled=true;
+    term.innerHTML='<div class="cmd">annotary wait plan'+(cursor!==812?' --cursor '+cursor:'')+'</div><div class="dim">wait: watching plan for version, action, mention after seq '+cursor+' …</div><div><span class="cursor"></span></div>';
+  }
+  function ev(kind, text, wakes){
+    seq++;
+    const d=document.createElement('div');
+    d.innerHTML='<span class="s">'+seq+'</span> '+esc(kind)+' '+esc(text)+(wakes&&parked?' <span class="m">→ wakes the agent</span>':(parked?' <span class="s">(not watched)</span>':''));
+    log.prepend(d);
+    if (wakes && parked){
+      parked=false; cursor=seq;
+      term.querySelector('.cursor').parentNode.remove();
+      const o=document.createElement('div'); o.className='ok'; o.textContent=seq+'  '+wakes; term.appendChild(o);
+      const x=document.createElement('div'); x.className='dim'; x.textContent='(exit 0 — the agent reads the Thread / Version and gets to work)'; term.appendChild(x);
+      rearm.disabled=false;
+    }
+  }
+  $$('[data-w]').forEach(b=>b.addEventListener('click', ()=>{
+    const w=b.dataset.w;
+    if (w==='reply') ev('thread.replied','t2.3 by @rowan "Looks good."', null);
+    if (w==='resolve') ev('thread.resolved','t5 by @rowan', null);
+    if (w==='mention') ev('thread.replied','t2.3 by @rowan mentions @claude-code', 'mention  plan  t2.3 by @rowan "@claude-code can you tighten item 3?"');
+    if (w==='approve') ev('action.taken','approve v'+head+' by @rowan', 'action  plan  approve v'+head+' by @rowan');
+    if (w==='push'){ head++; ev('version.pushed','v'+head+' by @rowan', 'version  plan  v'+head+' by @rowan "tighten scope"'); b.textContent='Push v'+(head+1); $('[data-w=approve]').textContent='Approve v'+head; }
+  }));
+  rearm.onclick=arm;
+  arm();
+})();
+
+/* ================= files ================= */
+const FILES = [
+  ['~/.annotary/',0,'The data directory. Override with --data-dir or ANNOTARY_HOME. Backup is "copy store/", or annotary export backup.tar for a consistent snapshot while the server runs.'],
+  ['config.toml',1,'CLI profiles: server URL, Token, default Vault. Written by login and profile add, atomically, mode 0600. The server never writes it.'],
+  ['server.json',1,'Written when the server starts (url, pid, started_at) and removed on a clean exit. daemon status reads it; a stale pid reads as "not running".'],
+  ['logs/server.log',1,'The LaunchAgent\'s log. A foreground serve logs to stderr instead.'],
+  ['store/',1,'Everything the server knows.'],
+  ['LOCK',2,'A file lock. A second serve on the same store is refused, so two processes never write the same data.'],
+  ['meta.json',2,'Tenant id and schema version. Migrations only ever append and run on start, so upgrading the binary never loses data.'],
+  ['annotary.sqlite',2,'The truth: Members, Tokens, Vaults, Documents, Versions, Threads, Comments, Actions, and an append-only events log. Every change writes its event in the same transaction.'],
+  ['blobs/sha256/ab/abf3…',2,'Content-addressed files: Markdown, Assets, image copies and rendered HTML, each stored once under its SHA-256. Identical images across 50 Versions take the space of one. An hourly sweep removes blobs no Version references.'],
+  ['~/work/',0,'Your working folder, wherever you keep the Markdown. Nothing here is required by the server; it is just where pull writes.'],
+  ['plan.md',1,'Your Markdown, byte-identical to the Version you pulled. Edit it with any tool.'],
+  ['plan.annotary',1,'The Sidecar: the Document\'s full state as stable JSON (Versions, Assets, Actions, every Thread with its Anchor history, the Members they name). It makes your data portable without the server. On push, only its id, base Version and Action declaration are read.'],
+  ['img/architecture.png',1,'An Asset. pull --assets writes these too, refusing to overwrite a different local file unless you pass --force.'],
+];
+(function(){
+  const tree=$('#tree'), info=$('#treeinfo');
+  FILES.forEach((f,i)=>{
+    const d=document.createElement('div'); d.className='ind'+f[1];
+    const b=document.createElement('button'); b.textContent=(f[0].endsWith('/')?'📁 ':'📄 ')+f[0];
+    b.onclick=()=>{ $$('button',tree).forEach(x=>x.classList.remove('on')); b.classList.add('on'); info.innerHTML='<h3 class="mono">'+esc(f[0])+'</h3><p class="small">'+esc(f[2])+'</p>'; };
+    d.appendChild(b); tree.appendChild(d);
+    if (i===9) tree.appendChild(document.createElement('br'));
+  });
+  $$('button',tree)[7].click();
+  const SIDE = `{
+  "format": 1,
+  "id": "k7q2m9xd",
+  "vault": "notes",
+  "base_version": 5,
+  "members": {
+    "rowan": {"id": "m1…", "name": "Rowan Vale"},
+    "claude-code": {"id": "m2…", "name": "Claude Code"}
+  },
+  "versions": [
+    {"number": 1, "name": "plan", "hash": "9c1e…", "by": "rowan", "message": "first draft"},
+    {"number": 5, "name": "plan", "hash": "41ad…", "by": "rowan", "message": "well before"}
+  ],
+  "assets": [
+    {"ref": "img/architecture.png", "hash": "abf3…", "size": 89, "type": "image/png"},
+    {"ref": "img/cli-screenshot.png", "type": "image/png", "missing": true}
+  ],
+  "actions": {
+    "available": [{"id": "approve", "label": "Approve", "intent": "positive"}, …],
+    "inherited": true
+  },
+  "threads": [
+    {
+      "id": "t2",
+      "subject": "span",
+      "anchor": {
+        "original": {"version": 1, "range": "16:0-16:33", "exact": "We ship the CLI before the web UI"},
+        "current": {"version": 5, "range": "16:0-16:38", "status": "refined",
+                    "exact": "We ship the CLI well before the web UI"},
+        "history": [
+          {"version": 1, "range": "16:0-16:33", "status": "anchored"},
+          {"version": 5, "range": "16:0-16:38", "status": "refined"}
+        ]
+      },
+      "author": "rowan",
+      "created": {"version": 1},
+      "body": "Agreed — but the skill file must land *with* the CLI, not after."
+    }
+  ]
+}`;
+  $('#sidecar').innerHTML=esc(SIDE)
+    .replace(/(&quot;[a-z_-]+&quot;)(:)/g,'<span class="k">$1</span>$2')
+    .replace(/(: )(&quot;.*?&quot;)/g,'$1<span class="s">$2</span>')
+    .replace(/(: )(\d+)/g,'$1<span class="n">$2</span>');
+})();
+
+/* ================= access ================= */
+(function(){
+  const M = {
+    '@rowan': {role:'owner', how:'local password or loopback', grants:{'*':['read','comment','action','write']}},
+    '@claude-code': {role:'member', how:'Token', grants:{'*':['read','comment','action','write']}},
+    '@codex': {role:'member', how:'Token', grants:{'*':['read','comment','write']}},
+    '@limited': {role:'member', how:'Token', grants:{'notes':['read','comment']}},
+  };
+  const CMDS = [
+    ['show plan','read'],['thread reply plan t2 -m …','comment'],['act plan approve','action'],['push plan.md','write'],['member add reviewer','owner'],['purge old-draft','owner'],
+  ];
+  const seg=$('#memseg'), tab=$('#acctable');
+  function pick(h){
+    $$('button',seg).forEach(b=>b.classList.toggle('on',b.textContent===h));
+    const m=M[h]; const g=m.grants['notes']||m.grants['*'];
+    let rows='<tr><th>Command</th><th>Needs</th><th>Result for '+esc(h)+' <span style="text-transform:none;font-weight:400">('+m.role+', signs in with: '+m.how+'; grants: '+Object.entries(m.grants).map(([v,r])=>v+': '+r.join(', ')).join('; ')+')</span></th></tr>';
+    CMDS.forEach(([c,need])=>{
+      let ok, msg;
+      if (need==='owner'){ ok=m.role==='owner'; msg=ok?'ok':'error: '+c.split(' ').slice(0,2).join(' ').replace(/ reviewer| old-draft/,'')+' is owner-only (exit 4)'; }
+      else { ok=g.includes(need); msg=ok?'ok':'error: missing right `'+need+'` on Vault notes (you are '+h+') — ask an owner: annotary member grant '+h.slice(1)+' notes '+need+' (exit 4)'; }
+      rows+='<tr><td class="mono">annotary '+esc(c)+'</td><td><code>'+need+'</code></td><td class="'+(ok?'':'')+'">'+(ok?'<span class="y">✓ allowed</span>':'<span class="mono small" style="color:var(--neg)">'+esc(msg)+'</span>')+'</td></tr>';
+    });
+    tab.innerHTML=rows;
+  }
+  Object.keys(M).forEach(h=>{ const b=document.createElement('button'); b.textContent=h; b.onclick=()=>pick(h); seg.appendChild(b); });
+  pick('@limited');
+})();
+
+/* ================= perf bars ================= */
+(function(){
+  const B=[['Document view: first paint',80,100],['Document view: interactive',124,200],['Switch to another Version',77,150],['Document list',36,100],['Optimistic reply on screen',7,50]];
+  const box=$('#bars');
+  B.forEach(([l,v,b])=>{
+    const d=document.createElement('div'); d.className='bar';
+    d.innerHTML='<div>'+esc(l)+'</div><div class="track"><div class="fill" data-w="'+(v/b*100)+'"></div><div class="budget"></div></div><div class="mono"><b>'+v+' ms</b> <span class="muted">/ '+b+'</span></div>';
+    box.appendChild(d);
+  });
+  enterHooks['Speed']=()=>{ $$('.fill',box).forEach(f=>f.style.width='0'); requestAnimationFrame(()=>requestAnimationFrame(()=>$$('.fill',box).forEach(f=>f.style.width=f.dataset.w+'%'))); };
+})();
+
+/* ================= landscape ================= */
+(function(){
+  const cols=['annotary','Plannotator','Proof SDK','Crit','markupmarkdown','GitHub PRs'];
+  const rows=[
+    ['Comments on text spans','yyypyp'],
+    ['Threaded replies + resolve','ynypyy'],
+    ['Versions; comments re-anchor across them','ypqppp'],
+    ['Approve / Send back tied to a Version','ypnppy'],
+    ['Agents as Members with their own identity','ynpnpp'],
+    ['Agent CLI + blocking wait','ypppnp'],
+    ['Local, with portable files','yypynn'],
+  ];
+  const sym={y:'<span class="y">●</span>',p:'<span class="p">◐</span>',n:'<span class="n">○</span>',q:'<span class="q">?</span>'};
+  let h='<tr><th></th>'+cols.map((c,i)=>'<th class="c'+(i===0?' me':'')+'">'+c+'</th>').join('')+'</tr>';
+  rows.forEach(([l,v])=>{ h+='<tr><td>'+l+'</td>'+v.split('').map((x,i)=>'<td class="c'+(i===0?' me':'')+'">'+sym[x]+'</td>').join('')+'</tr>'; });
+  h+='<tr><td class="small muted">What it is</td><td class="small c me">this</td><td class="small c muted">local plan review, 9 agent tools</td><td class="small c muted">collaborative editor with an agent API</td><td class="small c muted">browser review of plans and diffs</td><td class="small c muted">self-hosted "Google Docs for markdown"</td><td class="small c muted">code review, hosted</td></tr>';
+  $('#landscape').innerHTML=h;
+})();
+
+/* ================= start ================= */
+const m=location.hash.match(/^#(\d+)$/);
+show(m ? (+m[1]-1) : 0);
+})();
+</script>
+</body>
+</html>

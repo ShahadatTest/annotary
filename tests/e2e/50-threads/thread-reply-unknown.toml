@@ -1,0 +1,8 @@
+# spec: S04-18
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "reply", "th-plan", "t99", "-m", "hi"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Thread t99 in th-plan ([..])
+"""

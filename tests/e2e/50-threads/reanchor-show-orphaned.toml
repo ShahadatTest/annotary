@@ -1,0 +1,16 @@
+# spec: S07-10, S07-14
+# An orphaned span keeps its last valid placement (v3) and stays replyable/resolvable; t3 went
+# refined → anchored again on v4 (the quote came back), resolved.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "show", "ra-plan", "t8", "t3"]
+status = "success"
+stdout = """
+t8	open	@scribe	v3:31:41-31:57 orphaned "collect feedback"	created v3 [..]
+  How — survey or interviews? Worth deciding before the invites go out.
+
+t3	resolved by @rowan v3 [..]	@scribe	v5:20:41-20:73 "invite three external developers"	created v1 [..]
+  Three feels low for useful signal. Five?
+t3.1	@rowan	v3 [..]
+  Done — five, and two weeks of feedback.
+"""
+stderr = ""

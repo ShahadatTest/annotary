@@ -1,0 +1,7 @@
+# spec: S05-10
+# `send-back` was the last Action on v1 — not on head, so it no longer matches.
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "act-", "--action", "send-back"]
+status = "success"
+stdout = ""
+stderr = ""

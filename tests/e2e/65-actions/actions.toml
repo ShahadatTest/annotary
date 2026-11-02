@@ -1,0 +1,11 @@
+# spec: S05-08
+# `actions DOC`: the log newest first — id by at version label (snapshotted).
+bin.name = "annotary"
+args = ["-p", "agent", "actions", "act-plan"]
+status = "success"
+stdout = """
+approve	@scribe	[..]	v2	Approve
+send-back	@scribe	[..]	v1	Send back
+approve	@rowan	[..]	v1	Approve
+"""
+stderr = ""

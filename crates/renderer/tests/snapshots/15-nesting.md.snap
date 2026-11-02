@@ -1,0 +1,61 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="nesting">Nesting</h1>
+<blockquote data-l="3-14">
+<p data-l="3-3">A quote with a list:</p>
+<ul data-l="5-7">
+<li data-l="5-7">item with <code>code</code> and a <a href="https://x.y">link</a>
+<ol data-l="6-7">
+<li data-l="6-7">nested ordered inside a bullet inside a quote</li>
+</ol>
+</li>
+</ul>
+<pre data-l="8-10"><code class="language-js">fenced(&quot;in a quote&quot;);
+</code></pre>
+<table data-l="12-14">
+<thead data-l="12-12">
+<tr data-l="12-12"><th data-l="12-12">in</th><th data-l="12-12">quote</th></tr>
+</thead>
+<tbody data-l="14-14">
+<tr data-l="14-14"><td data-l="14-14">1</td><td data-l="14-14">2</td></tr>
+</tbody>
+</table>
+</blockquote>
+<ol data-l="16-28">
+<li data-l="16-20"><p data-l="16-16">Ordered with a table:</p>
+<table data-l="18-20">
+<thead data-l="18-18">
+<tr data-l="18-18"><th data-l="18-18">a</th><th data-l="18-18">b</th></tr>
+</thead>
+<tbody data-l="20-20">
+<tr data-l="20-20"><td data-l="20-20">c</td><td data-l="20-20">d</td></tr>
+</tbody>
+</table>
+</li>
+<li data-l="22-24"><p data-l="22-22">Ordered with a heading (allowed by CommonMark):</p>
+<h2 data-l="24-24" id="heading-in-a-list-item">Heading in a list item</h2>
+</li>
+<li data-l="26-28"><p data-l="26-26">Ordered with a task list:</p>
+<ul data-l="27-28">
+<li data-l="27-27"><input type="checkbox" checked disabled> done</li>
+<li data-l="28-28"><input type="checkbox" disabled> open</li>
+</ul>
+</li>
+</ol>
+<ul data-l="30-40">
+<li data-l="30-32">Bullet with a blockquote:
+<blockquote data-l="31-32">
+<p data-l="31-32">quoted inside a bullet
+with <strong>strong</strong></p>
+</blockquote>
+</li>
+<li data-l="33-36">Bullet with a math block:
+<math data-l="34-36" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup><mo>=</mo><msup><mi>c</mi><mn>2</mn></msup></math>
+</li>
+<li data-l="37-40">Bullet with a mermaid fence:
+<pre data-l="38-40" class="mermaid">graph LR; A--&gt;B;
+</pre>
+</li>
+</ul>
+<p data-l="42-42">Trailing paragraph.</p>

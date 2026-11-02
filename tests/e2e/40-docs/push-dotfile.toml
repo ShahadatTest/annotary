@@ -1,0 +1,9 @@
+# spec: S02-05
+bin.name = "annotary"
+args = ["-p", "rowan", "push", ".hidden.md"]
+fs.sandbox = true
+status.code = 1
+stdout = ""
+stderr = """
+error: invalid Name ".hidden": must not start with '.' — Names are the filename stem: not empty, no path separators or control characters, no leading '.'
+"""

@@ -1,0 +1,366 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored"
+    },
+    {
+      "version": 2,
+      "status": "anchored"
+    },
+    {
+      "version": 3,
+      "status": "anchored"
+    },
+    {
+      "version": 4,
+      "status": "anchored"
+    }
+  ],
+  "t2": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "22:0-22:45",
+      "exact": "versioned key, so publishing a style is cheap"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "22:0-22:45",
+      "exact": "versioned key, so publishing a style is cheap"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "22:0-22:45",
+      "exact": "versioned key, so publishing a style is cheap"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "24:0-24:45",
+      "exact": "versioned key, so publishing a style is cheap"
+    }
+  ],
+  "t3": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "44:27-44:68",
+      "exact": "memory is the most expensive thing we buy"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    },
+    {
+      "version": 3,
+      "status": "orphaned"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t4": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "33:64-33:91",
+      "exact": "clients recieve stale tiles"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "33:64-33:91",
+      "exact": "clients receive stale tiles"
+    },
+    {
+      "version": 3,
+      "status": "refined",
+      "range": "33:64-33:91",
+      "exact": "clients receive stale tiles"
+    },
+    {
+      "version": 4,
+      "status": "refined",
+      "range": "35:64-35:91",
+      "exact": "clients receive stale tiles"
+    }
+  ],
+  "t5": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "41:25-41:51",
+      "exact": "bulk re-render of contours"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "42:25-42:51",
+      "exact": "bulk re-render of contours"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "42:25-42:51",
+      "exact": "bulk re-render of contours"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "44:25-44:51",
+      "exact": "bulk re-render of contours"
+    }
+  ],
+  "t6": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "185:54-185:83",
+      "exact": "it refuses to run without one"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "186:54-186:83",
+      "exact": "it refuses to run without one"
+    },
+    {
+      "version": 3,
+      "status": "orphaned"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t7": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "143:12-143:59",
+      "exact": "let Some((_, evicted)) = self.entries.pop_lru()"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "144:12-144:59",
+      "exact": "let Some((_, evicted)) = self.entries.pop_lru()"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "144:12-144:59",
+      "exact": "let Some((_, evicted)) = self.entries.pop_lru()"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "146:12-146:59",
+      "exact": "let Some((_, evicted)) = self.entries.pop_lru()"
+    }
+  ],
+  "t8": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "313:6-313:49",
+      "exact": "takes around nine days on the current fleet"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "314:6-314:49",
+      "exact": "takes around nine days on the current fleet"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "314:6-314:49",
+      "exact": "takes around nine days on the current fleet"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t9": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "20:15-21:25",
+      "exact": "checks memory first, then the object store, and only then the renderer. The renderer\nwrites through both tiers"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "20:15-21:25",
+      "exact": "checks memory first, then the object store, and only then the renderer. The renderer\nwrites through both tiers"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "20:15-21:25",
+      "exact": "checks memory first, then the object store, and only then the renderer. The renderer\nwrites through both tiers"
+    },
+    {
+      "version": 4,
+      "status": "refined",
+      "range": "22:15-23:25",
+      "exact": "checks memory first, then the object store. The renderer\nwrites through both tiers"
+    }
+  ],
+  "t10": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "431:35-431:76",
+      "exact": "sampled by a hash of the tile coordinates"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "434:35-434:76",
+      "exact": "sampled by a hash of the tile coordinates"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "434:35-434:76",
+      "exact": "sampled by a hash of the tile coordinates"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "427:35-427:76",
+      "exact": "sampled by a hash of the tile coordinates"
+    }
+  ],
+  "t11": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "79:4-79:16",
+      "exact": "Request path"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "80:4-80:16",
+      "exact": "Request path"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "80:4-80:16",
+      "exact": "Request path"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "82:4-82:16",
+      "exact": "Request path"
+    }
+  ],
+  "t12": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "245:21-245:48",
+      "exact": "who mostly read at weekends"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "246:21-246:48",
+      "exact": "who mostly read at weekends"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "231:33-231:60",
+      "exact": "who mostly read at weekends"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "233:33-233:60",
+      "exact": "who mostly read at weekends"
+    }
+  ],
+  "t13": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "236:61-236:86",
+      "exact": "Serving yesterday's style"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "237:61-237:86",
+      "exact": "Serving yesterday's style"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "222:61-222:86",
+      "exact": "Serving yesterday's style"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "224:61-224:86",
+      "exact": "Serving yesterday's style"
+    }
+  ],
+  "t14": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "241:59-241:88",
+      "exact": "in the order that hurts least"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "242:59-242:88",
+      "exact": "in the order that hurts least"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "227:59-227:88",
+      "exact": "in the order that hurts least"
+    },
+    {
+      "version": 4,
+      "status": "refined",
+      "range": "229:58-229:93",
+      "exact": "in whichever order would hurt least"
+    }
+  ],
+  "t15": [
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "349:62-350:15",
+      "exact": "An `X-Fernway-Cache` header would be\n   cheap to add"
+    },
+    {
+      "version": 3,
+      "status": "refined",
+      "range": "349:62-350:20",
+      "exact": "An `X-Fernway-Cache` header would be\n   very cheap to add"
+    },
+    {
+      "version": 4,
+      "status": "refined",
+      "range": "342:62-343:20",
+      "exact": "An `X-Fernway-Cache` header would be\n   very cheap to add"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "G": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "28:0-29:25",
+      "exact": "Line 28: blue quebec india\nLine 29: coral xray tango"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    },
+    {
+      "version": 3,
+      "status": "orphaned"
+    }
+  ],
+  "B": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "9:0-10:28",
+      "exact": "Line 9: india delta juliet\nLine 10: juliet kilo uniform"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "9:0-10:28",
+      "exact": "Line 9: india delta juliet\nLine 10: juliet kilo uniform"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "9:0-10:28",
+      "exact": "Line 9: india delta juliet\nLine 10: juliet kilo uniform"
+    }
+  ],
+  "E": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "21:0-21:28",
+      "exact": "Line 21: uniform blue victor"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "21:0-21:28",
+      "exact": "Line 21: uniform blue victor"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "21:0-21:28",
+      "exact": "Line 21: uniform blue victor"
+    }
+  ]
+}

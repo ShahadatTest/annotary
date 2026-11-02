@@ -1,0 +1,9 @@
+# spec: S06-13
+# Tokens are never in the output.
+bin.name = "annotary"
+args = ["-p", "rowan", "profile", "list", "--json", "name,member,role,vault,has_token"]
+status = "success"
+stdout = """
+[{"name":"agent","member":"scribe","role":"member","vault":"notes","has_token":true},{"name":"down","has_token":true},{"name":"limited","member":"limited","role":"member","has_token":true},{"name":"pw"},{"name":"rowan","member":"rowan","role":"owner","has_token":true}]
+"""
+stderr = ""

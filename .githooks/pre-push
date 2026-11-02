@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# Scans the commits each push sends for secrets. Git runs this after every earlier step of the
+# command line, with one line per ref on stdin (<local ref> <local sha> <remote ref> <remote sha>),
+# so it sees exactly what the push sends. Each ref's commits are scanned down to the tips the
+# destination really has (git ls-remote), never to local remote-tracking refs, which can be stale
+# or belong to another remote. The hooks path is set by the session-start step
+# (`git config core.hooksPath .githooks`). Fails closed: no gitleaks, no destination list, or a
+# failed scan, no push.
+set -euo pipefail
+
+# Git passes the remote's name and the location it pushes to; list the latter, which differs
+# from the fetch URL when remote.<name>.pushurl is set.
+remote="${2:-${1:?pre-push: git passes the remote as the first argument}}"
+exclude=""                                      # "^<sha>" lines the destination has and this clone too
+ready=no
+scratch=""
+trap 'rm -rf "$scratch"' EXIT
+# gitleaks git reads ./.gitleaks.toml unless the environment names a config; the merge scan,
+# which runs in a scratch folder, is given the same one.
+config=""
+if [ -z "${GITLEAKS_CONFIG:-}${GITLEAKS_CONFIG_TOML:-}" ] && [ -f .gitleaks.toml ]; then
+  config="$PWD/.gitleaks.toml"
+fi
+
+refuse() {
+  echo "pre-push: $1; push refused" >&2
+  exit 1
+}
+
+# gitleaks git shows no patch for a merge, so a merge's own content (a file or line in none of its
+# parents) would go unscanned. Writes each line merge $1 adds against every parent under its path
+# in $2/tree (a binary file whole), then scans that folder; content a parent already has is left
+# to that parent's own scan or was already on the destination.
+scan_merge() {
+  local merge="$1" dir="$2" path kind out diff
+  mkdir -p "$dir/tree" || return 1
+  git diff-tree -c --name-only -z --no-commit-id "$merge" >"$dir/paths" </dev/null || return 1
+  while IFS= read -r -d '' path; do
+    case "/$path/" in */../*|*/./*|//*) return 1 ;; esac
+    # Only a file the merge has: a path it deletes, or turns into a folder, adds nothing.
+    kind=$(git --literal-pathspecs ls-tree --full-tree "$merge" -- "$path" </dev/null) || return 1
+    case "$kind" in [0-7]*" blob "*) ;; *) continue ;; esac
+    # gitleaks would read these at the top of the folder as its config and ignore list.
+    out="$dir/tree/$path"
+    case "$path" in .gitleaks.toml|.gitleaksignore) out="$out.merged" ;; esac
+    mkdir -p "$(dirname "$out")" || return 1
+    diff=$(git --literal-pathspecs diff-tree -c -p --no-commit-id "$merge" -- "$path" </dev/null) || return 1
+    if grep -q '^Binary files ' <<<"$diff"; then
+      git cat-file blob "$merge:$path" >"$out" </dev/null || return 1
+    else
+      # A hunk header has one @ per parent plus one; each line starts with one column per parent,
+      # and a line in none of the parents has + in every column.
+      printf '%s\n' "$diff" | awk '
+        /^@@@/ { match($0, /^@+/); n = RLENGTH - 1; all = ""; for (i = 0; i < n; i++) all = all "+"; next }
+        n && substr($0, 1, n) == all { print substr($0, n + 1) }' >"$out" || return 1
+    fi
+  done <"$dir/paths"
+  (cd "$dir/tree" && gitleaks dir --no-banner --redact --log-level warn ${config:+"--config=$config"} . </dev/null)
+}
+
+while read -r local_ref local_sha _remote_ref _remote_sha; do
+  if [ -z "${local_sha//0/}" ]; then
+    continue                                    # a deletion sends no commits
+  fi
+  if [ "$ready" = no ]; then
+    command -v gitleaks >/dev/null 2>&1 \
+      || refuse "gitleaks is not installed (brew install gitleaks), so the commits cannot be scanned"
+    tips=$(git ls-remote "$remote" </dev/null) || refuse "cannot list the refs ${remote} has"
+    # One line per ref; they go to git on stdin, never argv, which a remote with tens of
+    # thousands of refs would overflow.
+    exclude=$(printf '%s\n' "$tips" | cut -f1 | git cat-file --batch-check='%(objectname) %(objecttype)' \
+      | awk '$2 == "commit" || $2 == "tag" { print "^" $1 }' | sort -u) \
+      || refuse "cannot read this clone's objects"
+    scratch=$(mktemp -d "${TMPDIR:-/tmp}/pre-push.XXXXXX") || refuse "cannot make a scratch folder"
+    ready=yes
+  fi
+  git rev-parse -q --verify "${local_sha}^{commit}" >/dev/null </dev/null \
+    || refuse "${local_ref} is not a commit (a tag on a blob or tree), which gitleaks git cannot scan"
+  # A pushed tag object (and every tag it points through) is sent even when its commit is
+  # already there: scan each whole tag object.
+  tags="" obj="$local_sha"
+  while :; do
+    type=$(git cat-file -t "$obj" </dev/null) || refuse "cannot read the type of ${obj} for ${local_ref}"
+    [ "$type" = tag ] || break
+    tags="$tags$obj"$'\n'
+    obj=$(git cat-file tag "$obj" </dev/null | sed -n '1s/^object //p')
+    [ -n "$obj" ] || refuse "cannot read the tags behind ${local_ref}"
+  done
+  if [ -n "$tags" ] && ! printf '%s' "$tags" | git cat-file --batch \
+       | gitleaks stdin --no-banner --redact --log-level warn; then
+    refuse "gitleaks flagged a tag object for ${local_ref} (or could not scan it)"
+  fi
+  # The commits this push sends, each with its parents, and (prefixed -) the boundary: the
+  # commits they stop at, which the destination has. gitleaks git is given the boundary, a
+  # handful of commits however many refs the destination has.
+  listing=$( { printf '%s\n' "$local_sha"; [ -z "$exclude" ] || printf '%s\n' "$exclude"; } \
+    | git rev-list --stdin --boundary --parents) || refuse "cannot list the commits for ${local_ref}"
+  sent=$(printf '%s\n' "$listing" | sed '/^-/d;/^$/d')
+  if [ -z "$sent" ]; then
+    continue
+  fi
+  range="$local_sha$(printf '%s\n' "$listing" | sed -n 's/^-\([0-9a-f]*\).*/ ^\1/p' | tr -d '\n')"
+  if ! gitleaks git --no-banner --redact --log-level warn --log-opts "$range" </dev/null; then
+    refuse "gitleaks flagged the commits for ${local_ref} (or could not scan them)"
+  fi
+  # gitleaks git reads diffs only, so each whole commit object (headers and message) too.
+  if ! printf '%s\n' "$sent" | cut -d' ' -f1 | git cat-file --batch \
+       | gitleaks stdin --no-banner --redact --log-level warn; then
+    refuse "gitleaks flagged a commit's headers or message for ${local_ref} (or could not scan it)"
+  fi
+  for merge in $(printf '%s\n' "$sent" | awk 'NF > 2 { print $1 }'); do
+    scan_merge "$merge" "$scratch/$merge" \
+      || refuse "gitleaks flagged what merge $(git rev-parse --short "$merge") adds for ${local_ref} (or could not scan it)"
+  done
+done

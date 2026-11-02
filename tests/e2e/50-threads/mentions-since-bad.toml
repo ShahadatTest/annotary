@@ -1,0 +1,8 @@
+# spec: S04-10
+bin.name = "annotary"
+args = ["-p", "agent", "mentions", "--since", "yesterday"]
+status.code = 1
+stdout = ""
+stderr = """
+error: --since "yesterday": use a duration (2h, 3d, 1w), a date (2026-08-17) or an ISO-8601 time
+"""

@@ -1,0 +1,10 @@
+# spec: S08-08
+# Nothing happens on the seeded `ro-plan` while this runs: `wait` gives up after 1s with the
+# cursor it reached on stderr, exit 7, nothing on stdout.
+bin.name = "annotary"
+args = ["-p", "agent", "wait", "ro-plan", "--timeout", "1s"]
+status.code = 7
+stdout = ""
+stderr = """
+wait: nothing after 1s (seq [..])
+"""

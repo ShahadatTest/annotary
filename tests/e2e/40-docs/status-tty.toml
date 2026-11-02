@@ -1,0 +1,9 @@
+# spec: S02-30
+bin.name = "annotary"
+args = ["-p", "agent", "status", "ro-plan", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+ro-plan  [..]  v3  action:-  open:0  mentions-me:0  seq:[..]
+"""
+stderr = ""

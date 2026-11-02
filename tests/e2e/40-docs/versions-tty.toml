@@ -1,0 +1,12 @@
+# spec: S02-19, S02-30
+bin.name = "annotary"
+args = ["-p", "rowan", "versions", "ro-plan", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+VER  BY      AT[..]  MESSAGE      SAME_AS
+v1   @rowan  [..]  first draft  -
+v2   @rowan  [..]  add risks    -
+v3   @rowan  [..]  back to v1   v1
+"""
+stderr = ""

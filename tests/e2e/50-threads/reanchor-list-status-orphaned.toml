@@ -1,0 +1,10 @@
+# spec: S07-13
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "ra-plan", "--status", "orphaned", "--all"]
+status = "success"
+stdout = """
+t7	@scribe	v3:20 orphaned "mitigated by the fixture table"	(deleted)	+1	[..]
+t6	@rowan	v3:21 orphaned "agents should use the CLI, not read the file whole"	This is exactly what the sidecar-format ticket has to answer — link it here.	[..]
+t8	@scribe	v3:31 orphaned "collect feedback"	How — survey or interviews? Worth deciding before the invites go out.	[..]
+"""
+stderr = ""

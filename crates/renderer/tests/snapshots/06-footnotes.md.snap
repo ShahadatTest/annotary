@@ -1,0 +1,24 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="footnotes">Footnotes</h1>
+<p data-l="3-4">A footnote reference<sup class="footnote-ref"><a href="#fn-1" id="fnref-1">1</a></sup>, the same again<sup class="footnote-ref"><a href="#fn-1" id="fnref-1-2">1</a></sup>, and another<sup class="footnote-ref"><a href="#fn-2" id="fnref-2">2</a></sup>. A reference to a definition
+that comes later<sup class="footnote-ref"><a href="#fn-3" id="fnref-3">3</a></sup> and one that never gets defined[^missing].</p>
+<p data-l="11-11">Middle paragraph.</p>
+<section class="footnotes" data-l="6-15">
+<ol data-l="6-15">
+<li id="fn-1" data-l="6-6">
+<p data-l="6-6">The first footnote. <a href="#fnref-1" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn-2" data-l="7-9">
+<p data-l="7-7">The second footnote has <em>markup</em> and</p>
+<p data-l="9-9">a second paragraph (indented). <a href="#fnref-2" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn-3" data-l="13-13">
+<p data-l="13-13">Defined after its reference. <a href="#fnref-3" class="footnote-backref">↩</a></p>
+</li>
+<li id="fn-4" data-l="15-15">
+<p data-l="15-15">Never referenced — still emitted, after the referenced ones. <a href="#fnref-4" class="footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>

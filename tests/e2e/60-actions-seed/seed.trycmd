@@ -1,0 +1,30 @@
+spec: S05-02, S05-04, S05-05, S05-14
+
+Seeds the Actions the read-only `65-actions` cases look at: `act-plan` gets `approve` by @rowan
+and then `send-back` by @scribe on v1 (last event wins), a v2 (which starts with no
+Action), then `approve` by @scribe on v2; `act-none` has Versions but no Action. Merged
+stdout+stderr; ids are random.
+
+```console
+$ annotary -p rowan push act-plan.md -m "first draft"
+act-plan	[..]	v1
+
+$ annotary -p rowan act act-plan approve --version 1
+act-plan	v1	approve	by @rowan
+
+$ annotary -p agent act act-plan send-back
+act-plan	v1	send-back	by @scribe
+
+$ annotary -p rowan push v2/act-plan.md --doc act-plan -m "skill file with the CLI"
+act-plan	[..]	v2
+
+$ annotary -p agent status act-plan
+act-plan	[..]	v2	action:-	open:0	mentions-me:0	seq:[..]
+
+$ annotary -p agent act act-plan approve --version 2
+act-plan	v2	approve	by @scribe
+
+$ annotary -p rowan push act-none.md
+act-none	[..]	v1
+
+```

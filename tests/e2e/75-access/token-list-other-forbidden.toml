@@ -1,0 +1,8 @@
+# spec: S06-07, S06-03
+bin.name = "annotary"
+args = ["-p", "agent", "token", "list", "--member", "linter"]
+status.code = 4
+stdout = ""
+stderr = """
+error: managing another Member's tokens is owner-only — ask an owner (`annotary member list` shows who)
+"""

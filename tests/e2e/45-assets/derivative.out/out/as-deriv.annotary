@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "id": "[..]",
+  "vault": "notes",
+  "base_version": 1,
+  "members": {
+    "rowan": {"id": "[..]", "name": "Rowan Vale"}
+  },
+  "versions": [
+    {"number": 1, "name": "as-deriv", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z"}
+  ],
+  "assets": [
+    {"ref": "img/scan.bmp", "hash": "[..]", "size": 1974, "type": "image/bmp"}
+  ],
+  "actions": {
+    "available": [
+      {"id": "approve", "label": "Approve", "intent": "positive"},
+      {"id": "send-back", "label": "Send back", "intent": "neutral"}
+    ],
+    "inherited": true
+  }
+}

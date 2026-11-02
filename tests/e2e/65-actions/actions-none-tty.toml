@@ -1,0 +1,10 @@
+# spec: S05-08
+# No Actions yet: nothing on stdout; a TTY gets a note naming the available set.
+bin.name = "annotary"
+args = ["-p", "agent", "actions", "act-none", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = ""
+stderr = """
+no Actions on act-none yet — available: approve, send-back
+"""

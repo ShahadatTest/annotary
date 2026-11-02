@@ -1,0 +1,9 @@
+# spec: S01-13, S01-18
+# Handles are kebab-case: anything else is a usage error (exit 1) naming the rule.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "add", "Scribe_Bot"]
+status.code = 1
+stdout = ""
+stderr = """
+error: invalid handle 'Scribe_Bot': only lowercase letters, digits and '-' (kebab-case)
+"""

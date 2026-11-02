@@ -1,0 +1,15 @@
+# spec: S13-04, S16-04
+# `daemon stop` is idempotent: with no LaunchAgent loaded (the harness's private label) it notes
+# that on stderr and prints the status line — the harness's foreground `serve` is still running,
+# since `stop` only boots out the LaunchAgent. Nothing is touched.
+bin.name = "annotary"
+args = ["daemon", "stop"]
+env.add = { ANNOTARY_DAEMON_OS = "macos" }
+status = "success"
+stdout = """
+running	pid [..]	since [..]	[URL]	store ~/.annotary/store	log ~/.annotary/logs/server.log	(v0.0.0)
+"""
+stderr = """
+LaunchAgent com.annotary.e2e is not loaded — nothing to stop
+no LaunchAgent installed — `annotary daemon install` keeps the server up after login
+"""

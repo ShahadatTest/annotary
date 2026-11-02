@@ -1,0 +1,16 @@
+{
+  "A": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:0-6:25",
+      "exact": "Line 5: echo foxtrot zulu\nLine 6: foxtrot mike golf"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "5:0-6:25",
+      "exact": "Line 5: alpha CHANGED zulu\nLine 6: foxtrot mike golf"
+    }
+  ]
+}

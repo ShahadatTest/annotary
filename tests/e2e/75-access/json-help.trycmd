@@ -1,0 +1,51 @@
+spec: S06-06, S06-07, S06-12, S06-13
+
+`--json ?` lists every field of the ticket-06 verbs and exits without calling the server
+(so it works with any profile, even `down`).
+
+```console
+$ annotary -p down member rename x y --json ?
+handle name role grants disabled created id
+
+$ annotary -p down member disable x --json ?
+handle name role grants disabled created id
+
+$ annotary -p down member grant x notes read --json ?
+handle name role grants disabled created id
+
+$ annotary -p down member role x owner --json ?
+handle name role grants disabled created id
+
+$ annotary -p down token mint --json ?
+token id member name expires created
+
+$ annotary -p down token list --json ?
+id member name created last_used expires status revoked
+
+$ annotary -p down token revoke x --json ?
+id member revoked name
+
+$ annotary -p down login --json ?
+profile server handle role config
+
+$ annotary -p down logout --json ?
+profile handle revoked config
+
+$ annotary -p down profile list --json ?
+name server member role vault has_token
+
+$ annotary -p down profile add x --json ?
+name server vault has_token config
+
+$ annotary -p down profile remove x --json ?
+name server vault has_token config
+
+$ annotary -p down profile default --json ?
+? 1
+error: unrecognized subcommand 'default'
+
+Usage: annotary profile [OPTIONS] <COMMAND>
+
+For more information, try '--help'.
+
+```

@@ -1,0 +1,10 @@
+# spec: S08-07
+# Profile `down` points at a port nobody listens on: exit 6 before anything is waited for.
+bin.name = "annotary"
+args = ["-p", "down", "wait", "--cursor", "5", "--timeout", "1s"]
+status.code = 6
+stdout = ""
+stderr = """
+error: server at http://127.0.0.1:1 not reachable — run `annotary serve` or `annotary daemon install`
+resume with --cursor 5
+"""

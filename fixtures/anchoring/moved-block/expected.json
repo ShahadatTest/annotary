@@ -1,0 +1,14 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "7:8-7:16",
+      "exact": "bb cc dd"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ]
+}

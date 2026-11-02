@@ -1,0 +1,14 @@
+# spec: S09-11, S01-18
+# Neither DOC nor --all is a usage error (exit 1).
+bin.name = "annotary"
+args = ["-p", "rowan", "rerender"]
+status.code = 1
+stdout = ""
+stderr = """
+error: the following required arguments were not provided:
+  <DOC>
+
+Usage: annotary rerender <DOC>
+
+For more information, try '--help'.
+"""

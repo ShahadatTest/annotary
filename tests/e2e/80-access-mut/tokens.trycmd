@@ -1,0 +1,46 @@
+spec: S06-07, S06-08
+
+Tokens: the owner mints for another Member (name, expiry) — printed once like `member add` —
+and lists that Member's; a Member mints and lists their own (TTY parity, JSON). Revoking by id
+needs the id, which trycmd cannot capture (`crates/annotary/tests/cli_access.rs` covers
+mint → revoke → 401 with the real binary; `token-mint-tty.toml` beside this file is the TTY
+form). Merged stdout+stderr.
+
+```console
+$ annotary -p rowan token mint --member linter --name ci --expires 30d
+token minted for @linter "ci" (id [..], expires [..])
+Token (shown once):
+ANNOTARY_TOKEN=ant_[..]
+
+$ annotary -p rowan token list --member linter
+@linter	member add	[..]	-	-	[..]
+@linter	ci	[..]	-	[..]-[..]-[..]	[..]
+
+$ annotary -p rowan token list --member linter --json name,member,expires,status
+[{"name":"member add","member":"linter","status":"active"},{"name":"ci","member":"linter","expires":"[..]T[..]Z","status":"active"}]
+
+$ annotary -p agent token mint --name laptop
+token minted for @scribe "laptop" (id [..])
+Token (shown once):
+ANNOTARY_TOKEN=ant_[..]
+
+$ annotary -p agent token mint --json member,name,expires
+token minted for @scribe (id [..])
+Token (shown once):
+{"member":"scribe"}
+
+$ annotary -p agent token list
+@scribe	member add	[..]	[..]	-	[..]
+@scribe	laptop	[..]	-	-	[..]
+@scribe	-	[..]	-	-	[..]
+
+$ ANNOTARY_TTY=1 annotary -p agent token list --no-color
+MEMBER   NAME        CREATED  LAST USED  EXPIRES  ID
+@scribe  member add  [..]
+@scribe  laptop      [..]
+@scribe  -           [..]
+
+$ annotary -p agent token list --json name,status
+[{"name":"member add","status":"active"},{"name":"laptop","status":"active"},{"status":"active"}]
+
+```

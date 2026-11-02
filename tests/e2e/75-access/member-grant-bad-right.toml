@@ -1,0 +1,8 @@
+# spec: S06-02, S06-06
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "grant", "linter", "notes", "admin"]
+status.code = 1
+stdout = ""
+stderr = """
+error: unknown right "admin" — rights: read, comment, action, write (comma list) or none
+"""

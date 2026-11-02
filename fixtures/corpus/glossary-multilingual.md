@@ -1,0 +1,131 @@
+# Fernway glossary 🗺️
+
+The words we use, and how our customers say them. Fernway's maps are read in Tokyo, Haifa, Muscat
+and Thessaloniki, so a term here has a meaning, a note, and the name a customer will actually write
+in a support ticket. Mixed-direction text and combining marks are on purpose: this page is where
+the rendering problems show up first.
+
+## Core terms
+
+| English | 日本語 | العربية | עברית | Note |
+|---|---|---|---|---|
+| map | 地図 | خريطة | מפה | the product |
+| tile | タイル | مربع | משבצת | one square at one zoom |
+| style | スタイル | نمط | סגנון | rules that draw the data |
+| ferry | フェリー | عبّارة | מעבורת | a customer, usually |
+| contour | 等高線 | خط كنتور | קו גובה | line of equal height |
+| harbour | 港 | ميناء | נמל | a ferry stop, usually |
+| trail | 登山道 | مسار | שביל | often wrong in old data |
+| zoom | ズーム | تكبير | זום | z0 to z18 |
+
+## 日本語 (Japanese)
+
+東京の顧客は地図の品質と更新にとても厳しいです。等高線のラベルが山頂の名前と重なると、すぐに連絡が来ます。
+
+富士山の登山道は季節によって閉鎖されるため、データの更新日を必ず地図の隅に表示してください。
+
+タイルの再描画は夜間に行い、昼間の利用者に影響を与えないようにします。
+
+北海道の冬季閉鎖の情報も毎月確認します。
+
+- **縮尺**（しゅくしゃく）: the ratio between map and ground. 「五万分の一」 is 1:50,000.
+- **標高**（ひょうこう）: elevation. Always metres, always above Tokyo Bay mean sea level.
+- **国土地理院**: the national survey authority, whose attribution must appear on every derived map.
+
+## العربية (Arabic)
+
+تعتمد شركات العبارات في الخليج على خرائطنا لتحديد مسارات الرحلات اليومية بين الموانئ.
+
+يجب أن تظهر أسماء الموانئ باللغة العربية أولاً ثم باللغة الإنجليزية، وذلك حسب طلب العميل في مسقط.
+
+عند تكبير الخريطة تظهر تفاصيل الساحل والجزر الصغيرة بوضوح أكبر.
+
+- **الميناء**: the harbour. Mixed lines such as «ميناء السلطان قابوس (Port Sultan Qaboos)» must keep their order.
+- **خط الساحل**: the coastline, redrawn from survey data twice a year.
+- **رقم الرحلة ٤٢**: flight or sailing number 42, in Eastern Arabic numerals (٠١٢٣٤٥٦٧٨٩).
+
+With vocalisation marks, which must never split from their letter: مَكْتَبَةُ الْخَرَائِطِ means "the map library".
+
+## עברית (Hebrew)
+
+מועדון הטיולים הוותיק בחיפה מדפיס את המפות שלנו לפני כל מסע ארוך בהרי הכרמל.
+
+שמות השבילים מופיעים בעברית ובאנגלית, והסימון בשטח חייב להתאים למפה בדיוק.
+
+כאשר המטיילים מדווחים על שביל סגור, הצוות משנה אותם בתוך יממה.
+
+- **שביל ישראל**: the Israel National Trail, about 1,100 km end to end.
+- **גובה**: elevation, and the word on most of our contour questions.
+- **מַפָּה**: "map", with vowel points. Pointed text is common in the children's atlas we print.
+
+A mixed sentence, right-to-left with numbers and Latin inside: המסלול עובר דרך Mount Carmel ואורכו 12.8 ק״מ.
+
+## Numbers and units
+
+| Thing | Latin digits | Arabic-Indic | Full-width |
+|---|---:|---:|---:|
+| Harbour depth | 14.5 m | ١٤٫٥ م | １４．５ｍ |
+| Trail length | 12 km | ١٢ كم | １２ｋｍ |
+| Summit height | 3,776 m | ٣٬٧٧٦ م | ３，７７６ｍ |
+
+## Signage and support tickets
+
+Sentences customers really send us, kept here so that a reviewer can comment on them and so that the
+page exercises selection in every direction.
+
+地図の更新日が古いという問い合わせが週に数件あります。データの出典と作成日を、凡例の下に小さく記載してください。
+
+北アルプスの縦走路では、残雪期の通行止めを赤い破線で示します。夏季の登山道は実線、冬季閉鎖の区間は点線です。
+
+フェリーの航路は青い破線で描き、港の名前は航路と重ならないように配置します。
+
+طلب أحد العملاء في الدوحة إضافة مواعيد الرحلات إلى الخريطة، لكننا لا نعرض الجداول الزمنية داخل المربعات.
+
+تظهر المنارات على الخريطة بأيقونة صغيرة، ويُكتب اسم المنارة بالعربية تحت الأيقونة مباشرة.
+
+يبلغ طول الرحلة من مسقط إلى خصب نحو ٥٠٠ كيلومتر (500 km)، ويجب أن تظهر الوحدة بعد الرقم في الاتجاه الصحيح.
+
+המטיילים בנגב מבקשים מפה שמראה מקורות מים, ולכן הוספנו שכבה חדשה של נביעות ובארות.
+
+בשבילים המסומנים בצבע אדום יש לשמור על המרחק מהמצוק, ובקיץ מומלץ לצאת לפני הזריחה.
+
+לקוח מירושלים שאל מדוע שם הרחוב מופיע באנגלית בלבד, והתברר שהנתונים המקוריים היו חסרים.
+
+| Sign | 日本語 | العربية | עברית |
+|---|---|---|---|
+| closed in winter | 冬季閉鎖 | مغلق في الشتاء | סגור בחורף |
+| drinking water | 飲料水 | مياه الشرب | מי שתייה |
+| viewpoint | 展望台 | نقطة مشاهدة | נקודת תצפית |
+| danger, cliff | 崖注意 | خطر، منحدر | סכנה, מצוק |
+| ferry terminal | フェリー乗り場 | محطة العبّارات | תחנת מעבורת |
+| lighthouse | 灯台 | منارة | מגדלור |
+| spring | 湧水 | نبع | מעיין |
+| hut | 山小屋 | كوخ | בקתה |
+
+## Fonts that have let us down
+
+Noto Sans covers nearly everything, but a map label is small and a fallback font is obvious. 葛󠄀 is a
+Japanese place-name character with a variation selector that many fonts ignore. The Arabic ligature
+ﷺ and the Hebrew ligature ﭏ are one code point each and several letters' worth of width. Thai has
+marks stacked above and below, as in ก้ำ, and Devanagari joins across letters in नमस्ते. None of those
+are in our customers' data yet, but one day they will be, and this line will be the test.
+
+## Names people get wrong
+
+Thessaloniki, Salonica and Θεσσαλονίκη are one city. Muscat and مسقط are one city. 東京 and Tokyo are
+one city, and the renderer picks a label by the customer's language setting, never by guessing from
+the data.
+
+A revision is the counter that names one published version of a style. In Japanese we say リビジョン,
+in Arabic مراجعة and in Hebrew גרסה, and customers mostly just say "the new map".
+
+## Emoji in the wild
+
+Customers put these in trail names, and the renderer has to survive them:
+
+- 🥾 Boot Hill Loop
+- ⛴️ Harbour Ferry 3 (a base character, a variation selector)
+- 👩‍👩‍👧‍👦 Family Walk (a joined sequence of seven code points)
+- 🇸🇪 Skåne Coast Path (a flag, two regional indicators)
+- 🏔️ 北アルプス縦走 (an emoji beside CJK)
+

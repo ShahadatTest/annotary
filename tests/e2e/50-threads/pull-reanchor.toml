@@ -1,0 +1,13 @@
+# spec: S07-11, S07-08
+# The Sidecar carries every Anchor with its sparse history and range strings; compared against
+# pull-reanchor.out/.
+bin.name = "annotary"
+args = ["-p", "agent", "pull", "ra-plan"]
+fs.sandbox = true
+status = "success"
+stdout = """
+ra-plan.md	ra-plan.annotary	v5
+"""
+stderr = """
+pull: 8 threads, 3 assets (2 missing: img/cli-screenshot.png, api-notes.md); assets not written (--assets)
+"""

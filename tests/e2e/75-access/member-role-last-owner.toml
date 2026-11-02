@@ -1,0 +1,9 @@
+# spec: S06-04
+# @rowan is the only owner: stepping down is refused (409 last_owner ⇒ exit 5).
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "role", "rowan", "member"]
+status.code = 5
+stdout = ""
+stderr = """
+error: @rowan is the last owner — a Tenant always has one — make another Member an owner first: annotary member role HANDLE owner
+"""

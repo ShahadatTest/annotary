@@ -1,0 +1,8 @@
+# spec: S06-13
+bin.name = "annotary"
+args = ["-p", "rowan", "profile", "remove", "ghost"]
+status.code = 2
+stdout = ""
+stderr = """
+error: profile 'ghost' not found in ~/.annotary/config.toml — profiles: agent, down, limited, pw, rowan
+"""

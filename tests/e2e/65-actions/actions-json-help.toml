@@ -1,0 +1,8 @@
+# spec: S05-14
+bin.name = "annotary"
+args = ["-p", "agent", "actions", "x", "--json", "?"]
+status = "success"
+stdout = """
+id by at version label intent
+"""
+stderr = ""

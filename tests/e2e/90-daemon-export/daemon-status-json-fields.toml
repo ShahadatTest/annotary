@@ -1,0 +1,10 @@
+# spec: S13-02, S01-17
+# `--json a,b` narrows; `version` comes from the running server's /api/v1/health.
+bin.name = "annotary"
+args = ["daemon", "status", "--json", "state,version,label"]
+env.add = { ANNOTARY_DAEMON_OS = "macos" }
+status = "success"
+stdout = """
+{"state":"running","version":"0.0.0","label":"com.annotary.e2e"}
+"""
+stderr = ""

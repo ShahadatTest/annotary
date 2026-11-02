@@ -1,0 +1,9 @@
+# spec: S05-10
+# `list --action ID` = Documents whose head Action is ID; the ACTION column shows it.
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "act-", "--action", "approve"]
+status = "success"
+stdout = """
+[..]	act-plan	v2	approve	0	[..]
+"""
+stderr = ""

@@ -1,0 +1,47 @@
+spec: S18-06, S18-07, S18-09
+
+Ticket 18 on the second server (profile `ios` = its owner @ana), started with
+`--url http://pw-host.example.ts.net:7377 --link-base https://cd.example.dev`: `link` goes through
+the relay (`{link_base}/{host:port}/d/{id}[#tN]`, no note), `show` on a TTY appends the same link
+(non-TTY unchanged), and `pair` prints the `annotary://pair` URL (non-TTY: one line; TTY:
+header, the QR code in quadrant blocks, `profile ana@pw-host`, the URL, and the shown-once note).
+Tokens and ids are random, so they are `[..]`; the QR block is `...`. Merged stdout+stderr.
+
+```console
+$ annotary -p ios push ios-plan.md
+ios-plan	[..]	v1
+
+$ annotary -p ios thread new ios-plan --document -m "Have a look on your phone."
+t1	document
+
+$ annotary -p ios link ios-plan t1
+https://cd.example.dev/pw-host.example.ts.net:7377/d/[..]#t1
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p ios link ios-plan
+https://cd.example.dev/pw-host.example.ts.net:7377/d/[..]
+
+$ annotary -p ios link ios-plan t1 --json url,thread,public
+{"url":"https://cd.example.dev/pw-host.example.ts.net:7377/d/[..]#t1","thread":"t1","public":true}
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p ios show ios-plan
+ios-plan  [..]  notes  v1 by @ana [..]  action:-  open:1  actions:approve,send-back  https://cd.example.dev/pw-host.example.ts.net:7377/d/[..]
+...
+
+$ annotary -p ios show ios-plan
+ios-plan	[..]	notes	v1 by @ana [..]	action:-	open:1	actions:approve,send-back
+...
+
+$ annotary -p ios pair
+annotary://pair?v=1&server=http%3A%2F%2Fpw-host.example.ts.net%3A7377&token=[..]&profile=ana%40pw-host	ana	[..]	device
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p ios pair --name iPhone
+Pairing a device for @ana on http://pw-host.example.ts.net:7377
+...
+profile ana@pw-host
+annotary://pair?v=1&server=http%3A%2F%2Fpw-host.example.ts.net%3A7377&token=[..]&profile=ana%40pw-host
+Shown once. Revoke: annotary token revoke [..]
+
+$ annotary -p ios pair --json member,name,profile,server
+{"member":"ana","name":"device","profile":"ana@pw-host","server":"http://pw-host.example.ts.net:7377"}
+
+```

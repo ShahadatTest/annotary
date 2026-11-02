@@ -1,0 +1,8 @@
+# spec: S04-15
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "th-plan", "--all", "--json", "id,anchor,resolved"]
+status = "success"
+stdout = """
+[{"id":"t1","resolved":{"by":"scribe","at":"[..]T[..]Z","version":1}},{"id":"t5","anchor":{"version":1,"range":"3:0-3:14","status":"anchored","exact":"![architecture"}},{"id":"t3","anchor":{"version":1,"range":"11:48-11:69","status":"anchored","exact":"testable in isolation"},"resolved":{"by":"rowan","at":"[..]T[..]Z","version":1}},{"id":"t2","anchor":{"version":1,"range":"16:0-16:33","status":"anchored","exact":"We ship the CLI before the web UI"}},{"id":"t4","anchor":{"version":1,"range":"20:41-20:73","status":"anchored","exact":"invite three external developers"}}]
+"""
+stderr = ""

@@ -1,0 +1,67 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+# A placeholder: a deployed binary's version comes from the tag at build time (ANNOTARY_VERSION,
+# set by deploy/build_release.sh; crates/annotary/src/lib.rs).
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.85"
+publish = false
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/josh-andrews-dev/annotary"
+homepage = "https://github.com/josh-andrews-dev/annotary"
+
+[workspace.dependencies]
+annotary-store = { path = "crates/store" }
+annotary-renderer = { path = "crates/renderer" }
+annotary-diff = { path = "crates/diff" }
+annotary-sidecar = { path = "crates/sidecar" }
+annotary-perfgen = { path = "crates/perfgen" }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+thiserror = "2"
+jiff = "0.2"
+tempfile = "3"
+# ticket 18: the pairing QR code (`POST /api/v1/pairing` SVG, `annotary pair` quadrant blocks).
+qrcode = { version = "0.14", default-features = false, features = ["svg"] }
+
+# The release pipeline (docs/dev/releases.md): GitHub Releases for four targets, a shell installer
+# and a Homebrew tap. The tap goes through our own job rather than dist's `homebrew` one, which needs
+# a personal token and writes no `test do`. `allow-dirty` because release.yml carries hand edits that
+# docs/dev/releases.md lists: `dist generate` must not undo them, and they are tested.
+[workspace.metadata.dist]
+cargo-dist-version = "0.33.1"
+ci = "github"
+installers = ["shell", "homebrew"]
+tap = "josh-andrews-dev/homebrew-tap"
+publish-jobs = ["./publish-tap"]
+targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "aarch64-unknown-linux-gnu", "x86_64-unknown-linux-gnu"]
+unix-archive = ".tar.gz"
+checksum = "sha256"
+install-path = "~/.local/bin"
+install-updater = false
+include = ["deploy/annotary.service", "deploy/healthcheck.sh"]
+allow-dirty = ["ci"]
+
+[profile.dist]
+inherits = "release"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
+
+# Faster incremental test builds for the bundled SQLite.
+[profile.dev.package.libsqlite3-sys]
+opt-level = 2
+
+# argon2id in a debug build takes about a second a check; the login throttle tests (CMD-4) make
+# dozens of them.
+[profile.dev.package.argon2]
+opt-level = 3
+
+[profile.dev.package.blake2]
+opt-level = 3

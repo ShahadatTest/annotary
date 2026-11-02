@@ -1,0 +1,79 @@
+[
+  {
+    "id": "t1",
+    "subject": "document",
+    "version": 1
+  },
+  {
+    "id": "t2",
+    "subject": "span",
+    "version": 1,
+    "range": "1:2-1:21"
+  },
+  {
+    "id": "t3",
+    "subject": "span",
+    "version": 1,
+    "range": "22:6-22:18"
+  },
+  {
+    "id": "t4",
+    "subject": "span",
+    "version": 1,
+    "range": "34:0-34:31"
+  },
+  {
+    "id": "t5",
+    "subject": "span",
+    "version": 1,
+    "range": "48:30-48:40"
+  },
+  {
+    "id": "t6",
+    "subject": "span",
+    "version": 1,
+    "range": "52:42-52:60"
+  },
+  {
+    "id": "t7",
+    "subject": "span",
+    "version": 1,
+    "range": "72:2-72:21"
+  },
+  {
+    "id": "t8",
+    "subject": "span",
+    "version": 1,
+    "range": "63:86-63:95"
+  },
+  {
+    "id": "t9",
+    "subject": "span",
+    "version": 1,
+    "range": "15:18-15:26"
+  },
+  {
+    "id": "t10",
+    "subject": "span",
+    "version": 1,
+    "range": "44:67-44:90"
+  },
+  {
+    "id": "t11",
+    "subject": "span",
+    "version": 1,
+    "range": "58:75-58:98"
+  },
+  {
+    "id": "t12",
+    "subject": "span",
+    "version": 1,
+    "range": "132:90-132:95"
+  },
+  {
+    "id": "t13",
+    "subject": "span",
+    "version": 2,
+    "range": "29:4-29:11"
+  }
+]

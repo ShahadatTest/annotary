@@ -1,0 +1,13 @@
+# spec: S02-15
+# `pull --version N` writes N's bytes and Name and a Sidecar with base_version N; a note says so.
+bin.name = "annotary"
+args = ["-p", "rowan", "pull", "ro-plan", "--version", "2"]
+fs.sandbox = true
+status = "success"
+stdout = """
+ro-plan.md	ro-plan.annotary	v2
+"""
+stderr = """
+pull: 0 threads, 0 assets
+(name on v2 was "ro-plan"; Threads as they were on v2; head is v3)
+"""

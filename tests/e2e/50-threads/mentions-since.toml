@@ -1,0 +1,7 @@
+# spec: S04-10
+# `--since` in the future: nothing (exit 0); a bad `--since` is a usage error.
+bin.name = "annotary"
+args = ["-p", "agent", "mentions", "--since", "2099-01-01"]
+status = "success"
+stdout = ""
+stderr = ""

@@ -1,0 +1,11 @@
+# spec: S13-04
+# `start` (and `restart`) without a plist refuse with exit 5 and point at `daemon install`.
+# (HOME is the harness's temp dir: no ~/Library/LaunchAgents/… exists there.)
+bin.name = "annotary"
+args = ["daemon", "start"]
+env.add = { ANNOTARY_DAEMON_OS = "macos" }
+status.code = 5
+stdout = ""
+stderr = """
+error: no LaunchAgent installed (~/Library/LaunchAgents/com.annotary.e2e.plist is missing) — `annotary daemon install` writes it and starts the server
+"""

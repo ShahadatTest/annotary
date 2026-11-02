@@ -1,0 +1,9 @@
+# spec: S05-02
+# `--version N` ≠ head ⇒ exit 5, nothing recorded.
+bin.name = "annotary"
+args = ["-p", "rowan", "act", "act-plan", "approve", "--version", "1"]
+status.code = 5
+stdout = ""
+stderr = """
+error: head is v2, not v1 — run `annotary show act-plan` and act on v2 once you have read it
+"""

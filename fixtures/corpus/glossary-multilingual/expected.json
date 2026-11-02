@@ -1,0 +1,316 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored"
+    },
+    {
+      "version": 2,
+      "status": "anchored"
+    },
+    {
+      "version": 3,
+      "status": "anchored"
+    },
+    {
+      "version": 4,
+      "status": "anchored"
+    }
+  ],
+  "t2": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "1:2-1:21",
+      "exact": "Fernway glossary 🗺️"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "1:2-1:21",
+      "exact": "Fernway glossary 🗺️"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "1:2-1:21",
+      "exact": "Fernway glossary 🗺️"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "1:2-1:21",
+      "exact": "Fernway glossary 🗺️"
+    }
+  ],
+  "t3": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "22:6-22:18",
+      "exact": "地図の品質にとても厳しい"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "23:6-23:21",
+      "exact": "地図の品質と更新にとても厳しい"
+    },
+    {
+      "version": 3,
+      "status": "refined",
+      "range": "23:6-23:21",
+      "exact": "地図の品質と更新にとても厳しい"
+    },
+    {
+      "version": 4,
+      "status": "refined",
+      "range": "23:6-23:21",
+      "exact": "地図の品質と更新にとても厳しい"
+    }
+  ],
+  "t4": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "34:0-34:31",
+      "exact": "تعتمد شركات العبّارات في الخليج"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "37:0-37:30",
+      "exact": "تعتمد شركات العبارات في الخليج"
+    },
+    {
+      "version": 3,
+      "status": "refined",
+      "range": "37:0-37:30",
+      "exact": "تعتمد شركات العبارات في الخليج"
+    },
+    {
+      "version": 4,
+      "status": "refined",
+      "range": "37:0-37:30",
+      "exact": "تعتمد شركات العبارات في الخليج"
+    }
+  ],
+  "t5": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "48:30-48:40",
+      "exact": "המפות שלנו"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "51:30-51:40",
+      "exact": "המפות שלנו"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "51:37-51:47",
+      "exact": "המפות שלנו"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "51:37-51:47",
+      "exact": "המפות שלנו"
+    }
+  ],
+  "t6": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "52:42-52:60",
+      "exact": "מעדכנים את הנתונים"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "55:42-55:60",
+      "exact": "מעדכנים את הנתונים"
+    },
+    {
+      "version": 3,
+      "status": "orphaned"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t7": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "72:2-72:21",
+      "exact": "👩‍👩‍👧‍👦 Family Walk"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "75:2-75:21",
+      "exact": "👩‍👩‍👧‍👦 Family Walk"
+    },
+    {
+      "version": 3,
+      "status": "orphaned"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t8": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "63:86-63:95",
+      "exact": "Hà Nội"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "66:86-66:95",
+      "exact": "Hà Nội"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "66:86-66:95",
+      "exact": "Hà Nội"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t9": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "15:18-15:26",
+      "exact": "خط كنتور"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "16:18-16:26",
+      "exact": "خط كنتور"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "16:18-16:26",
+      "exact": "خط كنتور"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "16:18-16:26",
+      "exact": "خط كنتور"
+    }
+  ],
+  "t10": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "44:67-44:90",
+      "exact": "مَكْتَبَةُ الْخَرَائِطِ"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "47:67-47:90",
+      "exact": "مَكْتَبَةُ الْخَرَائِطِ"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "47:67-47:90",
+      "exact": "مَكْتَبَةُ الْخَرَائِطِ"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "47:67-47:90",
+      "exact": "مَكْتَبَةُ الْخَرَائِطِ"
+    }
+  ],
+  "t11": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "58:75-58:98",
+      "exact": "דרך Mount Carmel ואורכו"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "61:75-61:98",
+      "exact": "דרך Mount Carmel ואורכו"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "61:75-61:98",
+      "exact": "דרך Mount Carmel ואורכו"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "61:75-61:98",
+      "exact": "דרך Mount Carmel ואורכו"
+    }
+  ],
+  "t12": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "132:90-132:95",
+      "exact": "リビジョン"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "135:90-135:95",
+      "exact": "リビジョン"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "125:90-125:95",
+      "exact": "リビジョン"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "119:90-119:95",
+      "exact": "リビジョン"
+    }
+  ],
+  "t13": [
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "29:4-29:11",
+      "exact": "冬季閉鎖の情報"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "29:4-29:11",
+      "exact": "冬季閉鎖の情報"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "29:4-29:11",
+      "exact": "冬季閉鎖の情報"
+    }
+  ]
+}

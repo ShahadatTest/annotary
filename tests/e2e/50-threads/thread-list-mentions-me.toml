@@ -1,0 +1,10 @@
+# spec: S04-11, S04-10
+# `--mentions-me`: open Threads a live Comment of which mentions the caller (t1 mentions
+# @scribe but is resolved).
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "th-plan", "--mentions-me"]
+status = "success"
+stdout = """
+t2	@rowan	v1:16 "We ship the CLI before the web UI"	Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.	+1	[..]
+"""
+stderr = ""

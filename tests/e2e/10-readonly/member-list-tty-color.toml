@@ -1,0 +1,14 @@
+# spec: S01-12
+# TTY with colour: the header is dim (ESC[2m … ESC[0m); data rows carry no escapes.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "list"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+\u001B[2mHANDLE    NAME           ROLE    GRANTS\u001B[0m
+@rowan    Rowan Vale     owner   *:read,comment,action,write
+@scribe   Scribe         member  *:read,comment,action,write
+@linter   linter         member  *:read,comment,action,write
+@limited  Limited Agent  member  notes:read,comment
+"""
+stderr = ""

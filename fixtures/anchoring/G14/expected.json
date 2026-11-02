@@ -1,0 +1,16 @@
+{
+  "L": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "20:0-21:28",
+      "exact": "Line 20: tango uniform kilo\nLine 21: uniform blue victor"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "20:0-22:28",
+      "exact": "Line 20: tango uniform kilo\nLine 20a: inserted between L's lines\nLine 21: uniform blue victor"
+    }
+  ]
+}

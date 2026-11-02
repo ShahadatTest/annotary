@@ -1,0 +1,9 @@
+# spec: S04-04, S04-05
+# The CLI checks the range on head before posting.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "th-plan", "99:0-99:3", "-m", "x"]
+status.code = 5
+stdout = ""
+stderr = """
+error: range 99:0-99:3 is not on head v1: line 99 is past the end of the text (24 lines) — run `annotary pull th-plan` and quote a range that exists in v1
+"""

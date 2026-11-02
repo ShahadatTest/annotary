@@ -1,0 +1,10 @@
+# spec: S06-01, S06-14
+# `write` covers create/push: the two-phase upload is refused before anything is stored.
+bin.name = "annotary"
+args = ["-p", "limited", "push", "new.md"]
+fs.sandbox = true
+status.code = 4
+stdout = ""
+stderr = """
+error: blob upload needs the `write` right on a Vault (you are @limited) — ask an owner: annotary member grant limited VAULT write
+"""

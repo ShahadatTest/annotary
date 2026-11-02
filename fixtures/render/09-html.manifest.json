@@ -1,0 +1,7 @@
+[
+  {"ref": "img/a.png", "hash": "0000000000000000000000000000000000000000000000000000000000000a01", "size": 10, "type": "image/png", "width": 640, "height": 480},
+  {"ref": "img/missing.png", "type": "image/png", "missing": true},
+  {"ref": "vid/c.mp4", "hash": "0000000000000000000000000000000000000000000000000000000000000a02", "size": 10, "type": "video/mp4", "width": 1280, "height": 720},
+  {"ref": "snd/a.mp3", "hash": "0000000000000000000000000000000000000000000000000000000000000a03", "size": 10, "type": "audio/mpeg"},
+  {"ref": "docs/x.pdf", "hash": "0000000000000000000000000000000000000000000000000000000000000a04", "size": 10, "type": "application/pdf"}
+]

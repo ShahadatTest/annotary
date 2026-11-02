@@ -1,0 +1,7 @@
+# spec: S02-21
+# `--action approve` and `--mentions-me` parse and (with no Actions/Threads yet) match nothing.
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "lst-", "--action", "approve"]
+status = "success"
+stdout = ""
+stderr = ""

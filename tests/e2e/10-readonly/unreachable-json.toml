@@ -1,0 +1,8 @@
+# spec: S01-16, S01-18
+bin.name = "annotary"
+args = ["-p", "down", "member", "list", "--json"]
+status.code = 6
+stdout = ""
+stderr = """
+{"error":"unreachable","message":"server at http://127.0.0.1:1 not reachable","hint":"run `annotary serve` or `annotary daemon install`"}
+"""

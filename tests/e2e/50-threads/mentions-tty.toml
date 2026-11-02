@@ -1,0 +1,10 @@
+# spec: S04-10, S04-16
+bin.name = "annotary"
+args = ["-p", "agent", "mentions", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+DOC      ID  AUTHOR  ANCHOR                                     BODY                                          REPLIES  AGE
+th-plan  t2  @rowan  v1:16 "We ship the CLI before the web UI"  Agreed — but the skill file must land *with…  +1       [..]
+"""
+stderr = ""

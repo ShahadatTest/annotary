@@ -1,0 +1,11 @@
+# spec: S06-07
+# TTY: same fields, aligned, dim header (colour off).
+bin.name = "annotary"
+args = ["-p", "rowan", "token", "list", "--member", "linter", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+MEMBER   NAME        CREATED  LAST USED  EXPIRES  ID
+@linter  member add  [..]
+"""
+stderr = ""

@@ -1,0 +1,12 @@
+# spec: S18-06
+# The main harness server has no public URL: `link` prints this CLI's server URL and says on
+# stderr why other devices cannot open it (exit 0).
+bin.name = "annotary"
+args = ["-p", "rowan", "link", "ro-plan"]
+status.code = 0
+stdout = """
+[URL]/d/[..]
+"""
+stderr = """
+note: no public URL is set — other devices cannot open this; run: annotary serve --url http://HOST:PORT
+"""

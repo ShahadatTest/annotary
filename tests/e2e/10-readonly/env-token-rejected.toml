@@ -1,0 +1,11 @@
+# spec: S01-06, S01-14
+# ANNOTARY_TOKEN wins over ANNOTARY_PROFILE (the profile only supplies the server); a token
+# the server does not know is 401 ⇒ exit 3. No -p here: the flag would win over the token.
+bin.name = "annotary"
+args = ["member", "list"]
+env.add = { ANNOTARY_TOKEN = "ant_0000000000000000000000000000000000000000000", ANNOTARY_PROFILE = "rowan" }
+status.code = 3
+stdout = ""
+stderr = """
+error: invalid, revoked or expired token — check ANNOTARY_TOKEN or the profile's token; owners: `annotary login`; agents: ask an owner for a new token
+"""

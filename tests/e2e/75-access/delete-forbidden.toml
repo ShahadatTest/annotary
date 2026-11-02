@@ -1,0 +1,9 @@
+# spec: S06-01, S06-14
+# `write` covers delete/restore: a `read,comment` Member cannot delete.
+bin.name = "annotary"
+args = ["-p", "limited", "delete", "ro-plan"]
+status.code = 4
+stdout = ""
+stderr = """
+error: missing right `write` on Vault notes (you are @limited) — ask an owner: annotary member grant limited notes write
+"""

@@ -1,0 +1,9 @@
+# spec: S18-09
+# Pairing needs a public URL (a phone cannot reach 127.0.0.1): exit 5, nothing minted.
+bin.name = "annotary"
+args = ["-p", "rowan", "pair"]
+status.code = 5
+stdout = ""
+stderr = """
+error: no public URL is set — a phone cannot reach this server's loopback address — annotary serve --url http://HOST:PORT
+"""

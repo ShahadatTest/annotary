@@ -1,0 +1,12 @@
+# spec: S07-09
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "ra-plan", "--asset", "img/architecture.png", "--document", "-m", "x"]
+status.code = 1
+stdout = ""
+stderr = """
+error: the argument '--asset <REF>' cannot be used with '--document'
+
+Usage: annotary thread new --message <MSG> --asset <REF> <DOC> [ANCHOR]
+
+For more information, try '--help'.
+"""

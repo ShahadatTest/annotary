@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Scans the staged changes for secrets before every commit. The hooks path is set by the
+# session-start step (`git config core.hooksPath .githooks`). Fails closed: no gitleaks, no commit.
+set -euo pipefail
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks is not installed (brew install gitleaks); refusing to commit unscanned changes" >&2
+  exit 1
+fi
+exec gitleaks git --pre-commit --staged --redact --no-banner --log-level warn

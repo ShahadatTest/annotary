@@ -1,0 +1,12 @@
+# spec: S04-11, S04-12
+# Default: open Threads on head, document order (Document-level first, then span by
+# position), replies chronological; the empty REPLIES field is omitted (non-TTY).
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "th-plan"]
+status = "success"
+stdout = """
+t5	@scribe	v1:3 "![architecture"	(deleted)	+1	[..]
+t2	@rowan	v1:16 "We ship the CLI before the web UI"	Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.	+1	[..]
+t4	@rowan	v1:20 "invite three external developers"	Three feels low for useful signal. Five?	+1	[..]
+"""
+stderr = ""

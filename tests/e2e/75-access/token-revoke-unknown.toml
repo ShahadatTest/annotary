@@ -1,0 +1,8 @@
+# spec: S06-07
+bin.name = "annotary"
+args = ["-p", "rowan", "token", "revoke", "01ZZZZZZZZZZZZZZZZZZZZZZZZ"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Token 01ZZZZZZZZZZZZZZZZZZZZZZZZ
+"""

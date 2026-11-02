@@ -1,0 +1,16 @@
+{
+  "D": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "17:0-18:26",
+      "exact": "Line 17: quebec dune hotel\nLine 18: romeo golf sierra"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "17:0-18:26",
+      "exact": "Line 17: quebec dune hotel\nLine 18: romeo golf sierra"
+    }
+  ]
+}

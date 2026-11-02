@@ -1,0 +1,5 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="7-7" id="heading-below-front-matter">Heading Below Front Matter</h1>
+<p data-l="9-9">The front matter is not rendered; its <code>title:</code> is the display title.</p>

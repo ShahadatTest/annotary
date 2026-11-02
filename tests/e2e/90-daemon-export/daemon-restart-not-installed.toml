@@ -1,0 +1,9 @@
+# spec: S13-04
+bin.name = "annotary"
+args = ["daemon", "restart"]
+env.add = { ANNOTARY_DAEMON_OS = "macos" }
+status.code = 5
+stdout = ""
+stderr = """
+error: no LaunchAgent installed (~/Library/LaunchAgents/com.annotary.e2e.plist is missing) — `annotary daemon install` writes it and starts the server
+"""

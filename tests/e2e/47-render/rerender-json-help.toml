@@ -1,0 +1,8 @@
+# spec: S09-11, S01-17
+bin.name = "annotary"
+args = ["-p", "rowan", "rerender", "x", "--json", "?"]
+status = "success"
+stdout = """
+name id versions changed vault renderer
+"""
+stderr = ""

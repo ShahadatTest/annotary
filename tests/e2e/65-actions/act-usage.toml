@@ -1,0 +1,14 @@
+# spec: S05-14
+# A missing ACTION is a clap usage error (exit 1).
+bin.name = "annotary"
+args = ["-p", "rowan", "act", "act-plan"]
+status.code = 1
+stdout = ""
+stderr = """
+error: the following required arguments were not provided:
+  <ACTION>
+
+Usage: annotary act <DOC> <ACTION>
+
+For more information, try '--help'.
+"""

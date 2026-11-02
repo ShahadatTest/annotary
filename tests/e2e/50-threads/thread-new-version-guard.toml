@@ -1,0 +1,9 @@
+# spec: S04-04
+# `--version N` ≠ head ⇒ exit 5 before anything is posted.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "th-plan", "16:0-16:33", "--version", "4", "-m", "x"]
+status.code = 5
+stdout = ""
+stderr = """
+error: head is v1, not v4 — run `annotary pull th-plan` and re-read before commenting
+"""

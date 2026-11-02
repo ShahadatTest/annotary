@@ -1,0 +1,86 @@
+spec: S06-02, S06-03, S06-04, S06-05, S06-06
+
+Member management on a Member of its own (`granted`): `grant` upserts one Vault's Grant (and
+`*` can be dropped, so the Member ends up with `notes: read,comment` only), unknown Vault /
+right, `rename` (display name only — the handle stays), `role` up and down (TTY parity, JSON),
+`disable` (idempotent; the row keeps its history), refusals on a disabled Member, the handle
+never reused, and the owner-only / last-owner refusals. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan member add granted --name "Granted Agent"
+@granted added: member, grants * (read,comment,action,write)
+Token (shown once):
+ANNOTARY_TOKEN=ant_[..]
+
+$ annotary -p rowan member grant granted notes read,comment
+@granted	Granted Agent	member	*:read,comment,action,write notes:read,comment
+
+$ ANNOTARY_TTY=1 annotary -p rowan member grant granted '*' none --no-color
+@granted  Granted Agent  member  notes:read,comment
+
+$ annotary -p rowan member grant granted notes write --json
+{"handle":"granted","name":"Granted Agent","role":"member","grants":[{"vault":"notes","rights":["write"]}]}
+
+$ annotary -p rowan member grant granted drafts read
+? 2
+error: no Vault drafts
+
+$ annotary -p rowan member grant @granted notes comment
+@granted	Granted Agent	member	notes:comment
+
+$ annotary -p rowan member rename granted "Granted (renamed)"
+@granted	Granted (renamed)	member	notes:comment
+
+$ annotary -p rowan member rename granted ""
+? 1
+error: NEW must not be empty — member rename HANDLE "Display Name"
+
+$ annotary -p rowan member role granted owner
+@granted	Granted (renamed)	owner	notes:comment
+
+$ ANNOTARY_TTY=1 annotary -p rowan member role granted owner --no-color
+@granted is already owner
+@granted  Granted (renamed)  owner  notes:comment
+
+$ annotary -p rowan member role granted member --json handle,role
+{"handle":"granted","role":"member"}
+
+$ annotary -p rowan member role rowan member
+? 5
+error: @rowan is the last owner — a Tenant always has one — make another Member an owner first: annotary member role HANDLE owner
+
+$ annotary -p rowan member disable granted
+@granted	Granted (renamed)	member (disabled)	notes:comment
+
+$ annotary -p rowan member disable granted
+@granted was already disabled
+@granted	Granted (renamed)	member (disabled)	notes:comment
+
+$ annotary -p rowan member disable granted --json
+@granted was already disabled
+{"handle":"granted","name":"Granted (renamed)","role":"member","grants":[{"vault":"notes","rights":["comment"]}],"disabled":true}
+
+$ annotary -p rowan member grant granted notes read
+? 5
+error: @granted is disabled — disabled Members keep their history but cannot be granted, promoted or given tokens
+
+$ annotary -p rowan member role granted owner
+? 5
+error: @granted is disabled — disabled Members keep their history but cannot be granted, promoted or given tokens
+
+$ annotary -p rowan token mint --member granted
+? 5
+error: @granted is disabled — disabled Members keep their history but cannot be granted, promoted or given tokens
+
+$ annotary -p rowan member add granted
+? 5
+error: handle @granted is already taken (handles are unique per Tenant forever)
+
+$ annotary -p rowan member rename granted "Still renamable"
+@granted	Still renamable	member (disabled)	notes:comment
+
+$ annotary -p agent member disable granted
+? 4
+error: member disable is owner-only — ask an owner (`annotary member list` shows who)
+
+```

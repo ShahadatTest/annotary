@@ -1,0 +1,24 @@
+spec: S03-08, S03-07, S03-13, S03-14
+
+A BMP gets a web-safe PNG derivative (a second content-addressed blob, uploaded with the
+original — the `new` size counts both) and its dimensions; the Sidecar lists the original only;
+`pull --assets` writes the original bytes back (the re-push is `already v1`).
+
+```console
+$ annotary -p rowan push as-deriv.md
+assets: 1 referenced, 1 new (3 KB)
+as-deriv	[..]	v1
+
+$ annotary -p rowan push as-deriv.md --json assets
+assets: 1 referenced, 0 new
+{"assets":{"referenced":1,"new":0,"new_bytes":0}}
+
+$ annotary -p rowan pull as-deriv --out out --assets
+pull: 0 threads, 1 asset; 1 written, 0 unchanged
+as-deriv.md	as-deriv.annotary	v1
+
+$ annotary -p rowan push out/as-deriv.md
+assets: 1 referenced, 0 new
+as-deriv	[..]	already v1
+
+```

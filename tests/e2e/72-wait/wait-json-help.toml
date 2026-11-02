@@ -1,0 +1,8 @@
+# spec: S08-06
+bin.name = "annotary"
+args = ["-p", "agent", "wait", "ro-plan", "--json", "?"]
+status = "success"
+stdout = """
+seq kind doc name action version thread comment message excerpt by at type label intent same_as discarded mentions vault
+"""
+stderr = ""

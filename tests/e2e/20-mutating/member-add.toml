@@ -1,0 +1,12 @@
+# spec: S01-11
+# Non-TTY: notes on stderr, exactly one result line on stdout — the ANNOTARY_TOKEN= line to paste.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "add", "hermes", "--name", "Hermes"]
+status = "success"
+stdout = """
+ANNOTARY_TOKEN=ant_[..]
+"""
+stderr = """
+@hermes added: member, grants * (read,comment,action,write)
+Token (shown once):
+"""

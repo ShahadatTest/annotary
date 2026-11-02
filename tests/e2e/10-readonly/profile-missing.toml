@@ -1,0 +1,9 @@
+# spec: S01-14, S01-15
+# A named profile that does not exist is exit 3 too, listing the ones that do.
+bin.name = "annotary"
+args = ["-p", "nope", "member", "list"]
+status.code = 3
+stdout = ""
+stderr = """
+error: profile 'nope' not found in ~/.annotary/config.toml — profiles: agent, down, limited, pw, rowan
+"""

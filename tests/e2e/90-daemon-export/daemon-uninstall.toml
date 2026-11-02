@@ -1,0 +1,13 @@
+# spec: S13-04, S16-04
+# `daemon uninstall` is idempotent: no plist under the harness's private label ⇒ `not installed`,
+# the data dir kept, exit 0 (tab-separated non-TTY).
+bin.name = "annotary"
+args = ["daemon", "uninstall"]
+env.add = { ANNOTARY_DAEMON_OS = "macos" }
+status = "success"
+stdout = """
+~/Library/LaunchAgents/com.annotary.e2e.plist	not installed	(data dir ~/.annotary kept)
+"""
+stderr = """
+no LaunchAgent com.annotary.e2e installed — nothing to do
+"""

@@ -1,0 +1,8 @@
+# spec: S08-08
+bin.name = "annotary"
+args = ["-p", "agent", "wait", "ro-plan", "--timeout", "1s", "--json"]
+status.code = 7
+stdout = ""
+stderr = """
+{"error":"wait_timeout","message":"wait: nothing after 1s (seq [..])","seq":[..]}
+"""

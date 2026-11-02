@@ -1,0 +1,9 @@
+# spec: S02-28
+# `status DOC`: name id vN action open mentions-me seq (Tenant-wide event cursor).
+bin.name = "annotary"
+args = ["-p", "agent", "status", "ro-plan"]
+status = "success"
+stdout = """
+ro-plan	[..]	v3	action:-	open:0	mentions-me:0	seq:[..]
+"""
+stderr = ""

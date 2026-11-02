@@ -1,0 +1,16 @@
+{
+  "J": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:0-5:25",
+      "exact": "Line 5: echo foxtrot zulu"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "5:0-5:25",
+      "exact": "Line 5: echo foxtrot zulu"
+    }
+  ]
+}

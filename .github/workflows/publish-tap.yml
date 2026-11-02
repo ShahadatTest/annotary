@@ -1,0 +1,88 @@
+# Publishes the release's Homebrew formula to the tap (docs/dev/releases.md). release.yml calls it
+# after the release's assets are up, because `brew install` below downloads them.
+#
+# dist's own `homebrew` job would push with a personal token; this pushes with a deploy key that can
+# write only to the tap, and the formula is installed and tested before anything reaches users.
+#
+# Two jobs, so the key is never on a runner with Homebrew's action, Homebrew itself or the release's
+# binary: `check` has no secret at all, and `push` runs only GitHub's actions and git, once `check` has
+# passed. The formula is uploaded before anything from Homebrew runs.
+name: publish-tap
+
+on:
+  workflow_call:
+    inputs:
+      plan:
+        required: true
+        type: string
+    secrets:
+      HOMEBREW_TAP_DEPLOY_KEY:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: The formula dist generated
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: artifacts-*
+          path: artifacts
+          merge-multiple: true
+      - name: Add its test
+        run: python3 deploy/tap_formula.py artifacts/annotary.rb
+      - name: Keep it for the push
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: checked-formula
+          path: artifacts/annotary.rb
+          if-no-files-found: error
+      - uses: Homebrew/actions/setup-homebrew@c262868c096d909fc278daa87ed9772967331ea3 # main, 2026-10-30
+      - name: A local tap holding only it
+        run: |
+          mkdir -p tap/Formula
+          cp artifacts/annotary.rb tap/Formula/annotary.rb
+          git -C tap init -q
+          git -C tap add Formula/annotary.rb
+          git -C tap -c user.name=annotary-release -c user.email=annotary-release@example.com commit -qm annotary
+      - name: Audit, install and test it from that tap
+        run: |
+          brew tap josh-andrews-dev/tap "$GITHUB_WORKSPACE/tap"
+          brew trust --formula josh-andrews-dev/tap/annotary
+          brew audit --strict --online josh-andrews-dev/tap/annotary
+          brew install --formula josh-andrews-dev/tap/annotary
+          brew test josh-andrews-dev/tap/annotary
+
+  push:
+    needs: check
+    runs-on: ubuntu-22.04
+    env:
+      PLAN: ${{ inputs.plan }}
+    steps:
+      - name: The formula that passed
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: checked-formula
+          path: checked
+      - name: Check out the tap
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: josh-andrews-dev/homebrew-tap
+          ssh-key: ${{ secrets.HOMEBREW_TAP_DEPLOY_KEY }}
+          path: tap
+      - name: Commit it and push
+        run: |
+          version=$(echo "$PLAN" | jq -r '.releases[] | select(.app_name == "annotary") | .app_version')
+          mkdir -p tap/Formula
+          cp checked/annotary.rb tap/Formula/annotary.rb
+          git -C tap config user.name "annotary-release"
+          git -C tap config user.email "annotary-release@example.com"
+          git -C tap add Formula/annotary.rb
+          git -C tap diff --cached --quiet || git -C tap commit -m "annotary $version"
+          git -C tap push

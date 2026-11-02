@@ -1,0 +1,79 @@
+/* annotary owner screens + login page (ticket 12) — inlined after app.css only on /members,
+   /settings and /login. Namespaced `cd-` like everything else. */
+.cd-adminmain{max-width:960px;margin:0 auto;padding:16px 16px 80px}
+.cd-pagehead{display:flex;align-items:baseline;gap:12px;margin:8px 0 14px}
+.cd-pagehead h1{font-size:1.4em;margin:0}
+.cd-adminmain h2{font-size:1.05em;margin:0 0 6px}
+.cd-set{margin:0 0 28px;padding:0 0 22px;border-bottom:1px solid var(--cd-line)}
+.cd-set:last-child{border-bottom:0}
+.cd-box{border:1px solid var(--cd-line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--cd-card)}
+.cd-formrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+.cd-formrow label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.cd-formrow input[type=text],.cd-formrow input[type=password],.cd-formrow input[type=number],.cd-formrow select,.cd-inline input,.cd-actsed input,.cd-actsed select,.cd-advanced select{font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--cd-line);border-radius:6px;background:var(--cd-field);color:var(--cd-fg)}
+.cd-formrow input[type=number]{width:5.5em}
+.cd-ok{color:var(--cd-pos);font-size:12px}
+.cd-ok[hidden],.cd-inline[hidden],.cd-addform[hidden],.cd-tokonce[hidden]{display:none}
+.cd-warn-text{color:var(--cd-warn)}
+.cd-k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted);font-weight:600;margin-right:6px}
+.cd-k .cd-muted{text-transform:none;letter-spacing:0;font-weight:400}
+.cd-link{border:0;background:transparent;padding:0 2px;font:inherit;font-size:inherit;color:var(--cd-accent);text-decoration:underline dotted;cursor:pointer}
+.cd-link:hover{color:var(--cd-fg)}
+/* ---- Members ---- */
+.cd-memlist{display:flex;flex-direction:column;gap:10px}
+.cd-mem{border:1px solid var(--cd-line);border-radius:10px;padding:10px 14px;background:var(--cd-card)}
+.cd-mem.cd-mem-disabled{background:var(--cd-dim);color:var(--cd-muted)}
+.cd-memhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cd-memwho{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px}
+.cd-memwho .cd-member{font-weight:600}
+.cd-handle{font-size:12px;color:var(--cd-muted)}
+.cd-chip.cd-role{background:var(--cd-soft);border-color:transparent;color:var(--cd-fg)}
+.cd-chip.cd-role-owner{background:var(--cd-owner-bg);color:var(--cd-owner-ink)}
+.cd-memmeta{margin:2px 0 6px}
+.cd-memgrants{font-size:13px;margin:6px 0}
+.cd-grant{white-space:nowrap}
+.cd-memtokens{margin:8px 0 4px;overflow-x:auto}
+.cd-memtokhead{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.cd-toktable{border-collapse:collapse;font-size:12px;width:100%}
+.cd-toktable th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted);font-weight:600;padding:3px 6px;border-bottom:1px solid var(--cd-line)}
+.cd-toktable td{padding:4px 6px;border-bottom:1px solid var(--cd-soft);vertical-align:middle;white-space:nowrap}
+.cd-toktable .cd-tokid{color:var(--cd-muted);font-size:11px}
+.cd-tok[data-status=expired] td{color:var(--cd-muted)}
+.cd-notokens{margin:2px 0}
+.cd-inline{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:6px 0;font-size:13px}
+.cd-inline .cd-err{margin:0}
+.cd-confirm{font-size:12px;color:var(--cd-warn)}
+.cd-tokonce{border:1px solid var(--cd-info-line);background:var(--cd-info-bg);color:var(--cd-info-ink);border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px}
+.cd-tokonce-h{font-weight:600;margin-bottom:4px}
+.cd-tokline{margin:6px 0;padding:8px 10px;background:var(--cd-field);color:var(--cd-fg);border:1px solid var(--cd-info-line);border-radius:6px;font-family:var(--cd-mono);font-size:12px;overflow-x:auto;user-select:all;-webkit-user-select:all}
+.cd-tokonce .cd-copied{margin-left:6px;color:var(--cd-pos)}
+/* ticket 18: the pairing panel (a .cd-tokonce with the QR code) */
+/* the QR code keeps a white ground in every appearance (cameras read dark-on-light) */
+.cd-paironce .cd-qr{background:#fff;border:1px solid var(--cd-info-line);border-radius:6px;display:inline-block;padding:4px;line-height:0}
+.cd-paironce .cd-qr svg{width:232px;height:232px;max-width:100%}
+.cd-paironce .cd-pairnote{margin:6px 0;max-width:46em}
+details.cd-advanced{margin:8px 0 2px;border-top:1px dashed var(--cd-line);padding-top:6px}
+details.cd-advanced summary{cursor:pointer;font-size:12px;color:var(--cd-muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+details.cd-advanced summary .cd-muted{font-weight:400;text-transform:none;letter-spacing:0}
+.cd-advrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;margin:8px 0}
+.cd-granttable{border-collapse:collapse;font-size:12px;margin:6px 0}
+.cd-granttable td{padding:3px 10px 3px 0;white-space:nowrap}
+.cd-grantvault{font-weight:600}
+/* ---- Settings: Vaults / Actions editor ---- */
+.cd-vaulthead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cd-vaultname{font-size:15px}
+.cd-actsed{border-collapse:collapse;font-size:12px;margin:6px 0;width:100%}
+.cd-actsed th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--cd-muted);font-weight:600;padding:3px 6px 3px 0}
+.cd-actsed td{padding:3px 6px 3px 0;vertical-align:middle}
+.cd-actsed input{width:100%;min-width:8em}
+.cd-actrowtools{white-space:nowrap;width:1%}
+.cd-actrowtools .cd-btn{padding:2px 6px;margin-right:2px}
+.cd-vaultacts{margin-top:8px}
+/* ---- login ---- */
+.cd-login{max-width:26rem}
+.cd-logo{font-size:1.4em;margin:0 0 .4em}
+.cd-loginform{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.cd-loginform label{display:inline-flex;gap:6px;align-items:center}
+.cd-loginform input[type=password]{font:inherit;padding:5px 8px;border:1px solid var(--cd-line);border-radius:6px;background:var(--cd-field);color:var(--cd-fg)}
+.cd-login .cd-err{margin:8px 0}
+.cd-loginsteps{padding-left:1.25rem;margin:12px 0}
+.cd-loginsteps li{margin:8px 0}

@@ -1,0 +1,8 @@
+# spec: S06-08
+bin.name = "annotary"
+args = ["-p", "rowan", "token", "mint", "--expires", "soon"]
+status.code = 1
+stdout = ""
+stderr = """
+error: --expires "soon": use a duration (30d, 12h, 2w), a date (2026-12-31) or an ISO-8601 time
+"""

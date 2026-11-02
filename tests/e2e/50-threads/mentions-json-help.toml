@@ -1,0 +1,8 @@
+# spec: S04-15
+bin.name = "annotary"
+args = ["-p", "down", "mentions", "--json", "?"]
+status = "success"
+stdout = """
+doc id thread author anchor body mentions replies created updated version vault
+"""
+stderr = ""

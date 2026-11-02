@@ -1,0 +1,8 @@
+# spec: S09-11, S02-07
+bin.name = "annotary"
+args = ["-p", "rowan", "rerender", "no-such-document"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Document "no-such-document" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+"""

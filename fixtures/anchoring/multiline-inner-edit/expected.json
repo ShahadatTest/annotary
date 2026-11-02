@@ -1,0 +1,16 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "3:6-5:10",
+      "exact": "line of the span\nsecond line in the middle\nthird line"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "3:6-5:10",
+      "exact": "line of the span\nsecond line REWORDED in the middle\nthird line"
+    }
+  ]
+}

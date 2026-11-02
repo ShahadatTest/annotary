@@ -1,0 +1,13 @@
+# spec: S01-11, S01-14
+# The agent's Token (profile `agent`, minted by `member add`) lists members too — listing is not owner-only.
+bin.name = "annotary"
+args = ["member", "list"]
+env.add = { ANNOTARY_PROFILE = "agent" }
+status = "success"
+stdout = """
+@rowan	Rowan Vale	owner	*:read,comment,action,write
+@scribe	Scribe	member	*:read,comment,action,write
+@linter	linter	member	*:read,comment,action,write
+@limited	Limited Agent	member	notes:read,comment
+"""
+stderr = ""

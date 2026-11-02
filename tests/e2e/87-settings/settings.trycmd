@@ -1,0 +1,202 @@
+spec: S29-30, S29-31
+
+`settings list | get | set | reset` and `devices list | rename | forget` (CMD-23) for their own
+Member @kim (profile `kim`, removed again at the end), whose Web, iPhone and iPad `setup.sh`
+makes the way the clients do (the CLI never makes a Device). Without `--device`, a device setting
+shows its All devices value; `--device NAME` (an id, else a name, case-insensitively) resolves for
+that Device. A device setting needs `--all-devices` or `--device`, a user setting neither. Every
+exit path: 1 (missing or wrong flag, unknown key, bad value, low contrast, Display name reset), 2
+(unknown Device or Vault), 5 (Web renamed or forgotten, a forgotten Device written), 6
+(unreachable). Merged stdout+stderr; last-seen ages are `[..]`.
+
+```console
+$ sh setup.sh
+profile "kim" saved → [..]/config.toml
+Kim has Web, an iPhone and an iPad
+
+$ annotary -p kim settings list
+display_name	Kim	user	user
+appearance	system	default	device
+highlight_light	yellow	default	device
+highlight_dark	yellow	default	device
+text_size	100	default	device
+show_resolved	hidden	default	user
+default_vault	any	default	user
+keyboard_shortcuts	on	default	device
+send_key	enter	default	device
+times	relative	default	user
+clock	system	default	user
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p kim settings
+KEY                 VALUE     SOURCE   KIND
+display_name        Kim       user     user
+appearance          system    default  device
+highlight_light     yellow    default  device
+highlight_dark      yellow    default  device
+text_size           100       default  device
+show_resolved       hidden    default  user
+default_vault       any       default  user
+keyboard_shortcuts  on        default  device
+send_key            enter     default  device
+times               relative  default  user
+clock               system    default  user
+
+$ annotary -p kim settings list --json key,value,label,group
+[{"key":"display_name","value":"Kim","label":"Display name","group":"profile"},{"key":"appearance","value":"system","label":"Appearance","group":"appearance"},{"key":"highlight_light","value":"yellow","label":"Highlight, light","group":"appearance"},{"key":"highlight_dark","value":"yellow","label":"Highlight, dark","group":"appearance"},{"key":"text_size","value":100,"label":"Text size","group":"appearance"},{"key":"show_resolved","value":"hidden","label":"Resolved Threads","group":"threads"},{"key":"default_vault","value":"any","label":"Default Vault","group":"documents"},{"key":"keyboard_shortcuts","value":"on","label":"Keyboard shortcuts","group":"keyboard"},{"key":"send_key","value":"enter","label":"Send key for replies","group":"keyboard"},{"key":"times","value":"relative","label":"Times shown as","group":"date-and-time"},{"key":"clock","value":"system","label":"Clock","group":"date-and-time"}]
+
+$ annotary -p kim devices list
+web	web	Web	[..]
+01K9PH0NE00000000000000001	iphone	iPhone 17	[..]
+01K9PAD0000000000000000002	ipad	iPad Pro	[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p kim devices
+ID                          KIND    NAME       LAST SEEN
+web                         web     Web        [..]
+01K9PH0NE00000000000000001  iphone  iPhone 17  [..]
+01K9PAD0000000000000000002  ipad    iPad Pro   [..]
+
+$ annotary -p kim devices list --json id,kind,name
+[{"id":"web","kind":"web","name":"Web"},{"id":"01K9PH0NE00000000000000001","kind":"iphone","name":"iPhone 17"},{"id":"01K9PAD0000000000000000002","kind":"ipad","name":"iPad Pro"}]
+
+$ annotary -p kim settings set appearance dark
+? 1
+error: appearance is a device setting: say --all-devices or --device NAME — `annotary devices list` shows your Devices
+
+$ annotary -p kim settings set times absolute --device web
+? 1
+error: times is a user setting, the same on every Device: drop --device — annotary settings set times VALUE
+
+$ annotary -p kim settings set nope 1
+? 1
+error: no setting "nope" — GET /api/v1/me/settings/catalog lists them (`annotary settings list`)
+
+$ annotary -p kim settings set appearance purple --all-devices
+? 1
+error: appearance: "purple" is not one of system, light, dark
+
+$ annotary -p kim settings set highlight_dark "#222222" --all-devices
+? 1
+error: highlight_dark: text on that color has a contrast of [..]:1, below 4.5:1 — pick a lighter color for light pages, a brighter one for dark pages
+
+$ annotary -p kim settings set appearance dark --device toaster
+? 2
+error: no Device toaster — name one by its id or its name (`annotary devices list --all`)
+  web  Web
+  01K9PH0NE00000000000000001  iPhone 17
+  01K9PAD0000000000000000002  iPad Pro
+
+$ annotary -p kim settings get nope
+? 1
+error: no setting "nope" — `annotary settings list` shows them
+
+$ annotary -p kim settings set text_size 130% --all-devices
+text_size	130	all	device
+
+$ annotary -p kim settings set text_size 130 --all-devices
+text_size unchanged
+text_size	130	all	device
+
+$ annotary -p kim settings set appearance light --device Web
+appearance	light	device	device
+
+$ annotary -p kim settings get appearance
+appearance	system	default	device
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p kim settings get appearance --device web
+appearance  light  device  device
+
+$ annotary -p kim settings get appearance --device web --json
+{"key":"appearance","value":"light","source":"device","kind":"device"}
+
+$ annotary -p kim settings list --device "iphone 17" --json key,value,source,device
+[{"key":"display_name","value":"Kim","source":"user"},{"key":"appearance","value":"system","source":"default","device":"01K9PH0NE00000000000000001"},{"key":"highlight_light","value":"yellow","source":"default","device":"01K9PH0NE00000000000000001"},{"key":"highlight_dark","value":"yellow","source":"default","device":"01K9PH0NE00000000000000001"},{"key":"text_size","value":130,"source":"all","device":"01K9PH0NE00000000000000001"},{"key":"show_resolved","value":"hidden","source":"default"},{"key":"default_vault","value":"any","source":"default"},{"key":"keyboard_shortcuts","value":"on","source":"default","device":"01K9PH0NE00000000000000001"},{"key":"send_key","value":"enter","source":"default","device":"01K9PH0NE00000000000000001"},{"key":"times","value":"relative","source":"default"},{"key":"clock","value":"system","source":"default"}]
+
+$ annotary -p kim settings set default_vault notes
+default_vault	notes	user	user
+
+$ annotary -p kim settings set default_vault nowhere
+? 2
+error: no Vault nowhere — name one you can read (notes) or `any`
+
+$ annotary -p kim settings set times absolute --json
+{"key":"times","value":"absolute","source":"user","kind":"user","changed":true}
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p kim settings set times absolute
+times unchanged
+times  absolute  user  user
+
+$ annotary -p kim settings reset appearance
+? 1
+error: appearance is a device setting: say --all-devices or --device NAME — `annotary devices list` shows your Devices
+
+$ annotary -p kim settings reset appearance --device web
+appearance	system	default	device
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p kim settings reset times
+times  relative  default  user
+
+$ annotary -p kim settings reset default_vault --json
+{"key":"default_vault","value":"any","source":"default","kind":"user","changed":true}
+
+$ annotary -p kim settings reset display_name
+? 1
+error: display_name: a display name has no default
+
+$ annotary -p kim devices rename "ipad pro" "Kim's iPad"
+01K9PAD0000000000000000002	ipad	Kim's iPad	[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p kim devices rename 01K9PH0NE00000000000000001 "Kim's iPhone"
+01K9PH0NE00000000000000001  iphone  Kim's iPhone  [..]
+
+$ annotary -p kim devices rename web Browser
+? 5
+error: Web stands for every browser: it can't be renamed or forgotten — signing out of browsers is what Sign out does
+
+$ annotary -p kim devices rename toaster x
+? 2
+error: no Device toaster — name one by its id or its name (`annotary devices list --all`)
+  web  Web
+  01K9PH0NE00000000000000001  Kim's iPhone
+  01K9PAD0000000000000000002  Kim's iPad
+
+$ annotary -p kim devices forget Web
+? 5
+error: Web stands for every browser: it can't be renamed or forgotten — signing out of browsers is what Sign out does
+
+$ annotary -p kim devices forget "kim's ipad"
+01K9PAD0000000000000000002	Kim's iPad	forgotten	1 Token revoked	0 sessions ended
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p kim devices forget "Kim's iPad"
+Device 01K9PAD0000000000000000002 was already forgotten
+01K9PAD0000000000000000002  Kim's iPad  forgotten  0 Tokens revoked  0 sessions ended
+
+$ annotary -p kim devices forget "Kim's iPhone" --json
+{"id":"01K9PH0NE00000000000000001","name":"Kim's iPhone","forgotten":true,"tokens_revoked":1,"sessions_ended":0}
+
+$ annotary -p kim devices list
+web	web	Web	[..]
+
+$ annotary -p kim devices list --all
+web	web	Web	[..]
+01K9PH0NE00000000000000001	iphone	Kim's iPhone (forgotten)	[..]
+01K9PAD0000000000000000002	ipad	Kim's iPad (forgotten)	[..]
+
+$ annotary -p kim settings set appearance dark --device "Kim's iPad"
+? 5
+error: Device 01K9PAD0000000000000000002 was forgotten — a forgotten Device id is never used again: make a new one
+
+$ annotary -p rowan token list --member kim --all --json name,status
+[{"name":"member add","status":"active"},{"name":"iphone","status":"revoked"},{"name":"ipad","status":"revoked"}]
+
+$ annotary -p down settings list
+? 6
+error: server at http://127.0.0.1:1 not reachable — run `annotary serve` or `annotary daemon install`
+
+$ annotary -p down devices list
+? 6
+error: server at http://127.0.0.1:1 not reachable — run `annotary serve` or `annotary daemon install`
+
+$ annotary -p rowan -q profile remove kim
+profile "kim" removed → [..]/config.toml
+
+```

@@ -1,0 +1,9 @@
+# spec: S18-09
+# An unknown Member: exit 2.
+bin.name = "annotary"
+args = ["-p", "rowan", "pair", "--member", "nobody"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Member @nobody — `annotary member list` shows who
+"""

@@ -1,0 +1,9 @@
+# spec: S02-05
+bin.name = "annotary"
+args = ["-p", "rowan", "push", "nope.md"]
+fs.sandbox = true
+status.code = 1
+stdout = ""
+stderr = """
+error: cannot read nope.md: No such file or directory (os error 2)
+"""

@@ -1,0 +1,16 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:8-5:16",
+      "exact": "bb cc dd"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "5:8-5:16",
+      "exact": "bb cc dd"
+    }
+  ]
+}

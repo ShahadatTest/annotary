@@ -1,0 +1,170 @@
+{
+  "format": 1,
+  "id": "[..]",
+  "vault": "notes",
+  "base_version": 5,
+  "members": {
+    "rowan": {"id": "[..]", "name": "Rowan Vale"},
+    "scribe": {"id": "[..]", "name": "Scribe"}
+  },
+  "versions": [
+    {"number": 1, "name": "ra-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "first draft"},
+    {"number": 2, "name": "ra-plan", "hash": "[..]", "by": "scribe", "at": "[..]T[..]Z", "message": "address review: add Risks, split rollout"},
+    {"number": 3, "name": "ra-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z"},
+    {"number": 4, "name": "ra-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "back to the first-draft wording for comparison"},
+    {"number": 5, "name": "ra-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "well before"}
+  ],
+  "assets": [
+    {"ref": "img/architecture.png", "hash": "[..]", "size": 89, "type": "image/png"},
+    {"ref": "img/cli-screenshot.png", "type": "image/png", "missing": true},
+    {"ref": "api-notes.md", "type": "text/markdown", "missing": true}
+  ],
+  "actions": {
+    "available": [
+      {"id": "approve", "label": "Approve", "intent": "positive"},
+      {"id": "send-back", "label": "Send back", "intent": "neutral"}
+    ],
+    "inherited": true
+  },
+  "threads": [
+    {
+      "id": "t1",
+      "subject": "document",
+      "author": "rowan",
+      "created": {"at": "[..]T[..]Z", "version": 1},
+      "body": "Needs a Risks section before I can approve.",
+      "resolved": {"by": "scribe", "at": "[..]T[..]Z", "version": 1},
+      "replies": [
+        {
+          "id": "t1.1",
+          "author": "scribe",
+          "created": {"at": "[..]T[..]Z", "version": 1},
+          "body": "Added a Risks section in v2."
+        }
+      ]
+    },
+    {
+      "id": "t2",
+      "subject": "span",
+      "anchor": {
+        "original": {"version": 1, "range": "16:0-16:33", "exact": "We ship the CLI before the web UI"},
+        "current": {"version": 5, "range": "16:0-16:38", "status": "refined", "exact": "We ship the CLI well before the web UI"},
+        "history": [
+          {"version": 1, "range": "16:0-16:33", "status": "anchored"},
+          {"version": 5, "range": "16:0-16:38", "status": "refined"}
+        ]
+      },
+      "author": "rowan",
+      "created": {"at": "[..]T[..]Z", "version": 1},
+      "body": "Agreed — but the skill file must land *with* the CLI, not after."
+    },
+    {
+      "id": "t3",
+      "subject": "span",
+      "anchor": {
+        "original": {"version": 1, "range": "20:41-20:73", "exact": "invite three external developers"},
+        "current": {"version": 5, "range": "20:41-20:73", "status": "anchored"},
+        "history": [
+          {"version": 1, "range": "20:41-20:73", "status": "anchored"},
+          {"version": 2, "range": "31:5-31:37", "status": "anchored"},
+          {"version": 3, "range": "31:5-31:36", "status": "refined"},
+          {"version": 4, "range": "20:41-20:73", "status": "anchored"}
+        ]
+      },
+      "author": "scribe",
+      "created": {"at": "[..]T[..]Z", "version": 1},
+      "body": "Three feels low for useful signal. Five?",
+      "resolved": {"by": "rowan", "at": "[..]T[..]Z", "version": 3},
+      "replies": [
+        {
+          "id": "t3.1",
+          "author": "rowan",
+          "created": {"at": "[..]T[..]Z", "version": 3},
+          "body": "Done — five, and two weeks of feedback."
+        }
+      ]
+    },
+    {
+      "id": "t4",
+      "subject": "asset",
+      "anchor": {
+        "original": {"version": 1, "hash": "[..]", "ref": "img/architecture.png", "line": 3},
+        "current": {"version": 5, "line": 3, "status": "anchored"},
+        "history": [
+          {"version": 1, "line": 3, "status": "anchored"}
+        ]
+      },
+      "author": "rowan",
+      "created": {"at": "[..]T[..]Z", "version": 1},
+      "body": "Diagram is out of date — the daemon box is missing."
+    },
+    {
+      "id": "t5",
+      "subject": "span",
+      "anchor": {
+        "original": {"version": 1, "range": "11:48-11:69", "exact": "testable in isolation"},
+        "current": {"version": 5, "range": "11:48-11:69", "status": "anchored"},
+        "history": [
+          {"version": 1, "range": "11:48-11:69", "status": "anchored"}
+        ]
+      },
+      "author": "scribe",
+      "created": {"at": "[..]T[..]Z", "version": 1},
+      "body": "Should the anchor engine be its own package?"
+    },
+    {
+      "id": "t6",
+      "subject": "span",
+      "anchor": {
+        "original": {"version": 2, "range": "21:29-21:79", "exact": "agents should use the CLI, not read the file whole"},
+        "current": {"version": 3, "range": "21:29-21:79", "status": "orphaned"},
+        "history": [
+          {"version": 2, "range": "21:29-21:79", "status": "anchored"},
+          {"version": 4, "status": "orphaned"}
+        ]
+      },
+      "author": "rowan",
+      "created": {"at": "[..]T[..]Z", "version": 2},
+      "body": "This is exactly what the sidecar-format ticket has to answer — link it here."
+    },
+    {
+      "id": "t7",
+      "subject": "span",
+      "anchor": {
+        "original": {"version": 2, "range": "20:27-20:57", "exact": "mitigated by the fixture table"},
+        "current": {"version": 3, "range": "20:27-20:57", "status": "orphaned"},
+        "history": [
+          {"version": 2, "range": "20:27-20:57", "status": "anchored"},
+          {"version": 4, "status": "orphaned"}
+        ]
+      },
+      "author": "scribe",
+      "created": {"at": "[..]T[..]Z", "version": 2},
+      "body": "",
+      "deleted": {"at": "[..]T[..]Z", "by": "scribe"},
+      "replies": [
+        {
+          "id": "t7.1",
+          "author": "rowan",
+          "created": {"at": "[..]T[..]Z", "version": 2},
+          "body": "(Replying to the deleted question: yes — the fixture table is also the seed of the test suite.)"
+        }
+      ]
+    },
+    {
+      "id": "t8",
+      "subject": "span",
+      "anchor": {
+        "original": {"version": 3, "range": "31:41-31:57", "exact": "collect feedback"},
+        "current": {"version": 3, "range": "31:41-31:57", "status": "orphaned"},
+        "history": [
+          {"version": 3, "range": "31:41-31:57", "status": "anchored"},
+          {"version": 4, "status": "orphaned"}
+        ]
+      },
+      "author": "scribe",
+      "created": {"at": "[..]T[..]Z", "version": 3},
+      "body": "How — survey or interviews? Worth deciding before the invites go out."
+    }
+  ]
+}

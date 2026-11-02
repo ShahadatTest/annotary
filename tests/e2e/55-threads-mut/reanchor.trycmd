@@ -1,0 +1,44 @@
+spec: S07-06, S07-09, S07-10, S07-05, S07-17
+
+Re-anchoring on a Document of its own (`ra-life`): a whole-Asset Thread and a span Thread are
+orphaned by a push that drops the image and retypes the line; the next push restores both byte
+for byte and they stay orphaned (sticky, `(unchanged)`); orphaned Threads are still listed,
+replyable and resolvable; `push --json` carries the `threads` summary. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push ra-life.md
+assets: 1 referenced, [..]
+ra-life	[..]	v1
+
+$ annotary -p rowan thread new ra-life --asset img/a.png -m "picture"
+t1	asset img/a.png
+
+$ annotary -p agent thread new ra-life "3:0-3:5" -m "hello?"
+t2	v1:3:0-3:5 "hello"
+
+$ annotary -p rowan push v2/ra-life.md --doc ra-life -m "no picture, no hello"
+threads: 2 re-anchored — 0 anchored, 0 refined, 2 orphaned (+2 orphaned: t1, t2)
+ra-life	[..]	v2
+
+$ annotary -p agent thread list ra-life
+t2	@scribe	v1:3 orphaned "hello"	hello?	[..]
+t1	@rowan	asset img/a.png	picture	[..]
+
+$ annotary -p agent thread list ra-life --json id,anchor
+[{"id":"t2","anchor":{"version":1,"range":"3:0-3:5","status":"orphaned","exact":"hello"}},{"id":"t1","anchor":{"asset":"img/a.png"}}]
+
+$ annotary -p rowan push v3/ra-life.md --doc ra-life -m "everything back"
+assets: 1 referenced, [..]
+threads: 2 re-anchored — 0 anchored, 0 refined, 2 orphaned (unchanged)
+ra-life	[..]	v3 (same content as v1)
+
+$ annotary -p agent thread reply ra-life t2 --resolve -m "still fine, orphaned or not"
+t2.1	resolved
+
+$ annotary -p agent thread list ra-life --all --status orphaned --json id,anchor,resolved
+[{"id":"t2","anchor":{"version":1,"range":"3:0-3:5","status":"orphaned","exact":"hello"},"resolved":{"by":"scribe","at":"[..]","version":3}},{"id":"t1","anchor":{"asset":"img/a.png"}}]
+
+$ annotary -p rowan push v4/ra-life.md --doc ra-life -m "ps" -q --json name,version,threads
+{"name":"ra-life","version":4,"threads":{"re_anchored":2,"anchored":0,"refined":0,"orphaned":2}}
+
+```

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "G",
+    "subject": "span",
+    "version": 1,
+    "range": "28:0-29:25"
+  },
+  {
+    "id": "B",
+    "subject": "span",
+    "version": 1,
+    "range": "9:0-10:28"
+  },
+  {
+    "id": "E",
+    "subject": "span",
+    "version": 1,
+    "range": "21:0-21:28"
+  }
+]

@@ -1,0 +1,13 @@
+# spec: S03-05, S03-02, S03-01
+# Several warnings under --strict: one exit-5 error listing them.
+bin.name = "annotary"
+args = ["-p", "rowan", "push", "as-strict2.md", "--strict"]
+fs.sandbox = true
+status.code = 5
+stdout = ""
+stderr = """
+error: 3 push warnings (--strict) — fix the references or push without --strict
+  missing asset img/nope.png (not found)
+  unsupported asset notes.docx (.docx)
+  absolute path /tmp/x.png
+"""

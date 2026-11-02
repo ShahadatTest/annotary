@@ -1,0 +1,14 @@
+{
+  "C": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "13:0-14:28",
+      "exact": "Line 13: mike bravo xray\nLine 14: november india echo"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ]
+}

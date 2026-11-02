@@ -1,0 +1,9 @@
+# spec: S06-07
+# A Member sees their own tokens (the profile's token has just been used, so LAST USED is set).
+bin.name = "annotary"
+args = ["-p", "limited", "token", "list"]
+status = "success"
+stdout = """
+@limited	member add	[..]	[..]	-	[..]
+"""
+stderr = ""

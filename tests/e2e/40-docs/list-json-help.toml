@@ -1,0 +1,8 @@
+# spec: S02-20
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "--json", "?"]
+status = "success"
+stdout = """
+id name version action open updated vault by message deleted created
+"""
+stderr = ""

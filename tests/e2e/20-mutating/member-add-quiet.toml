@@ -1,0 +1,9 @@
+# spec: S01-11
+# -q: result only.
+bin.name = "annotary"
+args = ["-p", "rowan", "-q", "member", "add", "quiet-agent"]
+status = "success"
+stdout = """
+ANNOTARY_TOKEN=ant_[..]
+"""
+stderr = ""

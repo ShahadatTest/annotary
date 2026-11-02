@@ -1,0 +1,8 @@
+# spec: S04-15
+bin.name = "annotary"
+args = ["-p", "down", "thread", "reply", "th-plan", "t1", "-m", "x", "--json", "?"]
+status = "success"
+stdout = """
+id thread state version doc
+"""
+stderr = ""

@@ -1,0 +1,8 @@
+# spec: S04-11
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "th-plan", "--sort", "age"]
+status.code = 1
+stdout = ""
+stderr = """
+error: --sort "age": the only sort is `recent` — default is document order (Document-level first, then by position)
+"""

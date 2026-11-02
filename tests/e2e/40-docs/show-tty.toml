@@ -1,0 +1,10 @@
+# spec: S02-28, S02-30
+# TTY: same fields, two-space separated, and the web URL appended.
+bin.name = "annotary"
+args = ["-p", "rowan", "show", "ro-plan", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+ro-plan  [..]  notes  v3 by @rowan [..] "back to v1"  action:-  open:0  actions:approve,send-back  [URL]/d/[..]
+"""
+stderr = ""

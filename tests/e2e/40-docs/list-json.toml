@@ -1,0 +1,8 @@
+# spec: S02-20, S02-29
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "lst-", "--json"]
+status = "success"
+stdout = """
+[{"id":"[..]","name":"lst-a","version":1,"open":0,"updated":"[..]T[..]Z"},{"id":"[..]","name":"lst-c","version":1,"open":0,"updated":"[..]T[..]Z"},{"id":"[..]","name":"lst-b","version":1,"open":0,"updated":"[..]T[..]Z"}]
+"""
+stderr = ""

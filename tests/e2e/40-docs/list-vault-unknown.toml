@@ -1,0 +1,8 @@
+# spec: S02-21, S02-08
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "--vault", "drafts"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Vault drafts
+"""

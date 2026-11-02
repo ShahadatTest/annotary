@@ -1,0 +1,8 @@
+# spec: S04-05
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "th-plan", "sixteen", "-m", "x"]
+status.code = 1
+stdout = ""
+stderr = """
+error: range "sixteen" is not L:C-L:C (lines from 1, columns from 0, e.g. "16:0-16:33")
+"""

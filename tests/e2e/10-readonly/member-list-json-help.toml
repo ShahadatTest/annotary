@@ -1,0 +1,9 @@
+# spec: S01-17
+# --json ? lists every field (no server call needed).
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "list", "--json", "?"]
+status = "success"
+stdout = """
+handle name role grants disabled created id
+"""
+stderr = ""

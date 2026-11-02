@@ -1,0 +1,9 @@
+# spec: S04-18
+# `plan/t7` is not how a Thread is named: DOC and ID are separate arguments.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "th-plan/t2"]
+status.code = 1
+stdout = ""
+stderr = """
+error: "th-plan/t2": thread verbs take DOC and ID separately — e.g. `annotary thread show th-plan t2`
+"""

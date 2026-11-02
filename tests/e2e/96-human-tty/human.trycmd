@@ -1,0 +1,155 @@
+spec: S14-05, S14-06
+
+The human golden: the CLI prototype's `session-human.txt` in TTY mode (`ANNOTARY_TTY=1`,
+colour off) — the same verbs as the agent flow print the same fields in the same order, aligned
+with a dim header. It continues on the `plan` that `95-agent-flow` left at v5 (Approve by
+@rowan, five open Threads) and adds its own `roadmap`. First run and the daemon's `install` are
+not replayed (launchd: `make launchd-test`); `daemon status` reads the harness's own `serve`.
+`login` signs into the password server (profile `pw`) and `logout` hands it back. `list` and
+`token list` filter to this group's own Documents / Members — the store is shared. Ticket 17:
+Rowan's push over the agent's v4 is refused with the missing change shown; `merge.sh` puts it in
+and the same push lands as v5 (it used to warn and overwrite v4). Merged
+stdout+stderr; ids, ages and the Token are random.
+
+```console
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p down status plan
+? 6
+error: server at http://127.0.0.1:1 not reachable — run `annotary serve` or `annotary daemon install`
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 ANNOTARY_DAEMON_OS=macos annotary daemon status
+no LaunchAgent installed — `annotary daemon install` keeps the server up after login
+running  pid [..]  since [..]  [URL]  store ~/.annotary/store  log ~/.annotary/logs/server.log  (v0.0.0)
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 ANNOTARY_PASSWORD=hunter2 annotary -p pw login
+server [http://127.0.0.1:[..]]: http://127.0.0.1:[..]
+password: ********
+Signed in as @ana (owner). Saved profile "pw" → [..]/config.toml
+use it with -p pw
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan member add jules --name "Jules"
+@jules added: member, grants * (read,comment,action,write)
+Token (shown once):
+
+  ANNOTARY_TOKEN=ant_[..]   # put this in the agent's environment
+
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan push docs/roadmap.md -m "first draft"
+roadmap  [..]  v1[..][URL]/d/[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan push docs/v2/roadmap.md --doc roadmap -m "ships first"
+roadmap  [..]  v2[..][URL]/d/[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan push docs/v3/roadmap.md --doc roadmap -m "phase 3"
+roadmap  [..]  v3[..][URL]/d/[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan thread new roadmap --document -m "@linter is Phase 3 scoped right?"
+t1  document
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan list roadmap
+ID        NAME     VER  ACTION  OPEN  UPDATED
+[..]  roadmap  v3   -          1  [..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p linter list --mentions-me
+ID        NAME     VER  ACTION  OPEN  UPDATED
+[..]  roadmap  v3   -          1  [..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan show plan
+plan  [..]  notes  v5 by @scribe [..] "make the skill file explicit in the order of work"  action:approve@v5 by @rowan  open:5  actions:approve,send-back  [URL]/d/[..]
+ID  AUTHOR   ANCHOR                                                    BODY                                          REPLIES  AGE
+t4  @rowan   asset img/architecture.png                                Diagram is out of date — the daemon box is…   +1       [..]
+t9  @scribe  v5:20 "invite three external developers"                  Five external devs — do we have five lined…           [..]
+t7  @linter  v3:20 orphaned "mitigated by the fixture table"           (deleted)                                     +1       [..]
+t6  @rowan   v3:21 orphaned "agents should use the CLI, not read the…  This is exactly what the sidecar-format tic…           [..]
+t8  @linter  v3:31 orphaned "collect feedback"                         How — survey or interviews? Worth deciding…            [..]
+4 resolved hidden — `thread list plan --all` shows them
+3 orphaned — `thread show` prints their last placement; `--status anchored,refined` hides them
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan thread list plan
+ID  AUTHOR   ANCHOR                                                    BODY                                          REPLIES  AGE
+t4  @rowan   asset img/architecture.png                                Diagram is out of date — the daemon box is…   +1       [..]
+t9  @scribe  v5:20 "invite three external developers"                  Five external devs — do we have five lined…           [..]
+t7  @linter  v3:20 orphaned "mitigated by the fixture table"           (deleted)                                     +1       [..]
+t6  @rowan   v3:21 orphaned "agents should use the CLI, not read the…  This is exactly what the sidecar-format tic…           [..]
+t8  @linter  v3:31 orphaned "collect feedback"                         How — survey or interviews? Worth deciding…            [..]
+4 resolved hidden — `--all` shows them
+3 orphaned — `thread show` prints their last placement; `--status anchored,refined` hides them
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan status plan
+plan  [..]  v5  action:approve@v5 by @rowan  open:5  mentions-me:1  seq:[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan thread show plan t2
+t2  resolved by @scribe v5 [..]  @rowan  v5:16:0-16:33 "We ship the CLI before the web UI"  created v1 [..]  mentions @scribe
+  Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.
+t2.1  @scribe  v2 [..]  mentions @rowan
+  Item 3 already lists the skill file with the CLI. @rowan do you want it as its own item?
+t2.2  @scribe  v5 [..]  mentions @rowan
+  Done in v5 — item 3 now reads 'CLI … and its skill file'. @rowan
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan act plan approve
+plan  v5  approve  by @rowan
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan pull roadmap
+pull: 1 thread, 0 assets
+roadmap.md  roadmap.annotary  v3
+
+$ sh tweak.sh
+1
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan pull roadmap
+? 5
+error: roadmap.md has local edits since v3 (pulled [..]) — commit them with `push`, or `pull --force` to overwrite
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p agent push docs/v4/roadmap.md --doc roadmap -m "sync from local"
+threads: 1 re-anchored — 1 anchored, 0 refined, 0 orphaned (unchanged)
+roadmap  [..]  v4[..][URL]/d/[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan push roadmap.md -m "tweak"
+? 5
+error: v4 by @scribe changed roadmap.md since your v3 — those changes are not in your file — put them into roadmap.md and push again
+@@ -6,7 +6,7 @@
+ 
+ ## Phase 2 — cloud
+ 
+-Hosting, sign-in, the iOS app, harness plug-ins.
++Hosting, sign-in, the iOS app, harness plug-ins. Sync from local.
+ 
+ ## Phase 3 — suggestions
+ 
+
+$ sh merge.sh
+1
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan push roadmap.md -m "tweak"
+threads: 1 re-anchored — 1 anchored, 0 refined, 0 orphaned (unchanged)
+roadmap  [..]  v5[..][URL]/d/[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan pull roadmap --version 3 --out older
+pull: 1 thread, 0 assets
+(name on v3 was "roadmap"; Threads as they were on v3; head is v5)
+roadmap.md  roadmap.annotary  v3
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan profile list
+NAME     SERVER                  MEMBER
+agent    [URL]  @scribe
+down     http://127.0.0.1:1      -
+limited  [URL]  @limited
+linter   [URL]  @linter
+pw       http://127.0.0.1:[..]  @ana
+rowan    [URL]  @rowan
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p linter thread reply plan t8 -m "Interviews. Survey later."
+t8.1
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary skill install
+wrote ./.agents/skills/annotary/SKILL.md (v0.0.0)
+also: --dir ~/.claude/skills (any skills dir — the file lands in DIR/annotary/SKILL.md)
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan token list --member linter
+MEMBER   NAME        CREATED  LAST USED  EXPIRES     ID
+@linter  member add  [..]     [..]       -           [..]
+@linter  ci          [..]     -          [..]  [..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p pw logout
+Signed out (@ana): profile "pw" — token revoked and removed
+
+```

@@ -1,0 +1,59 @@
+spec: S03-01, S03-03, S03-04, S03-11, S03-13, S03-14, S03-15
+
+The ticket's scenario: `as-plan.md` references a PNG, a linked `api-notes.md` (which references
+`img/flow.svg` — recorded with `via`), an `https://` link (ignored) and a missing screenshot.
+Push warns about the missing file, uploads only what the server lacks and prints the `assets:`
+line; a re-push uploads nothing; `pull --assets` writes the files back to their relative paths
+(skipping same-hash files, refusing differing ones without `--force`); the pulled tree pushes
+back as `already v1`. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push as-plan.md -m "first draft"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 3 new (287 B), 1 missing (img/cli-screenshot.png)
+as-plan	[..]	v1
+
+$ annotary -p rowan push as-plan.md
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+as-plan	[..]	already v1
+
+$ annotary -p rowan push as-plan.md --json
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+{"name":"as-plan","id":"[..]","version":1,"already":true,"warnings":["missing asset img/cli-screenshot.png (not found) — pushed with missing:true"]}
+
+$ annotary -p rowan push as-plan.md -q --json assets
+{"assets":{"referenced":4,"new":0,"new_bytes":0,"missing":["img/cli-screenshot.png"]}}
+
+$ annotary -p rowan pull as-plan --out out
+pull: 0 threads, 4 assets (1 missing: img/cli-screenshot.png); assets not written (--assets)
+as-plan.md	as-plan.annotary	v1
+
+$ annotary -p rowan pull as-plan --out out --assets
+pull: 0 threads, 4 assets (1 missing: img/cli-screenshot.png); 3 written, 0 unchanged
+as-plan.md	as-plan.annotary	v1
+
+$ annotary -p rowan pull as-plan --out out --assets --json
+pull: 0 threads, 4 assets (1 missing: img/cli-screenshot.png); 0 written, 3 unchanged
+{"md":"as-plan.md","sidecar":"as-plan.annotary","version":1}
+
+$ annotary -p rowan push out/as-plan.md
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+as-plan	[..]	already v1
+
+$ annotary -p rowan pull as-plan --out dl --assets
+? 5
+error: 1 asset file here differs from v1 (img/flow.svg) — `pull --assets --force` overwrites them, or use --out DIR
+
+$ annotary -p rowan pull as-plan --out dl --assets --force
+pull: 0 threads, 4 assets (1 missing: img/cli-screenshot.png); 2 written, 1 unchanged
+as-plan.md	as-plan.annotary	v1
+
+$ annotary -p rowan push dl/as-plan.md
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+as-plan	[..]	already v1
+
+```

@@ -1,0 +1,12 @@
+# spec: S01-01, S18-01
+# Anything but loopback is refused before the store is touched (exit 1, nothing created) —
+# unless `--allow-remote` (ticket 18), which the hint names.
+bin.name = "annotary"
+args = ["serve", "--bind", "0.0.0.0", "--port", "0"]
+env.add = { ANNOTARY_HOME = "cdhome" }
+fs.sandbox = true
+status.code = 1
+stdout = ""
+stderr = """
+error: refusing to bind 0.0.0.0 — annotary serves loopback only; add --allow-remote to serve on a Tailscale / LAN address (then set a local password for web access), or use an SSH tunnel
+"""

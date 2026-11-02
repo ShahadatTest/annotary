@@ -1,0 +1,11 @@
+{
+  "name": "annotary-web-tests",
+  "private": true,
+  "description": "Playwright browser tests for the annotary web UI (tests/web/). Run via `make e2e`; needs the built binary (target/debug/annotary) and the cached Chromium of the pinned @playwright/test.",
+  "scripts": {
+    "test:web": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  }
+}

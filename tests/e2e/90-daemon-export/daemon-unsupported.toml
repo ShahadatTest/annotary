@@ -1,0 +1,11 @@
+# spec: S13-03
+# Anywhere but macOS `daemon` exits 1 and points at the service manager (forced here with the
+# ANNOTARY_DAEMON_OS seam). Nothing is created.
+bin.name = "annotary"
+args = ["daemon", "status"]
+env.add = { ANNOTARY_DAEMON_OS = "linux" }
+status.code = 1
+stdout = ""
+stderr = """
+error: daemon is unsupported here (linux) — run `annotary serve` under your service manager (systemd, a Windows service, …)
+"""

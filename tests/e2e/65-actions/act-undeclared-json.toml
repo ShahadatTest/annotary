@@ -1,0 +1,8 @@
+# spec: S05-03
+bin.name = "annotary"
+args = ["-p", "rowan", "act", "act-plan", "ship", "--json"]
+status.code = 5
+stdout = ""
+stderr = """
+{"error":"undeclared_action","message":"no Action [..]ship[..] on act-plan ([..])","hint":"available: approve, send-back"}
+"""

@@ -1,0 +1,11 @@
+# spec: S07-14, S07-17
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "show", "ra-plan", "t2", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+t2  open  @rowan  v5:16:0-16:38 refined "We ship the CLI before the web UI"  created v1 [..]
+  Agreed — but the skill file must land *with* the CLI, not after.
+  now: "We ship the CLI well before the web UI"
+"""
+stderr = ""

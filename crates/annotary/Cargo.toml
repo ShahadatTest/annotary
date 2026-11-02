@@ -1,0 +1,80 @@
+[package]
+name = "annotary"
+description = "Share Markdown with humans and agents, and comment on it together"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+default-run = "annotary"
+
+[lib]
+name = "annotary"
+path = "src/lib.rs"
+
+[[bin]]
+name = "annotary"
+path = "src/main.rs"
+
+[dependencies]
+annotary-store = { workspace = true }
+annotary-renderer = { workspace = true }
+annotary-diff = { workspace = true }
+annotary-sidecar = { workspace = true }
+
+clap = { version = "4", features = ["derive", "env", "wrap_help"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = "1"
+thiserror = { workspace = true }
+jiff = { workspace = true }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal", "sync", "time"] }
+axum = { version = "0.8", features = ["json", "http1", "tokio", "form"] } # form: the login page (ticket 06)
+http-body-util = "0.1"
+# ticket 08: the SSE stream of `GET /api/v1/events` (already an axum dependency).
+futures-util = { version = "0.3", default-features = false, features = ["alloc"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+# CMD-18: `rustls` = rustls with the ring provider and the bundled Mozilla roots (webpki-roots),
+# so the CLI speaks https (the live server is https only; ts.net certificates are Let's Encrypt).
+ureq = { version = "3", default-features = false, features = ["json", "rustls"] }
+# CMD-18: only to recognise a TLS failure inside ureq's io error (`client::map_transport`).
+rustls = { version = "0.23", default-features = false }
+rpassword = "7"
+libc = "0.2"
+tempfile = { workspace = true }
+# Assets (ticket 03): the Markdown scan shares the renderer's parser; dimensions and derivatives.
+pulldown-cmark = { version = "0.13", default-features = false }
+imagesize = "0.15"
+kamadak-exif = "0.6"
+image = { version = "0.25", default-features = false, features = ["bmp", "tiff", "png", "jpeg"] }
+# ticket 18: pairing QR codes.
+qrcode = { workspace = true }
+
+[dev-dependencies]
+# M5: the patterns of the personal-details guard — `tests/no_personal_details.rs`.
+regex = "1"
+# Turns on failpoints in the store for `cargo test` only (resolver 3 keeps dev-dependency features
+# out of `cargo build`).
+annotary-store = { workspace = true, features = ["failpoints"] }
+fail = { version = "0.5", features = ["failpoints"] }
+trycmd = "1"
+rusqlite = "0.40"
+# ticket 13: the export test unpacks the tarball it made.
+tar = "0.4"
+# ticket 14: the token-count guard (o200k, the prototype's tokenizer) — `tests/token_report.rs`.
+tiktoken-rs = "0.12"
+# ticket 15: the perf generator at its smoke scale — `tests/perf_smoke.rs`.
+annotary-perfgen = { workspace = true }
+# ticket 18: drive the router with a chosen peer address (`tests/server_bind.rs`).
+tower = { version = "0.5", features = ["util"] }
+# CMD-18: a local https server with a test certificate for `tests/cli_tls.rs` (ureq comes from
+# [dependencies], never repeated here: a dev copy with `rustls` would hide a missing feature).
+rcgen = "0.14"
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+
+# `publish = false` keeps it off crates.io; this is the one crate cargo-dist releases.
+[package.metadata.dist]
+dist = true

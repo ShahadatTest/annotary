@@ -1,0 +1,8 @@
+# spec: S02-14
+bin.name = "annotary"
+args = ["-p", "rowan", "pull", "x", "--json", "?"]
+status = "success"
+stdout = """
+md sidecar version name id vault threads assets written
+"""
+stderr = ""

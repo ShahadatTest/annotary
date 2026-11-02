@@ -1,0 +1,9 @@
+# spec: S04-15, S04-14
+# `--json`: the Sidecar's Thread shape (handles, seconds), always an array.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "show", "th-plan", "t4", "--json"]
+status = "success"
+stdout = """
+[{"id":"t4","subject":"span","anchor":{"original":{"version":1,"range":"20:41-20:73","exact":"invite three external developers"},"current":{"version":1,"range":"20:41-20:73","status":"anchored"},"history":[{"version":1,"range":"20:41-20:73","status":"anchored"}]},"author":"rowan","created":{"at":"[..]T[..]Z","version":1},"body":"Three feels low for useful signal. Five?","replies":[{"id":"t4.1","author":"scribe","created":{"at":"[..]T[..]Z","version":1},"deleted":{"at":"[..]T[..]Z","by":"scribe"}}],"updated":"[..]T[..]Z"}]
+"""
+stderr = ""

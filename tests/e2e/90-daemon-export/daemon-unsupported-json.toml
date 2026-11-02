@@ -1,0 +1,9 @@
+# spec: S13-03, S01-18
+bin.name = "annotary"
+args = ["daemon", "install", "--json"]
+env.add = { ANNOTARY_DAEMON_OS = "linux" }
+status.code = 1
+stdout = ""
+stderr = """
+{"error":"usage","message":"daemon is unsupported here (linux)","hint":"run `annotary serve` under your service manager (systemd, a Windows service, …)"}
+"""

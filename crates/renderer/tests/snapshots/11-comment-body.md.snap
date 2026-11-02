@@ -1,0 +1,9 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<p data-l="1-2">A comment body is the same superset <strong>minus embeds</strong>: <a href="/a/0000000000000000000000000000000000000000000000000000000000000b01" title="T">an image</a> and <a class="asset-missing" data-ref="img/gone.png">missing</a>
+and <a href="https://example.com/i.png">external</a> become links; <a href="/a/0000000000000000000000000000000000000000000000000000000000000b01">links</a> stay links; <code>code</code> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><msup><mi>x</mi><mn>2</mn></msup></math> work.</p>
+<ul data-l="4-5">
+<li data-l="4-4">lists too</li>
+<li data-l="5-5"><input type="checkbox" disabled> tasks</li>
+</ul>

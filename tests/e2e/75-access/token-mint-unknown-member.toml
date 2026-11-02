@@ -1,0 +1,8 @@
+# spec: S06-07
+bin.name = "annotary"
+args = ["-p", "rowan", "token", "mint", "--member", "ghost"]
+status.code = 2
+stdout = ""
+stderr = """
+error: no Member @ghost — `annotary member list` shows who
+"""

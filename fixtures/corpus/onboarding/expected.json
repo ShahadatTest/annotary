@@ -1,0 +1,292 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored"
+    },
+    {
+      "version": 2,
+      "status": "anchored"
+    },
+    {
+      "version": 3,
+      "status": "anchored"
+    },
+    {
+      "version": 4,
+      "status": "anchored"
+    }
+  ],
+  "t2": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "27:6-27:28",
+      "exact": "Payroll forms returned"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "28:6-28:28",
+      "exact": "Payroll forms returned"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "28:6-28:28",
+      "exact": "Payroll forms returned"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "28:6-28:28",
+      "exact": "Payroll forms returned"
+    }
+  ],
+  "t3": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "41:7-41:40",
+      "exact": "Its test suite takes four minutes"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "42:9-42:42",
+      "exact": "Its test suite takes four minutes"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "42:9-42:42",
+      "exact": "Its test suite takes four minutes"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "42:9-42:42",
+      "exact": "Its test suite takes four minutes"
+    }
+  ],
+  "t4": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "165:0-165:25",
+      "exact": "take the next morning off"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "166:0-166:25",
+      "exact": "take the next morning off"
+    },
+    {
+      "version": 3,
+      "status": "orphaned"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t5": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "7:39-7:57",
+      "exact": "a map is a promise"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "7:39-7:57",
+      "exact": "a map is a promise"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "7:39-7:57",
+      "exact": "a map is a promise"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "7:39-7:57",
+      "exact": "a map is a promise"
+    }
+  ],
+  "t6": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "147:0-147:71",
+      "exact": "[the meeting notes](meeting-notes-2026-03-02.md) from any recent Monday"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "148:0-148:71",
+      "exact": "[the meeting notes](meeting-notes-2026-03-02.md) from any recent Monday"
+    },
+    {
+      "version": 3,
+      "status": "refined",
+      "range": "148:0-148:71",
+      "exact": "[the meeting notes](meeting-notes-2026-03-16.md) from any recent Monday"
+    },
+    {
+      "version": 4,
+      "status": "refined",
+      "range": "142:0-142:71",
+      "exact": "[the meeting notes](meeting-notes-2026-03-16.md) from any recent Monday"
+    }
+  ],
+  "t7": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "76:0-76:33",
+      "exact": "Deploys take about twelve minutes"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "77:0-77:33",
+      "exact": "Deploys take about twelve minutes"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "77:0-77:33",
+      "exact": "Deploys take about twelve minutes"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t8": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "173:9-173:43",
+      "exact": "The company buys any book you want"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "174:9-174:43",
+      "exact": "The company buys any book you want"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "165:9-165:43",
+      "exact": "The company buys any book you want"
+    },
+    {
+      "version": 4,
+      "status": "orphaned"
+    }
+  ],
+  "t9": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "185:2-185:28",
+      "exact": "Styles, cartography, fonts"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "186:2-186:28",
+      "exact": "Styles, cartography, fonts"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "177:2-177:28",
+      "exact": "Styles, cartography, fonts"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "171:2-171:28",
+      "exact": "Styles, cartography, fonts"
+    }
+  ],
+  "t10": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "44:3-44:33",
+      "exact": "Render your first tile locally"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "45:3-45:33",
+      "exact": "Render your first tile locally"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "45:3-45:33",
+      "exact": "Render your first tile locally"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "45:3-45:33",
+      "exact": "Render your first tile locally"
+    }
+  ],
+  "t11": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "47:3-47:39",
+      "exact": "fernway-tiles render --style outdoor"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "48:3-48:39",
+      "exact": "fernway-tiles render --style outdoor"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "48:3-48:39",
+      "exact": "fernway-tiles render --style outdoor"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "48:3-48:39",
+      "exact": "fernway-tiles render --style outdoor"
+    }
+  ],
+  "t12": [
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "25:8-25:29",
+      "exact": "The survey-data drive"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "25:8-25:29",
+      "exact": "The survey-data drive"
+    },
+    {
+      "version": 4,
+      "status": "anchored",
+      "range": "25:8-25:29",
+      "exact": "The survey-data drive"
+    }
+  ]
+}

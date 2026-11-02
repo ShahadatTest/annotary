@@ -1,0 +1,83 @@
+spec: S16-04, S04-16, S06-06, S06-07, S06-13, S02-30
+
+Ticket 16's parity sweep: TTY (`ANNOTARY_TTY=1`, colour off) and non-TTY twins for the verbs
+no earlier golden ran on a TTY — `thread resolve | reopen | edit | delete`, `delete | restore |
+purge`, `member rename | disable`, `token revoke` (`revoke.sh`: the id comes from `token list
+--json`), `profile add | remove` — each printing the same fields in the same order
+(two spaces vs tabs). Everything here is this group's own (`par-a`, `@par-agent`, profile
+`par-p`). Merged stdout+stderr; ids and ages are random.
+
+```console
+$ annotary -p rowan push par-a.md
+par-a	[..]	v1
+
+$ annotary -p rowan thread new par-a --document -m "About the whole thing."
+t1	document
+
+$ annotary -p rowan thread new par-a "3:4-3:9" -m "First?"
+t2	v1:3:4-3:9 "first"
+
+$ annotary -p rowan thread reply par-a t2 -m "A reply to edit."
+t2.1
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan thread resolve par-a t1
+t1  resolved
+
+$ annotary -p rowan thread reopen par-a t1
+t1	reopened
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan thread reopen par-a t1
+t1 was already open
+t1  reopened
+
+$ annotary -p rowan thread resolve par-a t1
+t1	resolved
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan thread edit par-a t2.1 -m "A reply, edited."
+t2.1  edited
+
+$ annotary -p rowan thread edit par-a t2 -m "First, edited?"
+t2	edited
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan thread delete par-a t2.1
+t2.1  deleted
+
+$ annotary -p rowan thread delete par-a t2
+t2	deleted
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan delete par-a
+par-a  [..]  deleted
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan restore par-a
+par-a  [..]  restored
+
+$ annotary -p rowan delete par-a
+par-a	[..]	deleted
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan purge par-a
+purged par-a ([..]) — 2 blobs removed
+par-a  [..]  purged
+
+$ annotary -p rowan member add par-agent --name "Parity Agent"
+@par-agent added: member, grants * (read,comment,action,write)
+Token (shown once):
+ANNOTARY_TOKEN=ant_[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan member rename par-agent "Parity (renamed)"
+@par-agent  Parity (renamed)  member  *:read,comment,action,write
+
+$ sh revoke.sh
+[ID]  @par-agent  revoked
+token [ID] was already revoked
+[ID]	@par-agent	revoked
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan member disable par-agent
+@par-agent  Parity (renamed)  member (disabled)  *:read,comment,action,write
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan profile add par-p --server http://127.0.0.1:1 --token ant_notreal
+profile "par-p" saved → [..]/config.toml
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan profile remove par-p
+profile "par-p" removed → [..]/config.toml
+
+```

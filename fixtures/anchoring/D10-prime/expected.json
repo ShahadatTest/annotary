@@ -1,0 +1,28 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:11-5:16",
+      "exact": "cc dd"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "t2": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:8-5:16",
+      "exact": "bb cc dd"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "5:8-5:10",
+      "exact": "bb"
+    }
+  ]
+}

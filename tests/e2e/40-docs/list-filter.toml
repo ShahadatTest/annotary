@@ -1,0 +1,11 @@
+# spec: S02-20, S02-06
+# Positional Name substring; most recent activity first; id always shown; open=0, action=- for now.
+bin.name = "annotary"
+args = ["-p", "agent", "list", "lst-"]
+status = "success"
+stdout = """
+[..]	lst-a	v1	-	0	[..]
+[..]	lst-c	v1	-	0	[..]
+[..]	lst-b	v1	-	0	[..]
+"""
+stderr = ""

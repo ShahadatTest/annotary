@@ -1,0 +1,10 @@
+# spec: S02-07
+# DOC as a path needs the sibling Sidecar.
+bin.name = "annotary"
+args = ["-p", "rowan", "status", "./loose.md"]
+fs.sandbox = true
+status.code = 2
+stdout = ""
+stderr = """
+error: no Sidecar beside ./loose.md (loose.annotary missing) — `annotary pull DOC` writes it; or pass the Document id or Name
+"""

@@ -1,0 +1,12 @@
+# spec: S02-17
+# A deleted Document can still be pulled (Versions are retained).
+bin.name = "annotary"
+args = ["-p", "rowan", "pull", "ro-del", "--out", "d"]
+fs.sandbox = true
+status = "success"
+stdout = """
+ro-del.md	ro-del.annotary	v1
+"""
+stderr = """
+pull: 0 threads, 0 assets
+"""

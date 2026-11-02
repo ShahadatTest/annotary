@@ -1,0 +1,8 @@
+# spec: S05-02
+bin.name = "annotary"
+args = ["-p", "rowan", "act", "act-plan", "approve", "--version", "1", "--json"]
+status.code = 5
+stdout = ""
+stderr = """
+{"error":"refused","message":"head is v2, not v1","hint":"run `annotary show act-plan` and act on v2 once you have read it"}
+"""

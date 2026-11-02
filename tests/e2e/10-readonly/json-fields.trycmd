@@ -1,0 +1,184 @@
+spec: S01-17, S16-04, S18-06, S18-09, S26-01, S26-02, S29-30, S29-31
+
+The `--json ?` contract of every verb in one place (ticket 16's sweep): each lists every field
+its `--json` can carry (`--json a,b` narrows to some of them) and exits 0 without calling the
+server — so this runs with profile `down` (an unreachable server) and on any platform (`daemon`
+answers `--json ?` before looking at the OS). A verb that gains or renames a field changes this
+golden; `serve` has no `--json`.
+
+```console
+$ annotary -p down list --json ?
+id name version action open updated vault by message deleted created
+
+$ annotary -p down push x.md --json ?
+name id version same_as already warnings assets threads vault hash url
+
+$ annotary -p down pull x --json ?
+md sidecar version name id vault threads assets written
+
+$ annotary -p down show x --json ?
+name id vault version by at message action open actions threads same_as deleted url
+
+$ annotary -p down status x --json ?
+name id version action open_threads mentions_me seq vault deleted
+
+$ annotary -p down versions x --json ?
+number by at message same_as name hash
+
+$ annotary -p down delete x --json ?
+name id state vault version
+
+$ annotary -p down restore x --json ?
+name id state vault version
+
+$ annotary -p down purge x --json ?
+name id state vault version
+
+$ annotary -p down thread list x --json ?
+id author anchor body mentions replies resolved deleted created updated version
+
+$ annotary -p down thread show x t1 --json ?
+id subject anchor author created body mentions edited_at deleted resolved replies updated
+
+$ annotary -p down thread new x --document -m m --json ?
+id subject anchor version created body mentions doc
+
+$ annotary -p down thread reply x t1 -m m --json ?
+id thread state version doc
+
+$ annotary -p down thread resolve x t1 --json ?
+id thread state version doc
+
+$ annotary -p down thread reopen x t1 --json ?
+id thread state version doc
+
+$ annotary -p down thread edit x t1 -m m --json ?
+id thread state version doc
+
+$ annotary -p down thread delete x t1 --json ?
+id thread state version doc
+
+$ annotary -p down mentions --json ?
+doc id thread author anchor body mentions replies created updated version vault
+
+$ annotary -p down wait --json ?
+seq kind doc name action version thread comment message excerpt by at type label intent same_as discarded mentions vault
+
+$ annotary -p down rerender x --json ?
+name id versions changed vault renderer
+
+$ annotary -p down act x approve --json ?
+name id version action by at label intent
+
+$ annotary -p down actions x --json ?
+id by at version label intent
+
+$ annotary -p down member add x --json ?
+handle name role grants token created id
+
+$ annotary -p down member list --json ?
+handle name role grants disabled created id
+
+$ annotary -p down member rename x y --json ?
+handle name role grants disabled created id
+
+$ annotary -p down member disable x --json ?
+handle name role grants disabled created id
+
+$ annotary -p down member grant x notes read --json ?
+handle name role grants disabled created id
+
+$ annotary -p down member role x owner --json ?
+handle name role grants disabled created id
+
+$ annotary -p down token mint --json ?
+token id member name expires created
+
+$ annotary -p down token list --json ?
+id member name created last_used expires status revoked
+
+$ annotary -p down token revoke x --json ?
+id member revoked name
+
+$ annotary -p down vault list --json ?
+name documents deleted created id default_actions
+
+$ annotary -p down vault create x --json ?
+name documents deleted created id default_actions
+
+$ annotary -p down vault rename x y --json ?
+name from documents deleted created id default_actions profiles
+
+$ annotary -p down vault delete x --json ?
+name id deleted created profiles
+
+$ annotary -p down settings list --json ?
+key value source kind label group device
+
+$ annotary -p down settings get k --json ?
+key value source kind label group device
+
+$ annotary -p down settings set k v --json ?
+key value source kind label group device changed
+
+$ annotary -p down settings reset k --json ?
+key value source kind label group device changed
+
+$ annotary -p down devices list --json ?
+id kind name last_seen created forgotten
+
+$ annotary -p down devices rename d n --json ?
+id kind name last_seen created forgotten
+
+$ annotary -p down devices forget d --json ?
+id kind name forgotten tokens_revoked sessions_ended already
+
+$ annotary -p down link x --json ?
+url name id thread public
+
+$ annotary -p down pair --json ?
+pair_url member token_id name server profile token
+
+$ annotary -p down login --json ?
+profile server handle role config
+
+$ annotary -p down logout --json ?
+profile handle revoked config
+
+$ annotary -p down profile list --json ?
+name server member role vault has_token
+
+$ annotary -p down profile add x --json ?
+name server vault has_token config
+
+$ annotary -p down profile remove x --json ?
+name server vault has_token config
+
+$ annotary -p down skill install --json ?
+path version written dir previous
+
+$ annotary -p down daemon install --json ?
+state pid since url port store log plist installed loaded label version
+
+$ annotary -p down daemon uninstall --json ?
+plist removed stopped label
+
+$ annotary -p down daemon status --json ?
+state pid since url port store log plist installed loaded label version
+
+$ annotary -p down daemon start --json ?
+state pid since url port store log plist installed loaded label version
+
+$ annotary -p down daemon stop --json ?
+state pid since url port store log plist installed loaded label version
+
+$ annotary -p down daemon restart --json ?
+state pid since url port store log plist installed loaded label version
+
+$ annotary -p down export b.tar --json ?
+file blobs bytes size schema_version tenant_id store live
+
+$ annotary -p down password --clear --json ?
+member password id store
+
+```

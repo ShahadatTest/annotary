@@ -1,0 +1,23 @@
+# spec: S01-10, S01-19
+# First `serve` on an empty store: prompts answered from stdin (blank = defaults from $USER),
+# transcript on stdout, owner token shown once, then the "CLI still needs a credential" note.
+# `--setup-only` exits instead of serving so the transcript can be captured.
+bin.name = "annotary"
+args = ["serve", "--setup-only"]
+env.add = { ANNOTARY_HOME = "cdhome", USER = "rowan" }
+fs.sandbox = true
+stdin = "\n\n\n"
+status = "success"
+stdout = """
+Tenant created at [..]/cdhome/store
+  owner handle [rowan]: rowan
+  display name [[..]]: [..]
+  local password (blank = loopback trust, browser is you): 
+Vault "notes" created.
+Owner token for the CLI (shown once) — put it in your shell or a profile in [..]/cdhome/config.toml:
+
+  ANNOTARY_TOKEN=ant_[..]
+
+No CLI credential is saved: export the token above, or run `annotary login` (needs the local password); `annotary member add <handle>` mints a token for an agent.
+"""
+stderr = ""

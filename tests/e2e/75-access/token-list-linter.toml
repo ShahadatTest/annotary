@@ -1,0 +1,10 @@
+# spec: S06-07
+# Non-TTY: MEMBER NAME CREATED LAST-USED EXPIRES ID, tab-separated; @linter has the token
+# `member add` minted (never used, no expiry).
+bin.name = "annotary"
+args = ["-p", "rowan", "token", "list", "--member", "linter"]
+status = "success"
+stdout = """
+@linter	member add	[..]	-	-	[..]
+"""
+stderr = ""

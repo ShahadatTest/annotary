@@ -1,0 +1,65 @@
+spec: S02-01, S02-02, S02-09, S02-10, S02-12, S02-13, S02-14, S17-03, S17-05, S17-08
+
+push creates v1; the same bytes are a no-op; a change is v2; pushing v1's bytes again is v3
+(same content as v1). Ticket 17: when the local Sidecar is behind, a file that lacks the head's
+changes is refused (exit 5, the missing hunk shown) — a stale, unedited file too, `--strict` or
+not — and `--discard-head-changes` is how a deliberate revert goes through. Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push flow.md
+flow	[..]	v1
+
+$ annotary -p rowan push flow.md
+flow	[..]	already v1
+
+$ annotary -p rowan push flow-v2/flow.md --doc flow -m "edit"
+flow	[..]	v2
+
+$ annotary -p rowan pull flow --out here
+pull: 0 threads, 0 assets
+flow.md	flow.annotary	v2
+
+$ annotary -p rowan push here/flow.md
+flow	[..]	already v2
+
+$ annotary -p rowan push flow.md -m "back"
+? 5
+error: v2 by @rowan changed flow.md since your v1 — those changes are not in your file — put them into flow.md and push again
+@@ -1,3 +1,3 @@
+ # Flow
+ 
+-v1 text.
++v2 text.
+
+$ annotary -p rowan push flow.md -m "back" --discard-head-changes
+warning: discarding v2 by @rowan since your v1
+flow	[..]	v3 (same content as v1)
+
+$ annotary -p rowan push flow.md --json
+{"name":"flow","id":"[..]","version":3,"same_as":1,"already":true}
+
+$ annotary -p rowan versions flow --json number,same_as
+[{"number":1},{"number":2},{"number":3,"same_as":1}]
+
+$ annotary -p rowan pull flow --version 2 --force
+pull: 0 threads, 0 assets
+(name on v2 was "flow"; Threads as they were on v2; head is v3)
+flow.md	flow.annotary	v2
+
+$ annotary -p rowan push flow.md --strict
+? 5
+error: v3 by @rowan changed flow.md since your v2 — those changes are not in your file — put them into flow.md and push again
+@@ -1,3 +1,3 @@
+ # Flow
+ 
+-v2 text.
++v1 text.
+
+$ annotary -p rowan push flow.md -m "again" --discard-head-changes
+warning: discarding v3 by @rowan since your v2
+flow	[..]	v4 (same content as v2)
+
+$ annotary -p rowan push flow.md --json
+{"name":"flow","id":"[..]","version":4,"same_as":2,"already":true}
+
+```

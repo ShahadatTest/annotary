@@ -1,0 +1,8 @@
+# spec: S05-08
+bin.name = "annotary"
+args = ["-p", "agent", "actions", "act-plan", "--json"]
+status = "success"
+stdout = """
+[{"id":"approve","by":"scribe","at":"[..]T[..]Z","version":2,"label":"Approve"},{"id":"send-back","by":"scribe","at":"[..]T[..]Z","version":1,"label":"Send back"},{"id":"approve","by":"rowan","at":"[..]T[..]Z","version":1,"label":"Approve"}]
+"""
+stderr = ""

@@ -1,0 +1,8 @@
+# spec: S04-18
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "resolve", "th-plan", "t2.1"]
+status.code = 1
+stdout = ""
+stderr = """
+error: "t2.1" is not a Thread id — use t7 — thread verbs take DOC and ID separately: `annotary thread reply plan t7 -m …`
+"""

@@ -1,0 +1,9 @@
+# spec: S05-09
+# `--json`: action {id, by, at} — the ≈24-token record.
+bin.name = "annotary"
+args = ["-p", "rowan", "status", "act-plan", "--json"]
+status = "success"
+stdout = """
+{"name":"act-plan","id":"[..]","version":2,"action":{"id":"approve","by":"scribe","at":"[..]T[..]Z"},"open_threads":0,"mentions_me":0,"seq":[..]}
+"""
+stderr = ""

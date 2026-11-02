@@ -1,0 +1,9 @@
+# spec: S08-05
+# An unknown kind is a usage error before the server is asked.
+bin.name = "annotary"
+args = ["-p", "agent", "wait", "ro-plan", "--on", "version,approve"]
+status.code = 1
+stdout = ""
+stderr = """
+error: --on "approve": unknown kind — use a comma list of version,action,mention,thread,reply,resolve,reopen
+"""

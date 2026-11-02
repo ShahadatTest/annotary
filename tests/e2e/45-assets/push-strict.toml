@@ -1,0 +1,11 @@
+# spec: S03-05, S03-04
+# `--strict` turns the missing-asset warning into exit 5 before anything is uploaded (the
+# Document is never created — `as-strict` is not a Name any other case uses).
+bin.name = "annotary"
+args = ["-p", "rowan", "push", "as-strict.md", "--strict"]
+fs.sandbox = true
+status.code = 5
+stdout = ""
+stderr = """
+error: missing asset img/nope.png (not found) (--strict) — fix the references or push without --strict
+"""

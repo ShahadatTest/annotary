@@ -1,0 +1,59 @@
+# annotary under systemd. Installed by deploy/install-linux.sh as
+# /etc/systemd/system/annotary.service; never edited on the host. What differs from host to host
+# is in the root-only /etc/annotary/env, which the installer creates, never in this file:
+#
+#   ANNOTARY_URL=https://annotary.example.ts.net    the URL other devices use, or none
+#   ANNOTARY_LINK_BASE=none                         the link relay's base, or none
+#
+# It needs both. Without the file the unit does not start. Without a key, or with an empty value,
+# `--url` gets an empty value, which serve takes as "clear": so the installer treats that as missing
+# and refuses or fills it in, its start check fails on it, and the health check is critical for it.
+#
+# It listens on loopback only. Everyone else reaches it through what the host puts in front of
+# 127.0.0.1:7377 (a Tailscale Service, a reverse proxy); requests a proxy forwards are never
+# loopback-trusted (CMD-17). Logs go to the journal: journalctl -u annotary.service.
+[Unit]
+Description=annotary: Markdown documents shared and commented on by humans and agents
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=annotary
+Group=annotary
+EnvironmentFile=/etc/annotary/env
+WorkingDirectory=/srv/annotary/data
+# serve writes to stdout only during first-run setup (its transcript and the owner Token); the
+# installer runs setup before every start, and this keeps a Token out of the journal should the
+# unit ever run it. Its log lines go to stderr, kept in the journal (stderr would otherwise
+# inherit stdout's /dev/null).
+StandardOutput=null
+StandardError=journal
+ExecStart=/opt/annotary/app/annotary serve --data-dir /srv/annotary/data --port 7377 --bind 127.0.0.1 --url ${ANNOTARY_URL} --link-base ${ANNOTARY_LINK_BASE}
+Restart=always
+RestartSec=2
+UMask=0027
+# Hardening: the service can write only its data folder.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=yes
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/srv/annotary/data
+
+[Install]
+WantedBy=multi-user.target

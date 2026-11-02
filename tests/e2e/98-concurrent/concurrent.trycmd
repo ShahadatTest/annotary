@@ -1,0 +1,85 @@
+spec: S17-02, S17-03, S17-04, S17-05, S17-08
+
+Ticket 17 — two checkouts of one Document (`cc-plan`): Rowan's in the sandbox, @scribe's in
+`agent/`. The agent pushes v2; Rowan's push from v1 is refused with the missing hunk (non-TTY,
+TTY, `--json`); he puts it in and the same push is a normal v3. The agent's checkout, never
+pulled and unedited, is refused too (a stale file never reverts the head) until it says
+`--discard-head-changes`, which the event log records (`wait`: `discarding v3`). Merged
+stdout+stderr; ids and seqs are random.
+
+```console
+$ annotary -p rowan push cc-plan.md -m "first draft"
+cc-plan	[..]	v1
+
+$ annotary -p agent pull cc-plan --out agent
+pull: 0 threads, 0 assets
+cc-plan.md	cc-plan.annotary	v1
+
+$ sh agent-edit.sh
+1
+
+$ annotary -p agent push agent/cc-plan.md -m "storage: WAL"
+cc-plan	[..]	v2
+
+$ sh rowan-edit.sh
+1
+
+$ annotary -p rowan push cc-plan.md -m "later"
+? 5
+error: v2 by @scribe changed cc-plan.md since your v1 — those changes are not in your file — put them into cc-plan.md and push again
+@@ -1,7 +1,8 @@
+ # Plan
+ 
+ ## Storage
+-SQLite, one file.
++SQLite, one file, WAL mode.
++Blobs are content-addressed.
+ 
+ ## API
+ REST over HTTP.
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan push cc-plan.md -m "later"
+? 5
+error: v2 by @scribe changed cc-plan.md since your v1 — those changes are not in your file — put them into cc-plan.md and push again
+@@ -1,7 +1,8 @@
+ # Plan
+ 
+ ## Storage
+-SQLite, one file.
++SQLite, one file, WAL mode.
++Blobs are content-addressed.
+ 
+ ## API
+ REST over HTTP.
+
+$ annotary -p rowan push cc-plan.md --json
+? 5
+{"error":"head_moved","message":"v2 by @scribe changed cc-plan.md since your v1 — those changes are not in your file","hint":"put them into cc-plan.md and push again","base":1,"head":2,"by":["scribe"],"missing":[{"hunk":"@@ -1,7 +1,8 @@","lines":[" # Plan"," "," ## Storage","-SQLite, one file.","+SQLite, one file, WAL mode.","+Blobs are content-addressed."," "," ## API"," REST over HTTP."]}],"assets":[]}
+
+$ sh rowan-merge.sh
+1
+
+$ annotary -p rowan push cc-plan.md -m "later"
+cc-plan	[..]	v3
+
+$ annotary -p agent push agent/cc-plan.md
+? 5
+error: v3 by @rowan changed agent/cc-plan.md since your v2 — those changes are not in your file — put them into agent/cc-plan.md and push again
+@@ -8,4 +8,4 @@
+ REST over HTTP.
+ 
+ ## Later
+-Nothing yet.
++Search, later.
+
+$ annotary -p agent push agent/cc-plan.md -m "revert" --discard-head-changes
+warning: discarding v3 by @rowan since your v2
+cc-plan	[..]	v4 (same content as v2)
+
+$ annotary -p agent wait cc-plan --cursor 0 --on version --timeout 1s
+[..]	version	cc-plan	v1 by @rowan "first draft"
+[..]	version	cc-plan	v2 by @scribe "storage: WAL"
+[..]	version	cc-plan	v3 by @rowan "later"
+[..]	version	cc-plan	v4 by @scribe discarding v3 "revert"
+
+```

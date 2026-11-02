@@ -1,0 +1,9 @@
+# spec: S06-13
+# Without -p and without a default profile there is nothing to log out of.
+bin.name = "annotary"
+args = ["logout"]
+status.code = 1
+stdout = ""
+stderr = """
+error: logout needs a profile — pass -p NAME — profiles in ~/.annotary/config.toml: agent, down, limited, pw, rowan
+"""

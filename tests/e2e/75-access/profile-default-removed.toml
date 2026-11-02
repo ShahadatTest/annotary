@@ -1,0 +1,13 @@
+# spec: S06-13
+# There is no default profile (2026-10-21): `profile default` is not a verb any more.
+bin.name = "annotary"
+args = ["-p", "rowan", "profile", "default"]
+status = "failed"
+stdout = ""
+stderr = """
+error: unrecognized subcommand 'default'
+
+Usage: annotary profile [OPTIONS] <COMMAND>
+
+For more information, try '--help'.
+"""

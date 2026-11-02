@@ -1,0 +1,10 @@
+# spec: S13-02, S01-17
+# `--json` bare = the default field set (`installed: false` is omitted like every false/empty field).
+bin.name = "annotary"
+args = ["daemon", "status", "--json"]
+env.add = { ANNOTARY_DAEMON_OS = "macos" }
+status = "success"
+stdout = """
+{"state":"running","pid":[..],"url":"[URL]","port":[..],"log":"[..]/.annotary/logs/server.log"}
+"""
+stderr = ""

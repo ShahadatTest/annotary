@@ -1,0 +1,350 @@
+format: 1
+id: k7q2m9xd
+vault: notes
+base_version: 4
+members:
+  rowan:
+    id: 01K2WQ4M8XZ3N6P9RTB0AVYD5E
+    name: Rowan Vale
+  scribe:
+    id: 01K2WQ5A0DHKC7GJ2FN3QRSTV4
+    name: Scribe
+  linter:
+    id: 01K2WQ5R6YB1EM3D9XZ2HPWQNA
+    name: Linter
+versions:
+- number: 1
+  name: plan
+  hash: a368af8d4bac3bd7e0282515597231425f65ab4e6021f55851b59c8c81e863fc
+  by: rowan
+  at: '2026-08-14T09:12:04Z'
+  message: first draft
+- number: 2
+  name: plan
+  hash: 8d53e39d55aac410b73ed0bc07c0ca33fdc967e1deb1544dec0c6ce504949f5a
+  by: scribe
+  at: '2026-08-15T16:40:31Z'
+  message: 'address review: add Risks, split rollout'
+- number: 3
+  name: phase1-plan
+  hash: a718daeed70d0d94f7e9fa5524fc4582566bbb6bae56d197763e54bbfbef2287
+  by: rowan
+  at: '2026-08-17T10:05:12Z'
+- number: 4
+  name: phase1-plan
+  hash: a368af8d4bac3bd7e0282515597231425f65ab4e6021f55851b59c8c81e863fc
+  by: rowan
+  at: '2026-08-18T08:30:00Z'
+  message: back to the first-draft wording for comparison
+assets:
+- ref: img/architecture.png
+  hash: 8f1847fd42849cac9c6e3ea4f8fd453046e1833a4a9f413386330d581434ff8f
+  size: 48213
+  type: image/png
+- ref: img/cli-screenshot.png
+  type: image/png
+  missing: true
+- ref: api-notes.md
+  hash: 0692df2543a96aaf0a766143422b86910b40a2b9117488abfb476b6818717354
+  size: 1730
+  type: text/markdown
+- ref: img/flow.svg
+  hash: a94a7bc580798528f8881114ea6381c7b6bf099a4fed06d3d8ce201f0ed2e54e
+  size: 9021
+  type: image/svg+xml
+  via: api-notes.md
+actions:
+  available:
+  - id: approve
+    label: Approve
+    intent: positive
+  - id: send-back
+    label: Send back
+    intent: neutral
+  inherited: true
+  log:
+  - id: send-back
+    by: rowan
+    at: '2026-08-14T09:20:44Z'
+    version: 1
+    label: Send back
+    intent: neutral
+  - id: approve
+    by: rowan
+    at: '2026-08-17T10:06:02Z'
+    version: 3
+    label: Approve
+    intent: positive
+threads:
+- id: t1
+  subject: document
+  author: rowan
+  created:
+    at: '2026-08-14T09:15:00Z'
+    version: 1
+  body: Needs a **Risks** section before I can approve. @scribe can you add one?
+  mentions:
+  - scribe
+  resolved:
+    by: scribe
+    at: '2026-08-15T16:41:10Z'
+    version: 2
+  replies:
+  - id: t1.1
+    author: scribe
+    created:
+      at: '2026-08-15T16:41:10Z'
+      version: 2
+    body: Added §Risks in v2.
+- id: t2
+  subject: span
+  anchor:
+    original:
+      version: 1
+      range: 16:0-16:33
+      exact: We ship the CLI before the web UI
+    current:
+      version: 4
+      range: 16:0-16:33
+      status: anchored
+    history:
+    - version: 1
+      range: 16:0-16:33
+      status: anchored
+    - version: 2
+      range: 16:0-16:33
+      status: anchored
+    - version: 3
+      range: 16:0-16:33
+      status: anchored
+    - version: 4
+      range: 16:0-16:33
+      status: anchored
+  author: rowan
+  created:
+    at: '2026-08-14T09:16:30Z'
+    version: 1
+  body: Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.
+  mentions:
+  - scribe
+  replies:
+  - id: t2.1
+    author: scribe
+    created:
+      at: '2026-08-15T16:42:00Z'
+      version: 2
+    body: Item 3 already lists the skill file with the CLI. @rowan do you want it as its own item?
+    mentions:
+    - rowan
+- id: t3
+  subject: span
+  anchor:
+    original:
+      version: 1
+      range: 20:41-20:73
+      exact: invite three external developers
+    current:
+      version: 4
+      range: 20:41-20:73
+      status: anchored
+    history:
+    - version: 1
+      range: 20:41-20:73
+      status: anchored
+    - version: 2
+      range: 31:5-31:37
+      status: anchored
+    - version: 3
+      range: 31:5-31:36
+      status: refined
+    - version: 4
+      range: 20:41-20:73
+      status: anchored
+  author: scribe
+  created:
+    at: '2026-08-14T11:02:11Z'
+    version: 1
+  body: Three feels low for useful signal. Five?
+  resolved:
+    by: rowan
+    at: '2026-08-17T10:04:50Z'
+    version: 3
+  replies:
+  - id: t3.1
+    author: rowan
+    created:
+      at: '2026-08-17T10:04:50Z'
+      version: 3
+    body: Done — five, and two weeks of feedback.
+- id: t4
+  subject: span
+  anchor:
+    original:
+      version: 2
+      range: 21:29-21:79
+      exact: agents should use the CLI, not read the file whole
+    current:
+      version: 3
+      range: 21:29-21:79
+      status: orphaned
+    history:
+    - version: 2
+      range: 21:29-21:79
+      status: anchored
+    - version: 3
+      range: 21:29-21:79
+      status: anchored
+    - version: 4
+      status: orphaned
+  author: rowan
+  created:
+    at: '2026-08-16T08:10:00Z'
+    version: 2
+  body: This is exactly what the sidecar-format ticket has to answer — link it here.
+- id: t5
+  subject: span
+  anchor:
+    original:
+      version: 3
+      range: 31:41-31:57
+      exact: collect feedback
+    current:
+      version: 3
+      range: 31:41-31:57
+      status: orphaned
+    history:
+    - version: 3
+      range: 31:41-31:57
+      status: anchored
+    - version: 4
+      status: orphaned
+  author: linter
+  created:
+    at: '2026-08-17T12:30:00Z'
+    version: 3
+  body: How — survey or interviews? Worth deciding before the invites go out.
+- id: t6
+  subject: asset
+  anchor:
+    original:
+      version: 1
+      hash: 8f1847fd42849cac9c6e3ea4f8fd453046e1833a4a9f413386330d581434ff8f
+      ref: img/architecture.png
+      line: 3
+    current:
+      version: 4
+      line: 3
+      status: anchored
+    history:
+    - version: 1
+      line: 3
+      status: anchored
+    - version: 2
+      line: 3
+      status: anchored
+    - version: 3
+      line: 3
+      status: anchored
+    - version: 4
+      line: 3
+      status: anchored
+  author: rowan
+  created:
+    at: '2026-08-14T09:18:00Z'
+    version: 1
+  body: Diagram is out of date — the daemon box is missing.
+  replies:
+  - id: t6.1
+    author: scribe
+    created:
+      at: '2026-08-15T16:43:00Z'
+      version: 2
+    body: ''
+    deleted:
+      at: '2026-08-15T16:50:12Z'
+      by: scribe
+- id: t7
+  subject: span
+  anchor:
+    original:
+      version: 1
+      range: 11:48-11:69
+      exact: testable in isolation
+    current:
+      version: 4
+      range: 11:48-11:69
+      status: anchored
+    history:
+    - version: 1
+      range: 11:48-11:69
+      status: anchored
+    - version: 2
+      range: 11:48-11:69
+      status: anchored
+    - version: 3
+      range: 11:48-11:69
+      status: anchored
+    - version: 4
+      range: 11:48-11:69
+      status: anchored
+  author: scribe
+  created:
+    at: '2026-08-14T11:05:40Z'
+    version: 1
+  body: Should the anchor engine be its own package so the CLI and server share one implementation? @rowan @linter
+  mentions:
+  - rowan
+  - linter
+  edited_at: '2026-08-14T11:07:02Z'
+  resolved:
+    by: linter
+    at: '2026-08-17T12:28:00Z'
+    version: 3
+  replies:
+  - id: t7.1
+    author: linter
+    created:
+      at: '2026-08-17T12:27:30Z'
+      version: 3
+    body: Yes — one package, both import it. Determinism depends on it.
+  - id: t7.2
+    author: rowan
+    created:
+      at: '2026-08-17T12:29:15Z'
+      version: 3
+    body: Agreed.
+- id: t8
+  subject: span
+  anchor:
+    original:
+      version: 2
+      range: 20:27-20:57
+      exact: mitigated by the fixture table
+    current:
+      version: 3
+      range: 20:27-20:57
+      status: orphaned
+    history:
+    - version: 2
+      range: 20:27-20:57
+      status: anchored
+    - version: 3
+      range: 20:27-20:57
+      status: anchored
+    - version: 4
+      status: orphaned
+  author: linter
+  created:
+    at: '2026-08-16T09:00:00Z'
+    version: 2
+  body: ''
+  deleted:
+    at: '2026-08-16T09:03:41Z'
+    by: linter
+  replies:
+  - id: t8.1
+    author: rowan
+    created:
+      at: '2026-08-16T09:05:00Z'
+      version: 2
+    body: '(Replying to the deleted question: yes — the fixture table is also the seed of the test suite.)'

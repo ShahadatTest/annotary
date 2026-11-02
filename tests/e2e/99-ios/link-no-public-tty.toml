@@ -1,0 +1,12 @@
+# spec: S18-06
+# TTY twin of link-no-public: the same single field.
+bin.name = "annotary"
+args = ["-p", "rowan", "link", "ro-plan"]
+env.add = { ANNOTARY_TTY = "1", NO_COLOR = "1" }
+status.code = 0
+stdout = """
+[URL]/d/[..]
+"""
+stderr = """
+note: no public URL is set — other devices cannot open this; run: annotary serve --url http://HOST:PORT
+"""

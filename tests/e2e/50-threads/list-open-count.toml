@@ -1,0 +1,9 @@
+# spec: S04-13
+# `list` shows the live open-Thread count.
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "th-plan"]
+status = "success"
+stdout = """
+[..]	th-plan	v1	-	3	[..]
+"""
+stderr = ""

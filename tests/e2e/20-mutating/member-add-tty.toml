@@ -1,0 +1,15 @@
+# spec: S01-11, S01-12
+# TTY: the same fields with the paste hint, as in the human transcript.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "add", "antigravity"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+
+  ANNOTARY_TOKEN=ant_[..]   # put this in the agent's environment
+
+"""
+stderr = """
+@antigravity added: member, grants * (read,comment,action,write)
+Token (shown once):
+"""

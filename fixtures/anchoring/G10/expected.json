@@ -1,0 +1,98 @@
+{
+  "A": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:0-6:25",
+      "exact": "Line 5: echo foxtrot zulu\nLine 6: foxtrot mike golf"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "B": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "9:0-10:28",
+      "exact": "Line 9: india delta juliet\nLine 10: juliet kilo uniform"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "C": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "13:0-14:28",
+      "exact": "Line 13: mike bravo xray\nLine 14: november india echo"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "D": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "17:0-18:26",
+      "exact": "Line 17: quebec dune hotel\nLine 18: romeo golf sierra"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "E": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "21:0-21:28",
+      "exact": "Line 21: uniform blue victor"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "F": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "24:0-25:28",
+      "exact": "Line 24: xray sierra yankee\nLine 25: yankee zulu foxtrot"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "G": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "28:0-29:25",
+      "exact": "Line 28: blue quebec india\nLine 29: coral xray tango"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "H": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "2:0-2:27",
+      "exact": "Line 2: bravo oscar whiskey"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ]
+}

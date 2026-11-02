@@ -1,0 +1,11 @@
+# spec: S02-14
+bin.name = "annotary"
+args = ["-p", "rowan", "pull", "ro-plan", "--json"]
+fs.sandbox = true
+status = "success"
+stdout = """
+{"md":"ro-plan.md","sidecar":"ro-plan.annotary","version":3}
+"""
+stderr = """
+pull: 0 threads, 0 assets
+"""

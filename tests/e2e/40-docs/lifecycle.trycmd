@@ -1,0 +1,75 @@
+spec: S02-17, S02-18, S02-31
+
+delete is soft (hidden; Versions kept; any Member with write), restore undoes it, purge (owner)
+removes it for good and reclaims blobs no other Version references — a blob shared with another
+Document survives. (Since ticket 09 a Version also references its rendered HTML blob: purging
+`lc` removes two blobs, its Markdown and its HTML; `gc-shared`/`gc-twin` share both.)
+
+```console
+$ annotary -p rowan push lc.md
+lc	[..]	v1
+
+$ annotary -p agent delete lc
+lc	[..]	deleted
+
+$ annotary -p rowan status lc
+? 2
+error: no Document "lc" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan delete lc
+? 2
+error: no Document "lc" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan list lc --deleted
+[..]	lc	v1	-	0	[..]
+
+$ annotary -p rowan versions lc.md
+v1	@rowan	[..]	-	-
+
+$ annotary -p rowan restore lc
+lc	[..]	restored
+
+$ annotary -p rowan restore lc
+? 2
+error: no Document "lc" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan status lc.md
+lc	[..]	v1	action:-	open:0	mentions-me:0	seq:[..]
+
+$ annotary -p rowan delete lc.md
+lc	[..]	deleted
+
+$ annotary -p agent purge lc
+? 4
+error: purge is owner-only — ask an owner (`annotary member list` shows who)
+
+$ annotary -p rowan purge lc --json
+purged lc ([..]) — 2 blobs removed
+{"name":"lc","id":"[..]","state":"purged"}
+
+$ annotary -p rowan show lc --deleted
+? 2
+error: no Document "lc" — DOC is an id, a Name unique in the Vault, or the path to a pulled .md; `annotary list` shows Documents
+
+$ annotary -p rowan push lc.md
+? 2
+error: no Document [..] (from lc.annotary) — was it purged? `push --doc ID` rebinds; delete the Sidecar to create a new Document
+
+$ annotary -p rowan push gc-shared.md
+gc-shared	[..]	v1
+
+$ annotary -p rowan push gc-other/gc-twin.md
+gc-twin	[..]	v1
+
+$ annotary -p rowan delete gc-shared
+gc-shared	[..]	deleted
+
+$ annotary -p rowan purge gc-shared
+purged gc-shared ([..]) — 0 blobs removed
+gc-shared	[..]	purged
+
+$ annotary -p rowan pull gc-twin --out t
+pull: 0 threads, 0 assets
+gc-twin.md	gc-twin.annotary	v1
+
+```

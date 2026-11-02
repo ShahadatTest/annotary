@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "[..]",
+  "vault": "notes",
+  "base_version": 1,
+  "members": {
+    "rowan": {"id": "[..]", "name": "Rowan Vale"}
+  },
+  "versions": [
+    {"number": 1, "name": "as-plan", "hash": "[..]", "by": "rowan", "at": "[..]T[..]Z", "message": "first draft"}
+  ],
+  "assets": [
+    {"ref": "img/architecture.png", "hash": "[..]", "size": 83, "type": "image/png"},
+    {"ref": "api-notes.md", "hash": "[..]", "size": 68, "type": "text/markdown"},
+    {"ref": "img/flow.svg", "hash": "[..]", "size": 136, "type": "image/svg+xml", "via": "api-notes.md"},
+    {"ref": "img/cli-screenshot.png", "type": "image/png", "missing": true}
+  ],
+  "actions": {
+    "available": [
+      {"id": "approve", "label": "Approve", "intent": "positive"},
+      {"id": "send-back", "label": "Send back", "intent": "neutral"}
+    ],
+    "inherited": true
+  }
+}

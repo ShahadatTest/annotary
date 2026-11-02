@@ -1,0 +1,14 @@
+# spec: S06-13
+# NAME SERVER MEMBER DEFAULT — MEMBER is who each profile's token is on its server (`-` when the
+# server is unreachable or there is no token); no default is set in the harness config.
+bin.name = "annotary"
+args = ["-p", "rowan", "profile", "list"]
+status = "success"
+stdout = """
+agent\t[URL]\t@scribe
+down\thttp://127.0.0.1:1\t-
+limited\t[URL]\t@limited
+pw\thttp://127.0.0.1:[..]\t-
+rowan\t[URL]\t@rowan
+"""
+stderr = ""

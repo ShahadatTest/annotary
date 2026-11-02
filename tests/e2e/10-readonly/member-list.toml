@@ -1,0 +1,12 @@
+# spec: S01-12
+# Non-TTY: one record per line, tab-separated, no header. Fields: handle name role grants.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "list"]
+status = "success"
+stdout = """
+@rowan	Rowan Vale	owner	*:read,comment,action,write
+@scribe	Scribe	member	*:read,comment,action,write
+@linter	linter	member	*:read,comment,action,write
+@limited	Limited Agent	member	notes:read,comment
+"""
+stderr = ""

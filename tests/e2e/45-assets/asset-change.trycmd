@@ -1,0 +1,39 @@
+spec: S03-09, S03-11, S03-06, S17-06
+
+The Markdown is byte-identical in `v2/`; only `img/pic.png` differs — that is a new Version,
+because the identity covers the sorted `(ref, hash)` manifest. Pushing the first tree again from
+its v1 Sidecar is refused — the head changed the picture and this tree has the old one (ticket 17)
+— until `--discard-head-changes` makes it `v3 (same content as v1)`; the manifest of every
+Version is on the Version record.
+
+```console
+$ annotary -p rowan push as-aoc.md
+assets: 1 referenced, 1 new (89 B)
+as-aoc	[..]	v1
+
+$ annotary -p rowan push v2/as-aoc.md --doc as-aoc -m "new picture"
+assets: 1 referenced, 1 new (76 B)
+as-aoc	[..]	v2
+
+$ annotary -p rowan push v2/as-aoc.md
+assets: 1 referenced, 0 new
+as-aoc	[..]	already v2
+
+$ annotary -p rowan push as-aoc.md
+? 5
+error: v2 by @rowan changed as-aoc.md since your v1 — those changes are not in your file — put them into as-aoc.md and push again
+asset img/pic.png changed in v2
+
+$ annotary -p rowan push as-aoc.md --discard-head-changes
+warning: discarding v2 by @rowan since your v1
+assets: 1 referenced, 0 new
+as-aoc	[..]	v3 (same content as v1)
+
+$ annotary -p rowan versions as-aoc --json number,same_as
+[{"number":1},{"number":2},{"number":3,"same_as":1}]
+
+$ annotary -p rowan push as-aoc.md --strict
+assets: 1 referenced, 0 new
+as-aoc	[..]	already v3
+
+```

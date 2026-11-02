@@ -1,0 +1,9 @@
+# spec: S03-05
+bin.name = "annotary"
+args = ["-p", "rowan", "push", "as-strict.md", "--strict", "--json"]
+fs.sandbox = true
+status.code = 5
+stdout = ""
+stderr = """
+{"error":"strict","message":"missing asset img/nope.png (not found) (--strict)","hint":"fix the references or push without --strict"}
+"""

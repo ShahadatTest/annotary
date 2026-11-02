@@ -1,0 +1,9 @@
+# spec: S02-28, S02-29
+# `--json` bare: the compact default set; ISO-8601 UTC seconds; null action omitted.
+bin.name = "annotary"
+args = ["-p", "rowan", "show", "ro-plan", "--json"]
+status = "success"
+stdout = """
+{"name":"ro-plan","id":"[..]","vault":"notes","version":3,"by":"rowan","at":"[..]T[..]Z","message":"back to v1","open":0,"actions":["approve","send-back"]}
+"""
+stderr = ""

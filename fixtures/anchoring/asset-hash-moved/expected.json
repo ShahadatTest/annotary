@@ -1,0 +1,14 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "line": 3
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "line": 7
+    }
+  ]
+}

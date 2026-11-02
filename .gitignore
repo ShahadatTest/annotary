@@ -1,0 +1,43 @@
+# Machine-local agent state. Everything else under .agents/ and .claude/ is committed.
+.gemini/
+.claude/settings.local.json
+.claude/worktrees/
+.DS_Store
+
+.venv/
+__pycache__/
+node_modules/
+
+# ---- the repo's own ----
+# macOS
+.icloud
+*.icloud
+
+# Rust (ticket 01 stands up the cargo workspace)
+/target
+**/*.rs.bk
+
+# Node / web
+dist/
+
+# Python (prototypes)
+*.pyc
+
+# Local data / secrets
+.env
+.env.*
+*.log
+.annotary/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# trycmd dumps (TRYCMD=dump)
+dump/
+
+# ticket 14: `annotary skill install` run at the repo root writes the embedded skill here —
+# the source of truth is crates/annotary/skill/SKILL.md, so the copy is never committed.
+.agents/skills/annotary/
+

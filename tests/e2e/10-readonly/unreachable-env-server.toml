@@ -1,0 +1,10 @@
+# spec: S01-14, S01-16
+# ANNOTARY_SERVER overrides the profile's server.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "list"]
+env.add = { ANNOTARY_SERVER = "http://127.0.0.1:1" }
+status.code = 6
+stdout = ""
+stderr = """
+error: server at http://127.0.0.1:1 not reachable — run `annotary serve` or `annotary daemon install`
+"""

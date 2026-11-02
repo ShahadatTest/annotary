@@ -1,0 +1,8 @@
+# spec: S04-02
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "th-plan", "-m", "x"]
+status.code = 1
+stdout = ""
+stderr = """
+error: say what the Thread is about: an ANCHOR "L:C-L:C" on head, --document, or --asset REF — e.g. annotary thread new plan "16:0-16:33" -m "…"  ·  annotary thread new plan --document -m "…"  ·  annotary thread new plan --asset img/x.png -m "…"
+"""

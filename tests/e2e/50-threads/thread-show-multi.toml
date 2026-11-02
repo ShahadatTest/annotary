@@ -1,0 +1,25 @@
+# spec: S04-12, S04-07, S04-08
+# Several ids: resolved (by whom, on which Version), edited, tombstoned reply, tombstoned root.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "show", "th-plan", "t3", "t4", "t5", "t1"]
+status = "success"
+stdout = """
+t3	resolved by @rowan v1 [..]	@scribe	v1:11:48-11:69 "testable in isolation"	created v1 [..]	mentions @rowan @linter	edited [..]
+  Should the anchor engine be its own package so the CLI and server share one implementation? @rowan @linter
+
+t4	open	@rowan	v1:20:41-20:73 "invite three external developers"	created v1 [..]
+  Three feels low for useful signal. Five?
+t4.1	@scribe	v1 [..]	deleted by @scribe [..]
+  (deleted)
+
+t5	open	@scribe	v1:3:0-3:14 "![architecture"	created v1 [..]	deleted by @scribe [..]
+  (deleted)
+t5.1	@rowan	v1 [..]
+  (Replying to the deleted question: yes — the fixture table is also the seed of the test suite.)
+
+t1	resolved by @scribe v1 [..]	@rowan	document	created v1 [..]	mentions @scribe
+  Needs a **Risks** section before I can approve. @scribe can you add one?
+t1.1	@scribe	v1 [..]
+  Added §Risks in v2.
+"""
+stderr = ""

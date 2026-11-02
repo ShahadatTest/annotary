@@ -1,0 +1,10 @@
+# spec: S07-11, S07-14, S07-08
+# `thread show --json` = the Sidecar's Thread shape: sparse history (an entry only where the
+# placement changed), `current.exact` only when refined.
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "show", "ra-plan", "t2", "t3", "t8", "--json", "id,anchor"]
+status = "success"
+stdout = """
+[{"id":"t2","anchor":{"original":{"version":1,"range":"16:0-16:33","exact":"We ship the CLI before the web UI"},"current":{"version":5,"range":"16:0-16:38","status":"refined","exact":"We ship the CLI well before the web UI"},"history":[{"version":1,"range":"16:0-16:33","status":"anchored"},{"version":5,"range":"16:0-16:38","status":"refined"}]}},{"id":"t3","anchor":{"original":{"version":1,"range":"20:41-20:73","exact":"invite three external developers"},"current":{"version":5,"range":"20:41-20:73","status":"anchored"},"history":[{"version":1,"range":"20:41-20:73","status":"anchored"},{"version":2,"range":"31:5-31:37","status":"anchored"},{"version":3,"range":"31:5-31:36","status":"refined"},{"version":4,"range":"20:41-20:73","status":"anchored"}]}},{"id":"t8","anchor":{"original":{"version":3,"range":"31:41-31:57","exact":"collect feedback"},"current":{"version":3,"range":"31:41-31:57","status":"orphaned"},"history":[{"version":3,"range":"31:41-31:57","status":"anchored"},{"version":4,"status":"orphaned"}]}}]
+"""
+stderr = ""

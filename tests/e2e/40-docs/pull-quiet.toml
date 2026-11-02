@@ -1,0 +1,10 @@
+# spec: S02-13, S02-14
+# `-q` silences the summary; the result line stays.
+bin.name = "annotary"
+args = ["-p", "rowan", "pull", "ro-plan", "-q"]
+fs.sandbox = true
+status = "success"
+stdout = """
+ro-plan.md	ro-plan.annotary	v3
+"""
+stderr = ""

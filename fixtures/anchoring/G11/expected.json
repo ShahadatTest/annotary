@@ -1,0 +1,28 @@
+{
+  "I": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "11:0-12:25",
+      "exact": "Line 11: kilo romeo bravo\nLine 12: lima yankee mike"
+    },
+    {
+      "version": 2,
+      "status": "orphaned"
+    }
+  ],
+  "D": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "17:0-18:26",
+      "exact": "Line 17: quebec dune hotel\nLine 18: romeo golf sierra"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "15:0-16:26",
+      "exact": "Line 17: quebec dune hotel\nLine 18: romeo golf sierra"
+    }
+  ]
+}

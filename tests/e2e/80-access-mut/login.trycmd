@@ -1,0 +1,54 @@
+spec: S06-12, S06-13, S06-11
+
+`login` against the second server (profile `pw`: its owner @ana has the local password
+`hunter2`; the profile carries the server and no token): the server prompt takes the profile's
+server, `ANNOTARY_PASSWORD` answers the password prompt (echoed as `********`), the Token is
+saved into the profile and works; a wrong password is exit 3; `logout` revokes the Token and
+forgets it (the profile keeps its server); there is no default profile to offer (2026-10-21), so
+`login` only notes `use it with -p NAME`. Merged stdout+stderr.
+
+```console
+$ ANNOTARY_PASSWORD=hunter2 annotary -p pw login
+server [http://127.0.0.1:[..]]: http://127.0.0.1:[..]
+password: ********
+Signed in as @ana (owner). Saved profile "pw" → [..]/config.toml
+use it with -p pw
+
+$ annotary -p pw member list
+@ana	Ana Lima	owner	*:read,comment,action,write
+
+$ annotary -p pw token list --json name,status
+[{"name":"first-run","status":"active"},{"name":"login","status":"active"}]
+
+$ ANNOTARY_PASSWORD=wrong annotary -p pw login
+? 3
+server [http://127.0.0.1:[..]]: http://127.0.0.1:[..]
+password: ********
+error: wrong password — try again
+
+$ annotary -p pw logout
+Signed out (@ana): profile "pw" — token revoked and removed
+
+$ annotary -p pw member list
+? 3
+error: profile 'pw' in [..]/config.toml has no token — add `token = "ant_…"` to it, or run `annotary login`
+
+$ annotary -p pw token list --json name,status
+? 3
+{"error":"no_credential","message":"profile 'pw' in ~/.annotary/config.toml has no token","hint":"add `token = [..]` to it, or run `annotary login`"}
+
+$ ANNOTARY_PASSWORD=hunter2 annotary -p pw login --json
+server [http://127.0.0.1:[..]]: http://127.0.0.1:[..]
+password: ********
+{"profile":"pw","server":"http://127.0.0.1:[..]","handle":"ana","role":"owner"}
+
+$ annotary -p pw token list --json name,status
+[{"name":"first-run","status":"active"},{"name":"login","status":"active"}]
+
+$ annotary -p pw token list --all --json name,status
+[{"name":"first-run","status":"active"},{"name":"login","status":"revoked"},{"name":"login","status":"active"}]
+
+$ annotary -p pw logout --json
+{"profile":"pw","handle":"ana","revoked":true}
+
+```

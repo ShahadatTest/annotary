@@ -1,0 +1,30 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="code">Code</h1>
+<p data-l="3-3">Inline <code>code</code>, <code>double `backtick` code</code>, and <code>&lt;script&gt;</code> in a code span.</p>
+<pre data-l="5-9"><code class="language-rust">fn main() {
+    println!(&quot;&lt;hello&gt; &amp; {}&quot;, 1 &lt; 2);
+}
+</code></pre>
+<pre data-l="11-13"><code class="language-js">console.log(&quot;info string with attrs&quot;);
+</code></pre>
+<pre data-l="15-17"><code class="language-python">print(&quot;tilde fence&quot;)
+</code></pre>
+<pre data-l="19-21"><code>no language
+</code></pre>
+<pre data-l="23-24"><code>indented code block
+second line
+</code></pre>
+<pre data-l="26-30" class="mermaid">graph TD
+  A[Push] --&gt; B{Render}
+  B --&gt;|HTML| C[Serve]
+</pre>
+<math data-l="32-34" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mspace width="0.16666667em"/><mi>d</mi><mi>x</mi><mo>=</mo><mfrac><mn>1</mn><mn>3</mn></mfrac></math>
+<pre data-l="36-40"><code class="language-md">```
+nested fence
+```
+</code></pre>
+<p data-l="42-42">Unclosed fence at the end:</p>
+<pre data-l="44-45"><code class="language-text">still code
+</code></pre>

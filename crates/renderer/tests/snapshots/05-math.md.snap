@@ -1,0 +1,12 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="math">Math</h1>
+<p data-l="3-3">Inline <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mi>E</mi><mo>=</mo><mi>m</mi><msup><mi>c</mi><mn>2</mn></msup></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mi>α</mi><mo>+</mo><mi>β</mi><mo>≤</mo><mi>γ</mi></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><msub><mi>x</mi><msup><mn>1</mn><mn>2</mn></msup></msub><mo>+</mo><msqrt><mi>y</mi></msqrt></math>.</p>
+<p data-l="5-5">Display in a paragraph: <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mfrac><mi>a</mi><mi>b</mi></mfrac><mo>&lt;</mo><mi>c</mi><mo>&gt;</mo><mi>d</mi></math> then text.</p>
+<math data-l="7-9" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mi>n</mi></munderover><mi>i</mi><mo>=</mo><mfrac><mrow><mi>n</mi><mo>(</mo><mi>n</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow><mn>2</mn></mfrac></math>
+<p data-l="11-11">Matrix:</p>
+<p data-l="13-13"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></math></p>
+<p data-l="15-15">Text with markup that must not escape: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mtext>a</mtext><mi>b</mi><mtext>[PARSE ERROR: Undefined("RBrace")]</mtext><mtext></mtext><mi>b</mi><mo>&gt;</mo><mi>x</mi><mo>&lt;</mo><mo>/</mo><mi>b</mi><mo>&gt;</mo><mtext>[PARSE ERROR: Undefined("RBrace")]</mtext></math>.</p>
+<p data-l="17-17">Unsupported input renders an error, not nothing: <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mi>a</mi><mtext>[PARSE ERROR: NewLine]</mtext><mi>b</mi></math> and <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mtext>[PARSE ERROR: Undefined("Command(\"unknowncommand\")")]</mtext><mi>x</mi></math>.</p>
+<p data-l="19-19">Not math: $5 and $10 are prices, and $escaped$ dollars.</p>

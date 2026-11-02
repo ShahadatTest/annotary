@@ -1,0 +1,242 @@
+spec: S14-03, S18-06, S18-09
+
+`--help` is the full reference (≈ 700 tokens on demand, no separate references file): the CLI
+prototype's hand-written help for the top level (`-h` and `--help` print the same; `-V` the
+version) and for `push`, `pull`, `thread`, `wait`, `status`, `act`, `member`, `daemon` — plus
+`skill`, `link` and `pair` (ticket 18) — adjusted only where a later ticket added a flag (`push --doc`
+accepts any DOC form and the derivative warning, `status --deleted`, `wait --on … reopen`,
+`daemon install --port`, ticket 18's `daemon install --bind --allow-remote --url --link-base`).
+Verbs the prototype wrote no help for keep clap's generated help. No server is needed.
+
+```console
+$ annotary --help
+annotary 0.0.0 — share Markdown with humans and agents; comment on it; act on it.
+
+Usage: annotary <command> [args] [options]
+
+Documents
+  list [NAME]                 Documents in the Vault (id name vN action open updated), most active first
+  push FILE.md                Upload a new Version (or create the Document); re-anchors Threads at the edge
+  pull DOC                    Write <name>.md + <name>.annotary into the current dir
+  show DOC                    One-line header + open Threads (what an agent reads first)
+  status DOC                  version · action · open Threads · mentions of you · event cursor
+  versions DOC                Version list
+  delete | restore | purge DOC
+  link DOC [tN]               The URL that opens it (or Thread tN) on another device
+Threads
+  thread list DOC             Open Threads on head, document order, orphaned last
+  thread show DOC ID          Full Thread: root, replies, anchor, resolution
+  thread new DOC ANCHOR       Start a Thread ("L:C-L:C" range, --document, or --asset REF)
+  thread reply DOC ID         Reply (add --resolve to close it in the same step)
+  thread resolve | reopen | edit | delete DOC ID
+  mentions                    Threads mentioning you across every Document you can read (--since)
+Actions
+  act DOC ACTION              Take an Action on head (--version N guards against a moved head)
+  actions DOC                 Action history, newest first
+Wait
+  wait [DOC]                  Block until a new Version, Action or @mention (then print it and exit)
+Local server
+  serve                       Run the server in the foreground (127.0.0.1:7377)
+  daemon <cmd>                install | uninstall | status | start | stop | restart (macOS LaunchAgent)
+  export FILE.tar             Archive the store
+  password --clear | --set    Change a local password in a stopped data dir
+  rerender DOC | --all        Re-run the renderer after an upgrade
+Members & credentials (owner)
+  member <cmd>                add | list | rename | disable | grant | role
+  token <cmd>                 mint | list | revoke
+  vault <cmd>                 list | create | rename | delete
+  settings <cmd>              list | get | set | reset  (yours)
+  devices <cmd>               list | rename | forget  (yours)
+  pair                        Pair a phone or tablet: a new Token as a QR code
+  login | logout              Get a token with the local password / forget it
+  profile <cmd>               list | add | remove  (list shows whose each profile is)
+  skill install               Write the agent skill file for this CLI version
+
+Options (every command)
+  -p, --profile NAME          Who you are: a profile in ~/.annotary/config.toml (no default;
+                              else ANNOTARY_TOKEN, then ANNOTARY_PROFILE)
+      --json [FIELDS]         JSON output; FIELDS narrows (comma list), '?' lists fields
+  -q, --quiet                 Result only — no progress, no hints
+      --no-color
+      --data-dir DIR          Data dir (default ~/.annotary)  [env ANNOTARY_HOME]
+  -h, --help                  Per-command help: annotary <command> --help
+  -V, --version
+
+DOC is a Document id (k7q2m9xd), a Name unique in the Vault (plan), or a path to a pulled file (./plan.md).
+Every line number printed is stamped with its Version (v4:16). Quote Thread id + text, not line numbers.
+Exit codes: 0 ok · 1 usage · 2 not found/ambiguous · 3 no credential · 4 missing right ·
+            5 conflict/refused · 6 server unreachable · 7 wait timed out
+
+$ annotary -V
+annotary 0.0.0
+
+$ annotary push --help
+Upload a Version. The heavy verb by design: hashes, scans assets, records image/video dimensions,
+converts HEIC/AVIF/TIFF/BMP to web derivatives, re-anchors every Thread, renders HTML — then commits.
+
+Usage: annotary push FILE.md [options]
+
+  -m, --message MSG        Version message
+      --doc DOC            Bind this file to an existing Document (writes the Sidecar); default:
+                           Sidecar beside FILE.md, else create a new Document. DOC = id | unique Name |
+                           path to a pulled .md
+      --vault NAME         Vault for a new Document (default: Sidecar → --vault → profile → error if >1)
+      --strict             Warnings are errors: missing/unsupported assets, absolute paths, depth > 5,
+                           no web derivative
+      --force              Push even if the Sidecar is from another Document id (rebinds it to --doc)
+      --discard-head-changes  Push over the changes the head made since your pull (warns; logged)
+
+Prints one line: `NAME  ID  vN` (or `vN (same content as vK)` / `already vN` when nothing changed);
+on a TTY the web URL follows. Progress and warnings go to stderr (`assets: …`, `threads: … re-anchored`).
+`--json` → {name,id,version,same_as?,already?,warnings[]} (+ assets, threads, vault, hash, url).
+
+Warnings (stderr, exit 0 unless --strict):
+  missing asset      referenced file not found — pushed with missing:true
+  unsupported asset  type not in the supported list — left as written
+  absolute path      file:// or absolute reference — ignored
+  depth              linked .md deeper than 5 — ignored
+  derivative         HEIC/HEIF/AVIF needs macOS `sips` or ImageMagick — original pushed without one
+
+Head moved since your pull (Sidecar base_version < head): your file must already contain the head's
+changes — merge them in git or by hand. If it does, the push is normal. If not: exit 5 and the
+missing changes as a unified diff on stderr (`--json`: missing[], assets[]); put them in, push again.
+A .annotary left with git conflict markers needs no resolving.
+
+$ annotary pull --help
+Usage: annotary pull DOC [options]
+
+      --version N          Pull Version N (writes N's Name; Threads as they were on N)
+      --assets             Also write Assets to their relative paths (off by default)
+      --force              Overwrite local edits / differing Asset files
+      --out DIR            Directory to write into (default: .)
+
+Writes exactly two files: <name>.md (byte-identical) and <name>.annotary (JSON projection).
+Prints `NAME.md  NAME.annotary  vN`; the `N threads, M assets (K missing)` summary goes to stderr.
+Refuses if <name>.md exists and differs from the last pulled/pushed hash — exit 5 — unless --force.
+Agents: do not read the .annotary file; use `show`, `thread list`, `status`.
+
+$ annotary thread --help
+Usage: annotary thread <cmd> DOC [ID] [options]
+
+  list DOC                 Open Threads on head, document order, orphaned last (one per line)
+      --all                Include resolved
+      --resolved           Only resolved
+      --status S           anchored | refined | orphaned (comma list)
+      --mentions-me        Only Threads that mention you (root or reply)
+      --since T            Created or replied since: 2h, 3d, 2026-08-17, 2026-08-17T10:00Z
+      --sort recent        Most recent activity first (default: document order)
+      --version N          Threads as they were on Version N (read-only time-slice)
+  show DOC ID...           Everything on one or more Threads (t2 t7)
+  new DOC ANCHOR -m MSG    ANCHOR = "L:C-L:C" on head, or --document, or --asset REF (img/x.png)
+                           A range must match head; the CLI checks the text before posting.
+      --version N          Assert head is N (exit 5 if not) — never comment on content you haven't seen
+  reply DOC ID -m MSG      Reply; MSG may be '-' for stdin
+      --resolve            …and resolve in the same call
+  resolve DOC ID | reopen DOC ID
+  edit DOC ID -m MSG       Your own Comment (owner: anyone's) — sets edited; ID = t7 or t7.1
+  delete DOC ID            Tombstone a Comment (t7 or t7.1) — the Thread and ids stay
+
+List columns: ID  AUTHOR  ANCHOR  BODY  REPLIES  AGE
+  ANCHOR = vN:L "exact quote"          — anchored (word omitted)
+           vN:L refined "exact quote"  — text under it changed; `show` prints the current text
+           vN:L orphaned "exact quote" — span gone (vN:L is its last valid placement)
+           document | asset REF
+Body is the root Comment, first 120 chars, newlines collapsed. `--json` for full bodies.
+Bodies are Markdown, no embeds. 100,000-char cap per Document (exit 5 with the count when hit).
+
+$ annotary wait --help
+Block until something happens, print it, exit 0. Cheap for agents: one long-poll, no polling loop.
+
+Usage: annotary wait [DOC] [options]
+
+      --on KINDS           version,action,mention (default) — also thread,reply,resolve,reopen
+      --action ID          With action: only this Action id
+      --cursor SEQ         Resume from an event cursor (from `status` or a previous `wait`)
+      --timeout DUR        Give up after DUR (default 30m; 0 = never) — exit 7
+      --json               One JSON object per event line
+
+Output: SEQ  KIND  DOC  DETAIL   (one line per event; all events that arrived together are printed)
+  814  version  plan  v5 by @rowan "address review"
+  815  action   plan  approve v5 by @rowan
+  816  mention  plan  t2.2 by @rowan "…@scribe…"
+Without DOC: every Document you can read. Survives server restarts (cursor is durable).
+Timeout: `wait: nothing after DUR (seq N)` on stderr, exit 7 — resume with --cursor N.
+
+$ annotary status --help
+Usage: annotary status DOC [--deleted]
+
+One line: NAME  ID  vN  action:ID@vN by @handle | -  open:N  mentions-me:N  seq:N
+`--json` → {name,id,version,action,open_threads,mentions_me,seq} — action = {id,by,at} or omitted.
+Cheapest read there is. `seq` is the cursor for `wait --cursor`. --deleted also reads a deleted Document.
+
+$ annotary act --help
+Usage: annotary act DOC ACTION [--version N]
+
+ACTION is an id from the Document's available set (`show DOC` lists them). Actions are per-Version and
+head-only: `--version N` refuses (exit 5) if head ≠ N. Last Action on a Version wins. No note field —
+say why in a Thread. Needs the `action` right on the Vault.
+Prints `NAME  vN  ACTION  by @handle`; `--json` → {name,id,version,action,by,at}.
+
+$ annotary member --help
+Usage: annotary member <cmd>  (owner only; `list` for everyone)
+
+  add HANDLE [--name "Display Name"]
+        One step: Member + Membership + grant * (read,comment,action,write) + token, printed once.
+        This is how you add an agent.
+  list                     handle  name  role  grants  (disabled)
+  rename HANDLE NEW        Changes the display name; the handle itself never changes
+  disable HANDLE           Keeps history; token stops working
+  grant HANDLE VAULT|* RIGHTS   e.g. grant linter notes read,comment — `none` removes the grant
+  role HANDLE owner|member
+
+$ annotary daemon --help
+Usage: annotary daemon install | uninstall | status | start | stop | restart
+
+  install [--port N]       Write the LaunchAgent (RunAtLoad, KeepAlive, log → logs/server.log) and start it;
+                           first-run setup if the store is empty
+      [--bind ADDR --allow-remote] [--url URL] [--link-base URL]
+                           Passed to `serve` in the plist: reachable from your phone (Tailscale / LAN
+                           address), the public URL and the link relay — see `serve --help`
+  uninstall                Stop it and remove the plist (the data dir stays)
+  status                   running / pid / since / URL / store / log — from server.json (a stale pid
+                           reads as not running)
+  start | stop             Load / unload the LaunchAgent (stop keeps it installed; start or the next login
+                           brings it back)
+  restart                  Restart the running server (upgrade = replace the binary, then `daemon restart`)
+
+macOS: writes ~/Library/LaunchAgents/com.annotary.server.plist running `annotary serve`
+with the current data dir; `status` reads ~/.annotary/server.json. Other platforms: exit 1 with
+"unsupported — run `annotary serve` under your service manager".
+
+$ annotary skill --help
+Usage: annotary skill install [--dir DIR] [--force]
+
+Writes this binary's embedded SKILL.md — the agent skill: rules, command table, exit codes, ≤ 60
+lines — to DIR/annotary/SKILL.md and prints the path. DIR defaults to ./.agents/skills (the
+cross-harness location); e.g. --dir ~/.claude/skills. An identical file is left alone; a differing
+one (older version, local edit) is refused without --force (exit 5).
+The skill's metadata.version is this CLI's version: when `annotary --version` differs, run
+`skill install` again — the skill itself says so. There is no references file: `annotary
+<command> --help` is the reference.
+
+$ annotary link --help
+Usage: annotary link DOC [tN]
+
+Prints the URL a person opens to look at DOC — at Thread tN when given — on another device: the
+server's public URL (`serve --url`), through the link relay when one is set (`serve --link-base`:
+it opens the iOS app where installed, the web page elsewhere). No public URL set: this CLI's server
+URL plus a note on stderr. `--json` → {url,name,id} (+ thread, public).
+Agents: give a person this link when you want them to look at something.
+
+$ annotary pair --help
+Usage: annotary pair [--member HANDLE] [--name NAME]
+
+      --member HANDLE      Pair a device for another Member (owner only); default: yourself
+      --name NAME          The new Token's name (default: device)
+
+Mints a Token and prints it as a annotary://pair URL — on a TTY also as a QR code to scan with
+the iPhone or iPad camera or Annotary. Shown once; `token revoke ID` revokes it.
+Non-TTY: PAIR_URL  MEMBER  TOKEN_ID  NAME. `--json` → {pair_url,member,token_id,name} (+ server,
+profile, token). Needs a public URL (`serve --url http://HOST:PORT`): exit 5 without one.
+
+```

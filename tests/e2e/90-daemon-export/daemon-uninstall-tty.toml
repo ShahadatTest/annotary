@@ -1,0 +1,12 @@
+# spec: S13-04, S16-04
+# TTY parity for `daemon uninstall`: the same fields, two spaces apart.
+bin.name = "annotary"
+args = ["daemon", "uninstall"]
+env.add = { ANNOTARY_DAEMON_OS = "macos", ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+~/Library/LaunchAgents/com.annotary.e2e.plist  not installed  (data dir ~/.annotary kept)
+"""
+stderr = """
+no LaunchAgent com.annotary.e2e installed — nothing to do
+"""

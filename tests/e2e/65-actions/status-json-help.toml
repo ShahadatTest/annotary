@@ -1,0 +1,8 @@
+# spec: S05-09, S05-11
+bin.name = "annotary"
+args = ["-p", "rowan", "status", "act-plan", "--json", "?"]
+status = "success"
+stdout = """
+name id version action open_threads mentions_me seq vault deleted
+"""
+stderr = ""

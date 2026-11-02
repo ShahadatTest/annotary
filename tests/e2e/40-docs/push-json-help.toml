@@ -1,0 +1,8 @@
+# spec: S02-13
+bin.name = "annotary"
+args = ["-p", "rowan", "push", "x.md", "--json", "?"]
+status = "success"
+stdout = """
+name id version same_as already warnings assets threads vault hash url
+"""
+stderr = ""

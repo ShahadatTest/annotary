@@ -1,0 +1,10 @@
+# spec: S02-07
+# JSON error form: {error, message, hint} — the candidates fold into hint. (trycmd normalises the
+# JSON-escaped quotes around the Name, hence the wildcards.)
+bin.name = "annotary"
+args = ["-p", "rowan", "status", "dup-plan", "--json"]
+status.code = 2
+stdout = ""
+stderr = """
+{"error":"ambiguous","message":"2 Documents named [..]dup-plan[..] — use the id:","hint":"  [..]  dup-plan  v1  [..];   [..]  dup-plan  v1  [..]"}
+"""

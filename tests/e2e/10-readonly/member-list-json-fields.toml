@@ -1,0 +1,9 @@
+# spec: S01-17
+# --json a,b narrows to exactly those fields, in the order asked.
+bin.name = "annotary"
+args = ["-p", "rowan", "member", "list", "--json", "role,handle"]
+status = "success"
+stdout = """
+[{"role":"owner","handle":"rowan"},{"role":"member","handle":"scribe"},{"role":"member","handle":"linter"},{"role":"member","handle":"limited"}]
+"""
+stderr = ""

@@ -1,0 +1,12 @@
+# spec: S02-20, S02-30
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "lst-", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+ID        NAME   VER  ACTION  OPEN  UPDATED
+[..]  lst-a  v1   -          0  [..]
+[..]  lst-c  v1   -          0  [..]
+[..]  lst-b  v1   -          0  [..]
+"""
+stderr = ""

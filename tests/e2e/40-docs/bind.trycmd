@@ -1,0 +1,42 @@
+spec: S02-03, S02-04, S02-07, S02-15
+
+`push --doc` binds a file to an existing Document (by Name or by the path of a pulled file);
+a Sidecar from another Document needs `--force`; the Sidecar is written for an unbound file;
+pushing under a new filename renames (Names are recorded per Version).
+
+```console
+$ annotary -p rowan push bind-a.md
+bind-a	[..]	v1
+
+$ annotary -p rowan push bind-b.md
+bind-b	[..]	v1
+
+$ annotary -p rowan push bind-b.md --doc bind-a
+? 5
+error: bind-b.md is bound to [..] (bind-b.annotary) — pass --force to rebind it to [..] — or delete the Sidecar to create a new Document
+
+$ annotary -p rowan push bind-b.md --doc bind-a --force
+warning: rebinding bind-b.md from [..] to [..]
+bind-b	[..]	v2
+
+$ annotary -p rowan versions bind-b.md --json number,name
+[{"number":1,"name":"bind-a"},{"number":2,"name":"bind-b"}]
+
+$ annotary -p rowan push unbound/bind-c.md --doc bind-b.md
+bind-c	[..]	v3
+
+$ annotary -p rowan status unbound/bind-c.md
+bind-c	[..]	v3	action:-	open:0	mentions-me:0	seq:[..]
+
+$ annotary -p rowan push unbound/bind-c.md
+bind-c	[..]	already v3
+
+$ annotary -p rowan pull unbound/bind-c.md --version 1 --out v1
+pull: 0 threads, 0 assets
+(name on v1 was "bind-a"; Threads as they were on v1; head is v3)
+bind-a.md	bind-a.annotary	v1
+
+$ annotary -p rowan status v1/bind-a.md
+bind-c	[..]	v3	action:-	open:0	mentions-me:0	seq:[..]
+
+```

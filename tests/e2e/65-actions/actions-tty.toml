@@ -1,0 +1,12 @@
+# spec: S05-08, S05-14
+bin.name = "annotary"
+args = ["-p", "agent", "actions", "act-plan", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+ACTION     BY       AT[..]  VER  LABEL
+approve    @scribe  [..]  v2   Approve
+send-back  @scribe  [..]  v1   Send back
+approve    @rowan   [..]  v1   Approve
+"""
+stderr = ""

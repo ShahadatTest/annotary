@@ -1,0 +1,21 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="crlf-document">CRLF document</h1>
+<p data-l="3-4">Lines end with CRLF.
+Second line.</p>
+<ul data-l="6-7">
+<li data-l="6-6">item one</li>
+<li data-l="7-7">item two</li>
+</ul>
+<pre data-l="9-11"><code>code
+</code></pre>
+<table data-l="13-15">
+<thead data-l="13-13">
+<tr data-l="13-13"><th data-l="13-13">a</th><th data-l="13-13">b</th></tr>
+</thead>
+<tbody data-l="15-15">
+<tr data-l="15-15"><td data-l="15-15">1</td><td data-l="15-15">2</td></tr>
+</tbody>
+</table>
+<p data-l="17-17">Last line without a newline at the end</p>

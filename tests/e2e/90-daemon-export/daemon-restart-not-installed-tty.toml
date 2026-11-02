@@ -1,0 +1,10 @@
+# spec: S13-04, S16-04
+# TTY parity for `daemon restart` without a plist: the same one-line error, exit 5.
+bin.name = "annotary"
+args = ["daemon", "restart"]
+env.add = { ANNOTARY_DAEMON_OS = "macos", ANNOTARY_TTY = "1", NO_COLOR = "1" }
+status.code = 5
+stdout = ""
+stderr = """
+error: no LaunchAgent installed (~/Library/LaunchAgents/com.annotary.e2e.plist is missing) — `annotary daemon install` writes it and starts the server
+"""

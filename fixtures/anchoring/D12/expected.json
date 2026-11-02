@@ -1,0 +1,42 @@
+{
+  "t1": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "5:8-5:16",
+      "exact": "bb cc dd"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "5:11-5:22",
+      "exact": "bb cc XX dd"
+    },
+    {
+      "version": 3,
+      "status": "refined",
+      "range": "5:11-5:22",
+      "exact": "bb cc XX dd"
+    }
+  ],
+  "t2": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "3:21-3:34",
+      "exact": "never changes"
+    },
+    {
+      "version": 2,
+      "status": "anchored",
+      "range": "3:21-3:34",
+      "exact": "never changes"
+    },
+    {
+      "version": 3,
+      "status": "anchored",
+      "range": "3:21-3:34",
+      "exact": "never changes"
+    }
+  ]
+}

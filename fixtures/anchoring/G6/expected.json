@@ -1,0 +1,16 @@
+{
+  "F": [
+    {
+      "version": 1,
+      "status": "anchored",
+      "range": "24:0-25:28",
+      "exact": "Line 24: xray sierra yankee\nLine 25: yankee zulu foxtrot"
+    },
+    {
+      "version": 2,
+      "status": "refined",
+      "range": "24:0-26:28",
+      "exact": "Line 24: xray sierra yankee\nLine 24a: inserted between F's lines\nLine 25: yankee zulu foxtrot"
+    }
+  ]
+}

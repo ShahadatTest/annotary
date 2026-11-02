@@ -1,0 +1,9 @@
+# spec: S02-25
+bin.name = "annotary"
+args = ["-p", "rowan", "push", "plan.md"]
+fs.sandbox = true
+status.code = 1
+stdout = ""
+stderr = """
+error: plan.annotary is not a Sidecar: several JSON values (JSONL) — a Sidecar is one JSON object — `annotary pull DOC` regenerates it (only id, vault, base_version and actions.available are read from it)
+"""

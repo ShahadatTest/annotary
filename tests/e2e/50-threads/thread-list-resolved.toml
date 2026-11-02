@@ -1,0 +1,9 @@
+# spec: S04-11
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "th-plan", "--resolved"]
+status = "success"
+stdout = """
+t1	@rowan	document	Needs a **Risks** section before I can approve. @scribe can you add one?	+1	[..]
+t3	@scribe	v1:11 "testable in isolation"	Should the anchor engine be its own package so the CLI and server share one implementation? @rowan @linter	[..]
+"""
+stderr = ""

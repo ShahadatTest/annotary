@@ -1,0 +1,16 @@
+# spec: S14-03
+# `-h` prints the same top-level help as `--help` (the prototype's grouped reference).
+bin.name = "annotary"
+args = ["-h"]
+status = "success"
+stdout = """
+annotary 0.0.0 — share Markdown with humans and agents; comment on it; act on it.
+
+Usage: annotary <command> [args] [options]
+
+Documents
+...
+Exit codes: 0 ok · 1 usage · 2 not found/ambiguous · 3 no credential · 4 missing right ·
+            5 conflict/refused · 6 server unreachable · 7 wait timed out
+"""
+stderr = ""

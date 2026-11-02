@@ -1,0 +1,8 @@
+# spec: S04-02
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "th-plan", "--document", "-m", "  "]
+status.code = 1
+stdout = ""
+stderr = """
+error: empty message — pass -m MSG (Markdown), or -m - to read it from stdin
+"""

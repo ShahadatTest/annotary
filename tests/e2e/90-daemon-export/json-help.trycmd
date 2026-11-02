@@ -1,0 +1,19 @@
+spec: S13-02, S13-04, S13-06, S01-17
+
+`--json ?` lists every field of the ticket-13 verbs and exits without touching launchd or the
+store — on any platform.
+
+```console
+$ ANNOTARY_DAEMON_OS=linux annotary daemon status --json ?
+state pid since url port store log plist installed loaded label version
+
+$ ANNOTARY_DAEMON_OS=linux annotary daemon install --json ?
+state pid since url port store log plist installed loaded label version
+
+$ ANNOTARY_DAEMON_OS=linux annotary daemon uninstall --json ?
+plist removed stopped label
+
+$ annotary export backup.tar --json ?
+file blobs bytes size schema_version tenant_id store live
+
+```

@@ -1,0 +1,102 @@
+spec: S26-01, S26-02, S26-03
+
+`vault list | create | rename | delete` (CMD-5) on the shared store, in a group of its own: it
+adds Vaults while it runs (a `push` without `--vault` in a parallel case would see two and stop)
+and deletes them again before the next group. `vault rename` points the local profile whose
+Vault it was at the new name; `vault delete` clears it. Every exit path: 1 (empty name), 2
+(unknown — naming the new name once a Vault was renamed away), 4 (owner-only), 5 (taken, still
+holds a Document). Merged stdout+stderr; ages are `[..]`.
+
+```console
+$ annotary -p rowan vault create e2e-drafts
+e2e-drafts	0	0	[..]
+
+$ annotary -p rowan vault create e2e-drafts
+? 5
+error: Vault e2e-drafts already exists
+
+$ annotary -p agent vault create e2e-mine
+? 4
+error: vault create is owner-only — ask an owner (`annotary member list` shows who)
+
+$ annotary -p rowan vault create " "
+? 1
+error: NAME must not be empty — `annotary vault list` shows the Vaults
+
+$ sh add-profile.sh
+profile "e2e" saved → [..]/config.toml
+
+$ annotary -p rowan vault rename e2e-drafts e2e-reviews
+profile "e2e" now uses Vault "e2e-reviews"
+e2e-reviews	0	0	[..]
+
+$ annotary -p rowan profile list --json name,vault
+[{"name":"agent","vault":"notes"},{"name":"down"},{"name":"e2e","vault":"e2e-reviews"},{"name":"limited"},{"name":"pw"},{"name":"rowan"}]
+
+$ annotary -p rowan vault rename e2e-drafts e2e-x
+? 2
+error: no Vault e2e-drafts — Vault e2e-drafts was renamed to e2e-reviews
+
+$ annotary -p rowan vault rename e2e-reviews notes
+? 5
+error: Vault notes already exists
+
+$ annotary -p agent vault rename e2e-reviews e2e-x
+? 4
+error: vault rename is owner-only — ask an owner (`annotary member list` shows who)
+
+$ annotary -p agent vault list
+notes	[..]
+e2e-reviews	0	0	[..]
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan vault list
+NAME         DOCUMENTS  DELETED  CREATED
+notes        [..]
+e2e-reviews  0          0        [..]
+
+$ annotary -p rowan vault list --json name
+[{"name":"notes"},{"name":"e2e-reviews"}]
+
+$ annotary -p rowan push vdoc.md --vault e2e-reviews
+vdoc	[..]	v1
+
+$ annotary -p rowan vault delete e2e-reviews
+? 5
+error: Vault e2e-reviews still holds 1 Document — delete and purge its Documents first (`annotary purge DOC`), then delete the Vault
+
+$ annotary -p rowan delete vdoc.md
+vdoc	[..]	deleted
+
+$ annotary -p rowan vault delete e2e-reviews
+? 5
+error: Vault e2e-reviews still holds 1 Document (1 deleted — purge them first) — delete and purge its Documents first (`annotary purge DOC`), then delete the Vault
+
+$ annotary -p rowan purge vdoc.md
+purged vdoc ([..]) — 2 blobs removed
+vdoc	[..]	purged
+
+$ annotary -p agent vault delete e2e-reviews
+? 4
+error: vault delete is owner-only — ask an owner (`annotary member list` shows who)
+
+$ annotary -p rowan vault delete e2e-reviews
+profile "e2e" no longer names a Vault ("e2e-reviews" was deleted)
+e2e-reviews	deleted
+
+$ annotary -p rowan vault delete e2e-reviews
+? 2
+error: no Vault e2e-reviews — `GET /api/v1/vaults` lists them
+
+$ annotary -p rowan vault create e2e-json --json
+{"name":"e2e-json","documents":0,"deleted":0,"created":"[..]","id":"[..]"}
+
+$ ANNOTARY_TTY=1 NO_COLOR=1 annotary -p rowan vault delete e2e-json
+e2e-json  deleted
+
+$ annotary -p rowan -q profile remove e2e
+profile "e2e" removed → [..]/config.toml
+
+$ annotary -p rowan vault list --json name
+[{"name":"notes"}]
+
+```

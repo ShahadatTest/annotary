@@ -1,0 +1,9 @@
+# spec: S04-15, S04-13
+# `show --json` carries the open Threads as `threads` (the `thread list` records).
+bin.name = "annotary"
+args = ["-p", "agent", "show", "th-plan", "--json", "name,open,threads"]
+status = "success"
+stdout = """
+{"name":"th-plan","open":3,"threads":[{"id":"t5","author":"scribe","anchor":{"version":1,"range":"3:0-3:14","status":"anchored","exact":"![architecture"},"replies":1,"deleted":true,"created":"[..]T[..]Z","updated":"[..]T[..]Z","version":1},{"id":"t2","author":"rowan","anchor":{"version":1,"range":"16:0-16:33","status":"anchored","exact":"We ship the CLI before the web UI"},"body":"Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.","mentions":["scribe","rowan"],"replies":1,"created":"[..]T[..]Z","updated":"[..]T[..]Z","version":1},{"id":"t4","author":"rowan","anchor":{"version":1,"range":"20:41-20:73","status":"anchored","exact":"invite three external developers"},"body":"Three feels low for useful signal. Five?","replies":1,"created":"[..]T[..]Z","updated":"[..]T[..]Z","version":1}]}
+"""
+stderr = ""

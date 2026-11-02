@@ -1,0 +1,84 @@
+spec: S07-06, S07-09, S07-10, S07-14, S07-17
+
+Seeds `ra-plan` — the sidecar prototype's scenario, pushed for real (v1 → v2 → v3 → v4 = v1's
+text, then a v5 that changes one word under t2) — for the read-only `50-threads/reanchor-*`
+cases: t1 document (resolved), t2 span (anchored through v4, refined on v5), t3 span (shifted on
+v2, refined on v3, anchored again on v4; resolved), t4 whole-Asset Thread on
+`img/architecture.png` (anchored throughout), t5 span (anchored throughout), t6 + t7 spans
+created on v2 (t7's root tombstoned) and t8 created on v3 — all three orphaned by v4 and never
+revived. Every push prints the re-anchoring summary; the Sidecar golden is
+`50-threads/pull-reanchor.out/`. No @mentions (the `mentions` cases are cross-Document).
+Merged stdout+stderr; ids are random.
+
+```console
+$ annotary -p rowan push ra-plan.md -m "first draft"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+warning: missing asset api-notes.md (not found) — pushed with missing:true
+assets: 3 referenced, [..], 2 missing (img/cli-screenshot.png, api-notes.md)
+ra-plan	[..]	v1
+
+$ annotary -p rowan thread new ra-plan --document -m "Needs a Risks section before I can approve."
+t1	document
+
+$ annotary -p rowan thread new ra-plan "16:0-16:33" -m "Agreed — but the skill file must land *with* the CLI, not after."
+t2	v1:16:0-16:33 "We ship the CLI before the web UI"
+
+$ annotary -p agent thread new ra-plan "20:41-20:73" -m "Three feels low for useful signal. Five?"
+t3	v1:20:41-20:73 "invite three external developers"
+
+$ annotary -p rowan thread new ra-plan --asset img/architecture.png -m "Diagram is out of date — the daemon box is missing."
+t4	asset img/architecture.png
+
+$ annotary -p agent thread new ra-plan "11:48-11:69" -m "Should the anchor engine be its own package?"
+t5	v1:11:48-11:69 "testable in isolation"
+
+$ annotary -p agent thread reply ra-plan t1 --resolve -m "Added a Risks section in v2."
+t1.1	resolved
+
+$ annotary -p agent push v2/ra-plan.md --doc ra-plan -m "address review: add Risks, split rollout"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+warning: missing asset api-notes.md (not found) — pushed with missing:true
+assets: 3 referenced, 0 new, 2 missing (img/cli-screenshot.png, api-notes.md)
+threads: 5 re-anchored — 5 anchored, 0 refined, 0 orphaned (unchanged)
+ra-plan	[..]	v2
+
+$ annotary -p rowan thread new ra-plan "21:29-21:79" -m "This is exactly what the sidecar-format ticket has to answer — link it here."
+t6	v2:21:29-21:79 "agents should use the CLI, not read the file whole"
+
+$ annotary -p agent thread new ra-plan "20:27-20:57" -m "(a question, deleted below)"
+t7	v2:20:27-20:57 "mitigated by the fixture table"
+
+$ annotary -p rowan thread reply ra-plan t7 -m "(Replying to the deleted question: yes — the fixture table is also the seed of the test suite.)"
+t7.1
+
+$ annotary -p agent thread delete ra-plan t7
+t7	deleted
+
+$ annotary -p rowan push v3/ra-plan.md --doc ra-plan
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+warning: missing asset api-notes.md (not found) — pushed with missing:true
+assets: 3 referenced, 0 new, 2 missing (img/cli-screenshot.png, api-notes.md)
+threads: 7 re-anchored — 6 anchored, 1 refined, 0 orphaned (+1 refined: t3)
+ra-plan	[..]	v3
+
+$ annotary -p agent thread new ra-plan "31:41-31:57" -m "How — survey or interviews? Worth deciding before the invites go out."
+t8	v3:31:41-31:57 "collect feedback"
+
+$ annotary -p rowan thread reply ra-plan t3 --resolve -m "Done — five, and two weeks of feedback."
+t3.1	resolved
+
+$ annotary -p rowan push v4/ra-plan.md --doc ra-plan -m "back to the first-draft wording for comparison"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+warning: missing asset api-notes.md (not found) — pushed with missing:true
+assets: 3 referenced, 0 new, 2 missing (img/cli-screenshot.png, api-notes.md)
+threads: 8 re-anchored — 5 anchored, 0 refined, 3 orphaned (+3 orphaned: t6, t7, t8; +1 anchored: t3)
+ra-plan	[..]	v4 (same content as v1)
+
+$ annotary -p rowan push v5/ra-plan.md --doc ra-plan -m "well before"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+warning: missing asset api-notes.md (not found) — pushed with missing:true
+assets: 3 referenced, 0 new, 2 missing (img/cli-screenshot.png, api-notes.md)
+threads: 8 re-anchored — 4 anchored, 1 refined, 3 orphaned (+1 refined: t2)
+ra-plan	[..]	v5
+
+```

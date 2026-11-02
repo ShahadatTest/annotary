@@ -1,0 +1,9 @@
+# spec: S05-03
+# An id outside the Document's available set is refused, naming the available ids.
+bin.name = "annotary"
+args = ["-p", "rowan", "act", "act-plan", "ship"]
+status.code = 5
+stdout = ""
+stderr = """
+error: no Action "ship" on act-plan ([..]) — available: approve, send-back
+"""

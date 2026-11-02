@@ -1,0 +1,9 @@
+# spec: S02-17
+# `--deleted` shows it anyway (with a trailing `deleted` field).
+bin.name = "annotary"
+args = ["-p", "rowan", "show", "ro-del", "--deleted"]
+status = "success"
+stdout = """
+ro-del	[..]	notes	v1 by @rowan [..]	action:-	open:0	actions:approve,send-back	deleted
+"""
+stderr = ""

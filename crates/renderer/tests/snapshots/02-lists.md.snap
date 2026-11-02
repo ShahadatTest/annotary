@@ -1,0 +1,74 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="lists">Lists</h1>
+<ul data-l="3-7">
+<li data-l="3-3">bullet one</li>
+<li data-l="4-6">bullet two with <em>emphasis</em>
+<ul data-l="5-6">
+<li data-l="5-6">nested bullet
+<ul data-l="6-6">
+<li data-l="6-6">deeper</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-l="7-7">bullet three</li>
+</ul>
+<ul data-l="9-10">
+<li data-l="9-9">star bullets</li>
+<li data-l="10-10">also work</li>
+</ul>
+<ul data-l="12-12">
+<li data-l="12-12">plus bullets</li>
+</ul>
+<ol data-l="14-21">
+<li data-l="14-14"><p data-l="14-14">ordered one</p>
+</li>
+<li data-l="15-17"><p data-l="15-15">ordered two</p>
+<ol data-l="16-17">
+<li data-l="16-16">nested ordered</li>
+<li data-l="17-17">more</li>
+</ol>
+</li>
+<li data-l="18-18"><p data-l="18-18">ordered three</p>
+</li>
+<li data-l="20-20"><p data-l="20-20">starts at three</p>
+</li>
+<li data-l="21-21"><p data-l="21-21">four</p>
+</li>
+</ol>
+<ol data-l="23-24">
+<li data-l="23-23">paren delimiter</li>
+<li data-l="24-24">second</li>
+</ol>
+<ul data-l="26-29">
+<li data-l="26-26"><input type="checkbox" disabled> open task</li>
+<li data-l="27-27"><input type="checkbox" checked disabled> done task</li>
+<li data-l="28-29"><input type="checkbox" checked disabled> also done
+<ul data-l="29-29">
+<li data-l="29-29"><input type="checkbox" disabled> nested task</li>
+</ul>
+</li>
+</ul>
+<p data-l="31-31">Loose list:</p>
+<ul data-l="33-44">
+<li data-l="33-35"><p data-l="33-33">first item</p>
+<p data-l="35-35">with a second paragraph</p>
+</li>
+<li data-l="37-41"><p data-l="37-37">second item</p>
+<pre data-l="39-41"><code>code inside a list item
+</code></pre>
+</li>
+<li data-l="43-44"><p data-l="43-43">third item</p>
+<blockquote data-l="44-44">
+<p data-l="44-44">with a quote</p>
+</blockquote>
+</li>
+</ul>
+<ol data-l="46-48">
+<li data-l="46-46"><p data-l="46-46">ordered loose</p>
+</li>
+<li data-l="48-48"><p data-l="48-48">with gaps</p>
+</li>
+</ol>

@@ -1,0 +1,21 @@
+spec: S01-10
+
+Setup happens once; a second `serve --setup-only` on the same store says so and exits 0.
+
+```console
+$ ANNOTARY_HOME=cdhome ANNOTARY_SETUP_HANDLE=rowan ANNOTARY_SETUP_NAME=Rowan annotary serve --setup-only
+Tenant created at [..]/cdhome/store
+  owner handle [rowan]: rowan
+  display name [[..]]: Rowan
+  local password (blank = loopback trust, browser is you): 
+Vault "notes" created.
+Owner token for the CLI (shown once) — put it in your shell or a profile in [..]/cdhome/config.toml:
+
+  ANNOTARY_TOKEN=ant_[..]
+
+No CLI credential is saved: export the token above, or run `annotary login` (needs the local password); `annotary member add <handle>` mints a token for an agent.
+
+$ ANNOTARY_HOME=cdhome annotary serve --setup-only
+store [..]/cdhome/store is already set up (owner @rowan)
+
+```

@@ -1,0 +1,8 @@
+# spec: S07-12
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "list", "ra-plan", "--version", "9"]
+status.code = 2
+stdout = ""
+stderr = """
+error: Document [..] has no v9
+"""

@@ -1,0 +1,11 @@
+# spec: S05-10
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "act-", "--no-color"]
+env.add = { ANNOTARY_TTY = "1" }
+status = "success"
+stdout = """
+ID        NAME      VER  ACTION   OPEN  UPDATED
+[..]  act-none  v1   -           0  [..]
+[..]  act-plan  v2   approve     0  [..]
+"""
+stderr = ""

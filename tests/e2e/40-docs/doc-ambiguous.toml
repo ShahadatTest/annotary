@@ -1,0 +1,11 @@
+# spec: S02-07, S02-06
+# Two Documents share the Name: exit 2 listing `id name vN updated`.
+bin.name = "annotary"
+args = ["-p", "rowan", "status", "dup-plan"]
+status.code = 2
+stdout = ""
+stderr = """
+error: 2 Documents named "dup-plan" — use the id:
+  [..]  dup-plan  v1  [..]
+  [..]  dup-plan  v1  [..]
+"""

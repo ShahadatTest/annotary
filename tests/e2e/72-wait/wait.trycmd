@@ -1,0 +1,96 @@
+spec: S08-05, S08-06, S08-07, S08-08, S08-09
+
+`wait` on a Document of its own (`wt-plan`): every kind arriving together from `--cursor 0`
+(version, thread/mention, reply, resolve, reopen, action), the default `--on` as the mentioned
+agent, `--on`/`--action` narrowing, `--json` one object per event line (bare and narrowed), the
+TTY shape (two-space fields + the note on stderr), a timeout from `status`'s cursor and from an
+explicit one (exit 7, `(seq N)`), and `wait` without DOC across two Documents that mention
+`@limited` (a Member who reads `notes` only). Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push wt-plan.md -m "first draft"
+wt-plan	[..]	v1
+
+$ annotary -p rowan thread new wt-plan --document -m "Five external devs — do we have five lined up? @scribe"
+t1	document
+
+$ annotary -p agent thread reply wt-plan t1 -m "Item 3 already lists it. @rowan"
+t1.1
+
+$ annotary -p rowan thread reply wt-plan t1 --resolve -m "Done."
+t1.2	resolved
+
+$ annotary -p agent thread reopen wt-plan t1
+t1	reopened
+
+$ annotary -p rowan act wt-plan approve
+wt-plan	v1	approve	by @rowan
+
+$ annotary -p agent wait wt-plan --cursor 0
+[..]	version	wt-plan	v1 by @rowan "first draft"
+[..]	mention	wt-plan	t1 by @rowan "Five external devs — do we have five lined up? @scribe"
+[..]	action	wt-plan	approve v1 by @rowan
+
+$ annotary -p rowan wait wt-plan --cursor 0
+[..]	version	wt-plan	v1 by @rowan "first draft"
+[..]	mention	wt-plan	t1.1 by @scribe "Item 3 already lists it. @rowan"
+[..]	action	wt-plan	approve v1 by @rowan
+
+$ annotary -p rowan wait wt-plan --cursor 0 --on version,action,mention,thread,reply,resolve,reopen
+[..]	version	wt-plan	v1 by @rowan "first draft"
+[..]	thread	wt-plan	t1 by @rowan "Five external devs — do we have five lined up? @scribe"
+[..]	mention	wt-plan	t1.1 by @scribe "Item 3 already lists it. @rowan"
+[..]	reply	wt-plan	t1.2 by @rowan "Done."
+[..]	resolve	wt-plan	t1 by @rowan
+[..]	reopen	wt-plan	t1 by @scribe
+[..]	action	wt-plan	approve v1 by @rowan
+
+$ annotary -p rowan wait wt-plan --cursor 0 --on reply
+[..]	reply	wt-plan	t1.1 by @scribe "Item 3 already lists it. @rowan"
+[..]	reply	wt-plan	t1.2 by @rowan "Done."
+
+$ annotary -p rowan wait wt-plan --cursor 0 --on action --action approve
+[..]	action	wt-plan	approve v1 by @rowan
+
+$ annotary -p rowan wait wt-plan --cursor 0 --on action --action send-back --timeout 1s
+? 7
+wait: nothing after 1s (seq [..])
+
+$ annotary -p agent wait wt-plan --cursor 0 --json
+{"seq":[..],"kind":"version","doc":"[..]","name":"wt-plan","version":1,"message":"first draft","by":"rowan","at":"[..]T[..]Z"}
+{"seq":[..],"kind":"mention","doc":"[..]","name":"wt-plan","version":1,"thread":"t1","excerpt":"Five external devs — do we have five lined up? @scribe","by":"rowan","at":"[..]T[..]Z"}
+{"seq":[..],"kind":"action","doc":"[..]","name":"wt-plan","action":"approve","version":1,"by":"rowan","at":"[..]T[..]Z"}
+
+$ annotary -p agent wait wt-plan --cursor 0 --on action --json seq,kind,action,label,intent,type
+{"seq":[..],"kind":"action","action":"approve","label":"Approve","intent":"positive","type":"action.taken"}
+
+$ ANNOTARY_TTY=1 annotary -p agent wait wt-plan --cursor 0 --on action,mention --no-color
+wait: watching wt-plan for action, mention from seq 0 (timeout 30m)
+[..]  mention  wt-plan  t1 by @rowan "Five external devs — do we have five lined up? @scribe"
+[..]  action  wt-plan  approve v1 by @rowan
+
+$ annotary -p rowan wait wt-plan --timeout 1s
+? 7
+wait: nothing after 1s (seq [..])
+
+$ annotary -p rowan push wt-a.md
+wt-a	[..]	v1
+
+$ annotary -p rowan push wt-b.md
+wt-b	[..]	v1
+
+$ annotary -p rowan thread new wt-a --document -m "@limited please review a"
+t1	document
+
+$ annotary -p rowan thread new wt-b --document -m "@limited please review b"
+t1	document
+
+$ annotary -p limited wait --cursor 0 --on mention
+[..]	mention	wt-a	t1 by @rowan "@limited please review a"
+[..]	mention	wt-b	t1 by @rowan "@limited please review b"
+
+$ annotary -p limited wait --cursor 0 --on mention --json seq,kind,name,thread,by
+{"seq":[..],"kind":"mention","name":"wt-a","thread":"t1","by":"rowan"}
+{"seq":[..],"kind":"mention","name":"wt-b","thread":"t1","by":"rowan"}
+
+```

@@ -1,0 +1,14 @@
+# spec: S13-02
+# `daemon status` reads ~/.annotary/server.json (the harness's running `serve`): one line
+# `running  pid  since  URL  store  log  (version)`; the LaunchAgent note goes to stderr.
+# ANNOTARY_DAEMON_OS=macos is the test seam that lets `status` run on any platform.
+bin.name = "annotary"
+args = ["daemon", "status"]
+env.add = { ANNOTARY_DAEMON_OS = "macos" }
+status = "success"
+stdout = """
+running	pid [..]	since [..]	[URL]	store ~/.annotary/store	log ~/.annotary/logs/server.log	(v0.0.0)
+"""
+stderr = """
+no LaunchAgent installed — `annotary daemon install` keeps the server up after login
+"""

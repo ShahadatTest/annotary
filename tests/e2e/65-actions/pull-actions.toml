@@ -1,0 +1,14 @@
+# spec: S05-07, S05-12
+# `pull` writes `actions {available[], inherited, log[]}`: the Vault defaults with
+# `inherited: true` and the whole log (oldest first, handles, seconds, snapshotted label/intent).
+# Compared against pull-actions.out/.
+bin.name = "annotary"
+args = ["-p", "agent", "pull", "act-plan"]
+fs.sandbox = true
+status = "success"
+stdout = """
+act-plan.md	act-plan.annotary	v2
+"""
+stderr = """
+pull: 0 threads, 0 assets
+"""

@@ -1,0 +1,9 @@
+# spec: S04-13
+# As @rowan: t2's reply mentions me too.
+bin.name = "annotary"
+args = ["-p", "rowan", "status", "th-plan"]
+status = "success"
+stdout = """
+th-plan	[..]	v1	action:-	open:3	mentions-me:1	seq:[..]
+"""
+stderr = ""

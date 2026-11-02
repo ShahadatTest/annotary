@@ -1,0 +1,198 @@
+spec: S14-04, S14-05, S14-06
+
+The agent golden flow: the CLI prototype's `session-agent.txt` run for real. The store is
+seeded with the prototype's scenario first — `plan` (the sidecar prototype's text, v1 → v2 → v3
+→ v4 = v1's text again), eight Threads by @rowan, @scribe and @linter in the prototype's
+order (ids follow creation order, so the asset Thread is t4 and the two Threads the prototype
+numbered t4/t5 are t6/t8 here), @mentions in both directions, a tombstoned reply and a
+tombstoned root, Actions on v1 and v3, so that head v4 carries no Action. Then @scribe
+(profile `agent` — its `ANNOTARY_TOKEN` in the prototype) does exactly what the skill file
+says: `mentions` → `show` → `thread show` → `pull` → edit outside → `push` → `thread reply
+--resolve` → `status` → `wait` (woken by @rowan's `act` from a second profile, `wake.sh`) → the
+`--json` reads → `thread new --version N` (success, then the exit-5 guard) → the typical
+failures an agent must recognise. `mentions` is cross-Document (earlier groups' Threads mention
+@scribe too), so only its first row is pinned. Merged stdout+stderr; ids and ages are random.
+
+```console
+$ annotary -p rowan push seed/plan.md -m "first draft"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, [..], 1 missing (img/cli-screenshot.png)
+plan	[..]	v1
+
+$ annotary -p rowan thread new plan --document -m "Needs a **Risks** section before I can approve. @scribe can you add one?"
+t1	document
+
+$ annotary -p rowan thread new plan "16:0-16:33" -m "Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so."
+t2	v1:16:0-16:33 "We ship the CLI before the web UI"
+
+$ annotary -p agent thread new plan "20:41-20:73" -m "Three feels low for useful signal. Five?"
+t3	v1:20:41-20:73 "invite three external developers"
+
+$ annotary -p rowan thread new plan --asset img/architecture.png -m "Diagram is out of date — the daemon box is missing."
+t4	asset img/architecture.png
+
+$ annotary -p agent thread new plan "11:48-11:69" -m "Should the anchor engine be its own package? @rowan @linter"
+t5	v1:11:48-11:69 "testable in isolation"
+
+$ annotary -p agent thread edit plan t5 -m "Should the anchor engine be its own package so the CLI and server share one implementation? @rowan @linter"
+t5	edited
+
+$ annotary -p rowan act plan send-back
+plan	v1	send-back	by @rowan
+
+$ annotary -p agent push seed/v2/plan.md --doc plan -m "address review: add Risks, split rollout"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+threads: 5 re-anchored — 5 anchored, 0 refined, 0 orphaned (unchanged)
+plan	[..]	v2
+
+$ annotary -p agent thread reply plan t1 --resolve -m "Added §Risks in v2."
+t1.1	resolved
+
+$ annotary -p agent thread reply plan t2 -m "Item 3 already lists the skill file with the CLI. @rowan do you want it as its own item?"
+t2.1
+
+$ annotary -p agent thread reply plan t4 -m "(a reply, deleted below)"
+t4.1
+
+$ annotary -p agent thread delete plan t4.1
+t4.1	deleted
+
+$ annotary -p rowan thread new plan "21:29-21:79" -m "This is exactly what the sidecar-format ticket has to answer — link it here."
+t6	v2:21:29-21:79 "agents should use the CLI, not read the file whole"
+
+$ annotary -p linter thread new plan "20:27-20:57" -m "(a question, deleted below)"
+t7	v2:20:27-20:57 "mitigated by the fixture table"
+
+$ annotary -p rowan thread reply plan t7 -m "(Replying to the deleted question: yes — the fixture table is also the seed of the test suite.)"
+t7.1
+
+$ annotary -p linter thread delete plan t7
+t7	deleted
+
+$ annotary -p rowan push seed/v3/plan.md --doc plan
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+threads: 7 re-anchored — 6 anchored, 1 refined, 0 orphaned (+1 refined: t3)
+plan	[..]	v3
+
+$ annotary -p linter thread new plan "31:41-31:57" -m "How — survey or interviews? Worth deciding before the invites go out."
+t8	v3:31:41-31:57 "collect feedback"
+
+$ annotary -p linter thread reply plan t5 -m "Yes — one package, both import it. Determinism depends on it."
+t5.1
+
+$ annotary -p rowan thread reply plan t5 -m "Agreed."
+t5.2
+
+$ annotary -p linter thread resolve plan t5
+t5	resolved
+
+$ annotary -p rowan thread reply plan t3 --resolve -m "Done — five, and two weeks of feedback."
+t3.1	resolved
+
+$ annotary -p rowan act plan approve
+plan	v3	approve	by @rowan
+
+$ annotary -p rowan push seed/v4/plan.md --doc plan -m "back to the first-draft wording for comparison"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+threads: 8 re-anchored — 5 anchored, 0 refined, 3 orphaned (+3 orphaned: t6, t7, t8; +1 anchored: t3)
+plan	[..]	v4 (same content as v1)
+
+$ annotary -p agent mentions
+plan	t2	@rowan	v4:16 "We ship the CLI before the web UI"	Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.	+1	[..]
+...
+
+$ annotary -p agent show plan
+plan	[..]	notes	v4 by @rowan [..] "back to the first-draft wording for comparison"	action:-	open:5	actions:approve,send-back
+t4	@rowan	asset img/architecture.png	Diagram is out of date — the daemon box is missing.	+1	[..]
+t2	@rowan	v4:16 "We ship the CLI before the web UI"	Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.	+1	[..]
+t7	@linter	v3:20 orphaned "mitigated by the fixture table"	(deleted)	+1	[..]
+t6	@rowan	v3:21 orphaned "agents should use the CLI, not read the file whole"	This is exactly what the sidecar-format ticket has to answer — link it here.	[..]
+t8	@linter	v3:31 orphaned "collect feedback"	How — survey or interviews? Worth deciding before the invites go out.	[..]
+
+$ annotary -p agent thread show plan t2
+t2	open	@rowan	v4:16:0-16:33 "We ship the CLI before the web UI"	created v1 [..]	mentions @scribe
+  Agreed — but the skill file must land *with* the CLI, not after. @scribe make sure the order list says so.
+t2.1	@scribe	v2 [..]	mentions @rowan
+  Item 3 already lists the skill file with the CLI. @rowan do you want it as its own item?
+
+$ annotary -p agent pull plan --assets
+pull: 8 threads, 4 assets (1 missing: img/cli-screenshot.png); 3 written, 0 unchanged
+plan.md	plan.annotary	v4
+
+$ sh edit.sh
+13:3. CLI (`push`, `pull`, `thread`, `act`, `wait`) and its skill file — shipped together.
+
+$ annotary -p agent push plan.md -m "make the skill file explicit in the order of work"
+warning: missing asset img/cli-screenshot.png (not found) — pushed with missing:true
+assets: 4 referenced, 0 new, 1 missing (img/cli-screenshot.png)
+threads: 8 re-anchored — 5 anchored, 0 refined, 3 orphaned (unchanged)
+plan	[..]	v5
+
+$ annotary -p agent thread reply plan t2 --resolve -m "Done in v5 — item 3 now reads 'CLI … and its skill file'. @rowan"
+t2.2	resolved
+
+$ annotary -p agent status plan
+plan	[..]	v5	action:-	open:4	mentions-me:0	seq:[..]
+
+$ sh wake.sh
+[..]  action  plan  approve v5 by @rowan
+[..]	action	plan	approve v5 by @rowan
+{"seq":[..],"kind":"action","doc":"[..]","name":"plan","action":"approve","version":5,"by":"rowan","at":"[..]T[..]Z"}
+
+$ annotary -p agent status plan --json
+{"name":"plan","id":"[..]","version":5,"action":{"id":"approve","by":"rowan","at":"[..]T[..]Z"},"open_threads":4,"mentions_me":0,"seq":[..]}
+
+$ annotary -p agent thread list plan --json id,anchor,body
+[{"id":"t4","anchor":{"asset":"img/architecture.png"},"body":"Diagram is out of date — the daemon box is missing."},{"id":"t7","anchor":{"version":3,"range":"20:27-20:57","status":"orphaned","exact":"mitigated by the fixture table"}},{"id":"t6","anchor":{"version":3,"range":"21:29-21:79","status":"orphaned","exact":"agents should use the CLI, not read the file whole"},"body":"This is exactly what the sidecar-format ticket has to answer — link it here."},{"id":"t8","anchor":{"version":3,"range":"31:41-31:57","status":"orphaned","exact":"collect feedback"},"body":"How — survey or interviews? Worth deciding before the invites go out."}]
+
+$ annotary -p agent thread list plan --json ?
+id author anchor body mentions replies resolved deleted created updated version
+
+$ annotary -p agent thread new plan "20:41-20:73" --version 5 -m "Five external devs — do we have five lined up? @rowan"
+t9	v5:20:41-20:73 "invite three external developers"
+
+$ annotary -p agent thread new plan "20:41-20:73" --version 4 -m "…"
+? 5
+error: head is v5, not v4 — run `annotary pull plan` and re-read before commenting
+
+$ annotary -p limited act plan approve
+? 4
+error: missing right `action` on Vault notes (you are @limited) — ask an owner: annotary member grant limited notes action
+
+$ annotary -p agent thread reply plan t99 -m "hi"
+? 2
+error: no Thread t99 in plan ([..])
+
+$ annotary -p agent wait plan --timeout 1s
+? 7
+wait: nothing after 1s (seq [..])
+
+$ annotary -p down status plan
+? 6
+error: server at http://127.0.0.1:1 not reachable — run `annotary serve` or `annotary daemon install`
+
+$ ANNOTARY_TOKEN= annotary status plan
+? 3
+error: no credential — say who you are: pass -p NAME (`annotary profile list` shows whose each one is), or set ANNOTARY_TOKEN
+profiles in ~/.annotary/config.toml: agent, down, limited, linter, pw, rowan
+
+$ annotary -p rowan push other/plan.md -m "a second Document named plan"
+plan	[..]	v1
+
+$ annotary -p agent show plan
+? 2
+error: 2 Documents named "plan" in Vault notes — use the id:
+  [..]  plan  v[..]  [..]
+  [..]  plan  v[..]  [..]
+
+$ annotary -p rowan delete other/plan.md
+plan	[..]	deleted
+
+$ annotary -p rowan purge other/plan.md
+purged plan ([..]) — [..] blobs removed
+plan	[..]	purged
+
+```

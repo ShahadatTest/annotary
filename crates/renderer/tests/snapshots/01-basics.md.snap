@@ -1,0 +1,36 @@
+---
+source: crates/renderer/tests/corpus.rs
+---
+<h1 data-l="1-1" id="basics">Basics</h1>
+<p data-l="3-6">Paragraph with <strong>strong</strong>, <em>emphasis</em>, <em><strong>both</strong></em>, <del>strikethrough</del>, <code>code with &lt;angle&gt; &amp; amp</code>,
+a soft break here and a hard break at the end of this line<br>
+after two spaces, and a backslash hard break<br>
+here.</p>
+<h1 data-l="8-9" id="setext-heading">Setext heading</h1>
+<h2 data-l="11-12" id="another-setext">Another setext</h2>
+<h2 data-l="14-14" id="links">Links</h2>
+<p data-l="16-19">Inline <a href="https://example.com/path?a=1&amp;b=2" title="Title here">link</a>, reference <a href="https://ref.example/target" title="Reference title">ref</a>, collapsed
+<a href="https://ref.example/target" title="Reference title">r1</a>, shortcut <a href="https://ref.example/target" title="Reference title">r1</a>, autolink <a href="https://auto.example/x?y=1">https://auto.example/x?y=1</a>, email autolink <a href="mailto:me@example.com">me@example.com</a>,
+fragment <a href="#basics">to basics</a>, and a bare URL <a href="https://bare.example.com/a_(b)_c">https://bare.example.com/a_(b)_c</a>. Bare <a href="http://www.example.org">www.example.org</a>,
+bare email <a href="mailto:hi.there+tag@example.org">hi.there+tag@example.org</a>. A <code>javascript:</code> link: <a>click</a> becomes text.</p>
+<h2 data-l="23-23" id="entities-and-escapes">Entities and escapes</h2>
+<p data-l="25-26">Entities: © &amp; &lt;tag&gt; © 😀 — escapes: *not emphasis* # not a heading,
+`not code`, back\slash. Unicode: Ünïcödé, 日本語, emoji 🎉.</p>
+<p data-l="28-28">Heading ids get de-duplicated:</p>
+<h3 data-l="30-30" id="same">Same</h3>
+<h3 data-l="32-32" id="same-1">Same</h3>
+<h3 data-l="34-34" id="same-2">Same</h3>
+<h2 data-l="36-36" id="blockquotes">Blockquotes</h2>
+<blockquote data-l="38-43">
+<p data-l="38-39">Quoted paragraph one.
+Still the first paragraph.</p>
+<p data-l="41-41">Second paragraph in the quote.</p>
+<blockquote data-l="43-43">
+<p data-l="43-43">Nested quote.</p>
+</blockquote>
+</blockquote>
+<p data-l="45-45">Thematic breaks:</p>
+<hr data-l="47-47">
+<hr data-l="49-49">
+<hr data-l="51-51">
+<p data-l="53-53">Final paragraph.</p>

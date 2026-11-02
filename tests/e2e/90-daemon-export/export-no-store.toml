@@ -1,0 +1,11 @@
+# spec: S13-06
+# A data dir without a store has nothing to export (exit 5); no file is written.
+bin.name = "annotary"
+args = ["export", "backup.tar"]
+env.add = { ANNOTARY_HOME = "cdhome" }
+fs.sandbox = true
+status.code = 5
+stdout = ""
+stderr = """
+error: no store at [..]/cdhome/store — nothing to export yet — `annotary serve` creates it; --data-dir / ANNOTARY_HOME pick another data dir
+"""

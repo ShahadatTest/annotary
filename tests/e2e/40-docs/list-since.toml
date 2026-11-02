@@ -1,0 +1,11 @@
+# spec: S02-21
+# `--since 1h`: everything seeded is recent; `--since` far in the future: nothing (exit 0).
+bin.name = "annotary"
+args = ["-p", "rowan", "list", "lst-", "--since", "1h", "--limit", "1"]
+status = "success"
+stdout = """
+[..]	lst-a	v1	-	0	[..]
+"""
+stderr = """
+showing 1 of 3 — `--limit N` for more
+"""

@@ -1,0 +1,8 @@
+# spec: S06-03
+bin.name = "annotary"
+args = ["-p", "agent", "member", "disable", "linter"]
+status.code = 4
+stdout = ""
+stderr = """
+error: member disable is owner-only — ask an owner (`annotary member list` shows who)
+"""

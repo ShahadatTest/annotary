@@ -1,0 +1,8 @@
+# spec: S07-09
+bin.name = "annotary"
+args = ["-p", "agent", "thread", "new", "ra-plan", "--asset", "img/nope.png", "-m", "x"]
+status.code = 5
+stdout = ""
+stderr = """
+error: no Asset img/nope.png on head v5 — referenced: img/architecture.png, img/cli-screenshot.png, api-notes.md — the ref is the Asset's path as the manifest lists it (`annotary pull DOC` shows assets[])
+"""

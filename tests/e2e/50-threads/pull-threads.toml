@@ -1,0 +1,14 @@
+# spec: S04-14
+# `pull` writes the full projection: every Thread (resolved and tombstoned included) with
+# handles, `L:C-L:C` ranges, seconds, empty/null omitted; `members` covers every handle referenced.
+# Compared against pull-threads.out/.
+bin.name = "annotary"
+args = ["-p", "agent", "pull", "th-plan"]
+fs.sandbox = true
+status = "success"
+stdout = """
+th-plan.md	th-plan.annotary	v1
+"""
+stderr = """
+pull: 6 threads, 3 assets (3 missing: img/architecture.png, img/cli-screenshot.png, api-notes.md); assets not written (--assets)
+"""

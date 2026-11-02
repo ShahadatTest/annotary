@@ -1,0 +1,9 @@
+# spec: S02-15
+bin.name = "annotary"
+args = ["-p", "rowan", "pull", "ro-plan", "--version", "9"]
+fs.sandbox = true
+status.code = 2
+stdout = ""
+stderr = """
+error: Document [..] has no v9
+"""

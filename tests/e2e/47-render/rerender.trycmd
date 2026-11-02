@@ -1,0 +1,31 @@
+spec: S09-08, S09-11
+
+`push` renders at the edge and uploads the HTML with the commit; `rerender DOC` re-renders every
+Version with the server's renderer and reports `name id versions changed` — the server's crate is
+the CLI's crate, so a freshly pushed Document changes nothing. `--json` narrows like everywhere.
+Merged stdout+stderr.
+
+```console
+$ annotary -p rowan push rr-plan.md -m "first"
+assets: 1 referenced, 1 new (178 B)
+rr-plan	[..]	v1
+
+$ annotary -p rowan rerender rr-plan
+rerender: 1 Version, 0 changed (renderer [..])
+rr-plan	[..]	1	0
+
+$ annotary -p agent rerender rr-plan.md -q
+rr-plan	[..]	1	0
+
+$ annotary -p rowan push rr-plan.md -m "second" --json version,already
+assets: 1 referenced, 0 new
+{"version":1,"already":true}
+
+$ annotary -p rowan rerender rr-plan --json
+rerender: 1 Version, 0 changed (renderer [..])
+{"name":"rr-plan","id":"[..]","versions":1,"changed":0}
+
+$ annotary -p rowan rerender rr-plan -q --json versions,changed
+{"versions":1,"changed":0}
+
+```
