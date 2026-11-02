@@ -102,7 +102,8 @@ button{font:inherit;cursor:pointer}
 .cd-vsw{display:inline-flex;align-items:center;border:1px solid var(--cd-line);border-radius:6px;overflow:hidden}
 .cd-vsw .cd-arrow{display:inline-block;padding:3px 8px;font-size:13px;color:var(--cd-fg);line-height:1.4}
 .cd-vsw .cd-arrow.cd-off{color:var(--cd-faint);pointer-events:none}
-.cd-vsw select{border:0;border-left:1px solid var(--cd-line);border-right:1px solid var(--cd-line);font:inherit;font-size:13px;padding:3px 6px;background:var(--cd-card);color:var(--cd-fg);max-width:220px}
+/* Room on the right for the native chevron so long Version labels do not run under it. */
+.cd-vsw select{border:0;border-left:1px solid var(--cd-line);border-right:1px solid var(--cd-line);font:inherit;font-size:13px;padding:3px 22px 3px 6px;background:var(--cd-card);color:var(--cd-fg);max-width:220px;text-overflow:ellipsis}
 .cd-banner{background:var(--cd-note-bg);border-bottom:1px solid var(--cd-note-line);color:var(--cd-note-ink);padding:6px 16px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .cd-banner .cd-btn{background:var(--cd-card)}
 .cd-panel{position:absolute;right:16px;top:52px;z-index:6;width:min(440px,calc(100% - 32px));background:var(--cd-card);border:1px solid var(--cd-line);border-radius:10px;

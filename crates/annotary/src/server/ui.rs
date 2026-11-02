@@ -375,6 +375,17 @@ mod tests {
         assert_eq!(esc("a<b>&\"'"), "a&lt;b&gt;&amp;&quot;&#39;");
     }
 
+    /// The Version `<select>` keeps right padding so long labels do not run under the chevron.
+    #[test]
+    fn version_select_leaves_room_for_the_chevron() {
+        let at = CSS.find(".cd-vsw select{").expect("Version select rule");
+        let rule = &CSS[at..];
+        let end = rule.find('}').expect("closed rule");
+        let rule = &rule[..=end];
+        assert!(rule.contains("padding:3px 22px 3px 6px"), "{rule}");
+        assert!(rule.contains("text-overflow:ellipsis"), "{rule}");
+    }
+
     /// CMD-23: the dark palette is written twice in app.css (`.cd-theme-dark`, and
     /// `.cd-theme-system` under `prefers-color-scheme: dark`); the two must never drift.
     #[test]
