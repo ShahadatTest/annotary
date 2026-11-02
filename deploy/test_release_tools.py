@@ -114,6 +114,23 @@ class Formula(unittest.TestCase):
             self.assertIn(needle, out)
         self.assertEqual(out.count("test do"), 1)
 
+    def test_what_homebrew_audit_refuses_in_dists_formula_is_rewritten(self):
+        formula = FORMULA.replace('  url "', '  version "1.2.3"\n  url "', 1).replace(
+            "  def install",
+            '  BINARY_ALIASES = {\n    "aarch64-apple-darwin": {},\n    "x86_64-unknown-linux-gnu": {}\n  }\n\n  def install',
+        )
+        out = tap_formula.with_test(formula)
+        self.assertNotIn('version "1.2.3"', out)
+        self.assertIn(
+            '  BINARY_ALIASES = {\n    "aarch64-apple-darwin":     {},\n    "x86_64-unknown-linux-gnu": {},\n  }.freeze\n',
+            out,
+        )
+
+    def test_an_alias_table_it_does_not_recognise_passes_through_for_the_audit_to_judge(self):
+        table = '  BINARY_ALIASES = {\n    "aarch64-apple-darwin": {"annotary": ["an"]},\n  }\n\n'
+        out = tap_formula.with_test(FORMULA.replace("  def install", table + "  def install"))
+        self.assertIn(table, out)
+
     def test_it_refuses_a_formula_that_should_not_go_out(self):
         for bad in (
             tap_formula.with_test(FORMULA),  # a second test

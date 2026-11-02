@@ -3,13 +3,16 @@
 
     python3 deploy/tap_formula.py path/to/annotary.rb
 
-dist writes the formula but gives it no test, and `brew audit --strict` wants one, so the tap's
-publish job (.github/workflows/publish-tap.yml) runs this before `brew test`. It refuses a formula
+dist writes the formula with no test and with an alias table `brew audit --strict` refuses, so the
+tap's publish job (.github/workflows/publish-tap.yml) runs this before the audit. It refuses a formula
 with a test already (one is all a formula may have), with no closing `end` to put it before, or with
 a download that has no checksum.
 """
 import re
 import sys
+
+# dist's table of binary aliases, written so that `brew audit --strict` refuses it.
+ALIASES = re.compile(r"^  BINARY_ALIASES = \{\n(?:    \"[^\"]+\": \{\},?\n)+  \}\n", re.M)
 
 TEST_BLOCK = """
   test do
@@ -21,6 +24,14 @@ TEST_BLOCK = """
 """
 
 
+def aligned_aliases(match):
+    """The table as Homebrew's style wants it: aligned, a trailing comma, frozen."""
+    names = re.findall(r'"([^"]+)": \{\}', match.group(0))
+    width = max(len(n) for n in names) + 3
+    rows = "".join('    %s {},\n' % ('"%s":' % n).ljust(width) for n in names)
+    return "  BINARY_ALIASES = {\n" + rows + "  }.freeze\n"
+
+
 def with_test(formula):
     """`formula` with the test added; ValueError if it should not be published."""
     if re.search(r"^\s*test do\b", formula, re.M):
@@ -29,6 +40,9 @@ def with_test(formula):
     sums = len(re.findall(r'^\s*sha256 "[0-9a-f]{64}"', formula, re.M))
     if not urls or urls != sums:
         raise ValueError("the formula has %d url lines and %d sha256 lines; every download needs a checksum" % (urls, sums))
+    formula = ALIASES.sub(aligned_aliases, formula)
+    # `brew audit --strict`: the version is already in the url.
+    formula = re.sub(r'^  version "[^"]+"\n', "", formula, count=1, flags=re.M)
     stripped = formula.rstrip("\n")
     if not stripped.endswith("\nend"):
         raise ValueError("the formula does not end with the class's end")

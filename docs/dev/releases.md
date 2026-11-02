@@ -41,7 +41,7 @@ The hand edits, each because dist has no setting for it, and which `tests/phase1
 
 dist's `homebrew` publish job needs a personal access token (`HOMEBREW_TAP_TOKEN`) and writes a formula with
 no `test do`, so `publish-jobs` names our own workflow, `publish-tap.yml`. Its `check` job, with no secret, takes
-dist's generated `annotary.rb`, adds the test (`deploy/tap_formula.py`), and puts it in a local tap for `brew
+dist's generated `annotary.rb`, adds the test and rewrites what `brew audit --strict` refuses in dist's output, the `version` line and the alias table (`deploy/tap_formula.py`; if dist changes its shape, the audit stops the job), and puts it in a local tap for `brew
 audit --strict --online`, `brew install` and `brew test`. Only then does its `push` job, on a runner of its own,
 check out `josh-andrews-dev/homebrew-tap` with the key, commit that same file and push. A failure leaves the tap
 on the previous release, and the release itself up.
